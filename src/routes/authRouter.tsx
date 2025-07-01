@@ -2,6 +2,7 @@ import AuthLayout from '../layout/authLayout';
 import SignInPage from '../pages/auth/signInPage';
 import SignUpPage from '../pages/auth/signUpPage';
 import Complete from '../pages/auth/signUpPage/complete';
+import Detail from '../pages/detail';
 
 const AuthRouter = [
   {
@@ -27,6 +28,10 @@ const AuthRouter = [
         element: <Complete />,
       },
     ],
+  },
+  {
+    path: '/detail',
+    element: <Detail />,
   },
 ];
 
