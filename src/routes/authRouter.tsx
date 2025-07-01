@@ -1,12 +1,12 @@
-import AuthLayout from '../layout/authLayout';
-import SignInPage from '../pages/auth/signInPage';
-import SignUpPage from '../pages/auth/signUpPage';
-import Complete from '../pages/auth/signUpPage/complete';
-import Detail from '../pages/detail';
+import AuthLayout from "../layout/authLayout";
+import SignInPage from "../pages/auth/signInPage";
+import SignUpPage from "../pages/auth/signUpPage";
+import Complete from "../pages/auth/signUpPage/complete";
+import Detail from "../pages/detail";
 
 const AuthRouter = [
   {
-    path: '/signIn',
+    path: "/signIn",
     element: <AuthLayout />,
     children: [
       {
@@ -16,7 +16,7 @@ const AuthRouter = [
     ],
   },
   {
-    path: '/signUp',
+    path: "/signUp",
     element: <AuthLayout />,
     children: [
       {
@@ -24,13 +24,13 @@ const AuthRouter = [
         element: <SignUpPage />,
       },
       {
-        path: 'completed',
+        path: "completed",
         element: <Complete />,
       },
     ],
   },
   {
-    path: '/detail',
+    path: "/detail",
     element: <Detail />,
   },
 ];
