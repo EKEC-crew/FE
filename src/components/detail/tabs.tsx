@@ -19,20 +19,23 @@ function Tabs() {
   };
 
   return (
-    <div className="flex justify-center space-x-6 bg-white p-4 shadow-sm border-b border-gray-200">
-      {tabItems.map(({ name, path }) => (
-        <button
-          key={name}
-          onClick={() => handleClick(name, path)}
-          className={`relative text-sm font-semibold pb-1 ${
-            activeTab === name
-              ? 'text-blue-600 border-b-2 border-blue-600'
-              : 'text-gray-400'
-          }`}
-        >
-          {name}
-        </button>
-      ))}
+    <div className="flex justify-between bg-white border-b border-gray-200">
+      {tabItems.map(({ name, path }) => {
+        const isActive = activeTab === name;
+        return (
+          <button
+            key={name}
+            onClick={() => handleClick(name, path)}
+            className={`relative flex-1 text-center py-3 text-sm font-bold 
+              ${isActive ? 'text-[#373EE7]' : 'text-[#A1A1A1]'}`}
+          >
+            {name}
+            {isActive && (
+              <div className="absolute bottom-0 left-0 w-full h-[1] bg-[#373EE7]" />
+            )}
+          </button>
+        );
+      })}
     </div>
   );
 }
