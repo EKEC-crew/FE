@@ -1,5 +1,5 @@
-import { Outlet } from "react-router-dom";
-import LeftGnb from "../components/LeftGnb/leftGnb";
+import { Outlet } from 'react-router-dom';
+import LeftGnb from '../components/LeftGnb/LeftGnb';
 
 const RootLayout = () => {
   return (
