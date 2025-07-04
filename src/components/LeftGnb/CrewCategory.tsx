@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import categoryIconBk from '../../assets/icons/ic_category_36.svg';
 import categoryIconWt from '../../assets/icons/ic_category_white_36.svg';
+import pressedRadioBtn from '../../assets/icons/ic_radio_pressed.svg';
+import depressedRadioBtn from '../../assets/icons/ic_radio_de.svg';
 const categoryList = [
   '사교',
   '운동/등산',
@@ -22,7 +24,7 @@ const CrewCategory = () => {
     <div>
       <button
         onClick={() => setOpen(!isOpen)}
-        className={`flex items-start gap-2 w-full h-[44px] text-left px-4 py-2 rounded-[16px] transition-colors focus:outline-none ${
+        className={`flex items-center gap-2 w-full h-[48px] text-left px-4 py-2 rounded-[16px] transition-colors focus:outline-none ${
           isOpen
             ? 'bg-[#3A3ADB] text-white'
             : 'bg-[#F7F7FB] text-black hover:bg-[#3A3ADB] hover:text-white'
@@ -42,10 +44,10 @@ const CrewCategory = () => {
           {categoryList.map((category) => (
             <label
               key={category}
-              className={`flex items-center w-full h-[44px] gap-2 text-sm px-4 py-2 rounded-[10px] cursor-pointer transition-colors ${
+              className={`flex items-center w-full h-[48px] gap-2 text-sm px-4 py-2 rounded-[10px] cursor-pointer transition-colors ${
                 isSelected === category
                   ? 'bg-[#F7F7FB] text-black'
-                  : 'hover:bg-[#F7F7FB]  text-black'
+                  : 'not-first:hover:bg-[#F7F7FB]  text-black'
               }`}
             >
               <input
@@ -54,7 +56,14 @@ const CrewCategory = () => {
                 value={category}
                 checked={isSelected === category}
                 onChange={() => setSelected(category)}
-                className="accent-[#3A3ADB] mr-2"
+                className="hidden"
+              />
+              <img
+                src={
+                  isSelected === category ? pressedRadioBtn : depressedRadioBtn
+                }
+                alt="radio"
+                className="w-5 h-5"
               />
               {category}
             </label>
