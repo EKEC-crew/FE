@@ -1,4 +1,4 @@
-import LeftTopLogo from "../../../public/signIn/signInLeftTopLogo.svg";
+import LeftTopLogo from "../../assets/signIn/signInLeftTopLogo.svg";
 
 const SignInHeader = () => {
   return (

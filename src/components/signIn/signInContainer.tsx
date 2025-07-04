@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 
-import Kakao from "../../../public/signIn/signInKakaoLogo.svg";
-import Google from "../../../public/signIn/signInGoogleLogo.svg";
-import Naver from "../../../public/signIn/signInNaverLogo.svg";
-import Ekec from "../../../public/signIn/signInEkecLogo.svg";
-import emailSignInBtn from "../../../public/signIn/btn_login_520x68.svg";
+import Kakao from "../../assets/signIn/signInKakaoLogo.svg";
+import Google from "../../assets/signIn/signInGoogleLogo.svg";
+import Naver from "../../assets/signIn/signInNaverLogo.svg";
+import Ekec from "../../assets/signIn/signInEkecLogo.svg";
+import emailSignInBtn from "../../assets/signIn/btn_login_520x68.svg";
 
 import SignInButton from "./signInButton";
 
