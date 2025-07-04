@@ -7,7 +7,7 @@ const FilterButton = () => {
     <button
       onClick={() => navigate("/searchPage")}
       className="flex items-center gap-2 w-full h-[48px] text-left px-4 py-2
-             rounded-[16px] bg-[#F7F7FB] focus:outline-none"
+             rounded-[8px] bg-[#F7F7FB] focus:outline-none"
       style={{
         border: "none",
         outline: "none",
