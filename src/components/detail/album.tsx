@@ -5,8 +5,8 @@ interface AlbumItem {
 
 const albumData: AlbumItem[] = [
   {
-    id: '1',
-    src: 'https://images.unsplash.com/photo-1601758125946-3c45cbb6f8d0',
+    id: "1",
+    src: "https://images.unsplash.com/photo-1601758125946-3c45cbb6f8d0",
   },
 ];
 

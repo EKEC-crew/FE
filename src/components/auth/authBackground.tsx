@@ -1,4 +1,4 @@
-const SignInBackground = () => {
+const AuthBackground = () => {
   return (
     <div className="absolute inset-0 pointer-events-none">
       <div className="w-96 h-96 left-[308.70px] top-[255px] absolute origin-top-left rotate-[0.62deg] bg-cyan-300 rounded-full blur-[100px]"></div>
@@ -9,4 +9,4 @@ const SignInBackground = () => {
   );
 };
 
-export default SignInBackground;
+export default AuthBackground;
