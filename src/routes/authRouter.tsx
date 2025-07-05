@@ -1,16 +1,16 @@
-import AuthLayout from '../layout/authLayout';
-import SignInPage from '../pages/auth/signInPage/';
-import EmailSignIn from '../pages/auth/signInPage/emailSignIn';
-import GoogleSignIn from '../pages/auth/signInPage/googleSignIn';
-import KakaoSignIn from '../pages/auth/signInPage/kakaoSignIn';
-import NaverSignIn from '../pages/auth/signInPage/naverSignIn';
-import SignUpPage from '../pages/auth/signUpPage';
-import Complete from '../pages/auth/signUpPage/complete';
-import Detail from '../pages/detail/index';
+import AuthLayout from "../layout/authLayout";
+import SignInPage from "../pages/auth/signInPage/";
+import EmailSignIn from "../pages/auth/signInPage/emailSignIn";
+import GoogleSignIn from "../pages/auth/signInPage/googleSignIn";
+import KakaoSignIn from "../pages/auth/signInPage/kakaoSignIn";
+import NaverSignIn from "../pages/auth/signInPage/naverSignIn";
+import SignUpPage from "../pages/auth/signUpPage";
+import Complete from "../pages/auth/signUpPage/complete";
+import Detail from "../pages/detail/index";
 
 const AuthRouter = [
   {
-    path: '/signIn',
+    path: "/signIn",
     element: <AuthLayout />,
     children: [
       {
@@ -18,25 +18,25 @@ const AuthRouter = [
         element: <SignInPage />,
       },
       {
-        path: 'email',
+        path: "email",
         element: <EmailSignIn />,
       },
       {
-        path: 'kakao',
+        path: "kakao",
         element: <KakaoSignIn />,
       },
       {
-        path: 'google',
+        path: "google",
         element: <GoogleSignIn />,
       },
       {
-        path: 'naver',
+        path: "naver",
         element: <NaverSignIn />,
       },
     ],
   },
   {
-    path: '/signUp',
+    path: "/signUp",
     element: <AuthLayout />,
     children: [
       {
@@ -44,13 +44,13 @@ const AuthRouter = [
         element: <SignUpPage />,
       },
       {
-        path: 'completed',
+        path: "completed",
         element: <Complete />,
       },
     ],
   },
   {
-    path: '/detail',
+    path: "/detail",
     element: <AuthLayout />,
     children: [
       {

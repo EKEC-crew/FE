@@ -1,9 +1,7 @@
-import React from 'react';
-import Header from '../../components/detail/header';
-import Notice from '../../components/detail/notice';
-import Tabs from '../../components/detail/tabs';
-import AboutSection from '../../components/detail/about';
-import Album from '../../components/detail/album';
+import Header from "../../components/detail/header";
+import Notice from "../../components/detail/notice";
+import Tabs from "../../components/detail/tabs";
+import AboutSection from "../../components/detail/about";
 function Detail() {
   return (
     <div className="bg-gray-100 !importent">
