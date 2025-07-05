@@ -1,9 +1,13 @@
-const emailSignIn = () => {
+import SignInHeader from "../../../../components/signIn/signInHeader";
+import EmailSignInContainer from "../../../../components/signIn/emailSignInContainer";
+
+const EmailSignInPage = () => {
   return (
     <>
-      <div>이크에크로그인페이지</div>
+      <SignInHeader />
+      <EmailSignInContainer />
     </>
   );
 };
 
-export default emailSignIn;
+export default EmailSignInPage;
