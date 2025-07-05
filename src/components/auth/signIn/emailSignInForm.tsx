@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
-import EkecLogo from "../../assets/icons/ic_logo_graphic_45.svg";
-import EyeOffIcon from "../../assets/icons/ic_eyeoff_24.svg";
-import EyeIcon from "../../assets/icons/ic_eye_24.svg";
-import emailSignInBtn from "../../assets/signIn/btn_login_520x68.svg";
-import checkBoxIcon from "../../assets/icons/ic_check_de.svg";
-import pressedCheckBoxIcon from "../../assets/icons/ic_check_pressed.svg";
+import EkecLogo from "../../../assets/icons/ic_logo_graphic_45.svg";
+import EyeOffIcon from "../../../assets/icons/ic_eyeoff_24.svg";
+import EyeIcon from "../../../assets/icons/ic_eye_24.svg";
+import emailSignInBtn from "../../../assets/signIn/btn_login_520x68.svg";
+import checkBoxIcon from "../../../assets/icons/ic_check_de.svg";
+import pressedCheckBoxIcon from "../../../assets/icons/ic_check_pressed.svg";
 import { useState } from "react";
 
 const EmailSignInForm: React.FC = () => {

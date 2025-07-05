@@ -1,13 +1,7 @@
-import SignInHeader from "../../../../components/signIn/signInHeader";
-import EmailSignInContainer from "../../../../components/signIn/emailSignInContainer";
+import AuthContainer from "../../../../components/auth/AuthContainer";
 
 const EmailSignInPage = () => {
-  return (
-    <>
-      <SignInHeader />
-      <EmailSignInContainer />
-    </>
-  );
+  return <AuthContainer variant="emailsignIn" />;
 };
 
 export default EmailSignInPage;

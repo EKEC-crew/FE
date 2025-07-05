@@ -1,13 +1,7 @@
-import SignInHeader from "../../../components/signIn/signInHeader";
-import SignInContainer from "../../../components/signIn/signInContainer";
+import AuthContainer from "../../../components/auth/AuthContainer";
 
 const SignInPage = () => {
-  return (
-    <>
-      <SignInHeader />
-      <SignInContainer />
-    </>
-  );
+  return <AuthContainer variant="signIn" />;
 };
 
 export default SignInPage;
