@@ -1,7 +1,13 @@
-import AuthContainer from "../../../components/auth/authContainer";
+import AuthHeader from "../../../components/auth/authHeader";
+import AuthContainer from "../../../components/auth/AuthContainer";
 
 const SignInPage = () => {
-  return <AuthContainer variant="signIn" />;
+  return (
+    <>
+      <AuthHeader />
+      <AuthContainer variant="signIn" />
+    </>
+  );
 };
 
 export default SignInPage;
