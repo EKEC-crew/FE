@@ -1,9 +1,6 @@
 import EmailSignInForm from "./signIn/emailSignInForm";
 import SignInForm from "./signIn/signInForm";
 
-// 나중에 추가될 컴포넌트들을 위한 임시 컴포넌트
-const SignUpForm = () => <div>회원가입 폼 (구현 예정)</div>;
-
 interface AuthContainerProps {
   variant: "signIn" | "emailsignIn" | "signUp";
 }
@@ -16,7 +13,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({ variant }) => {
       case "emailsignIn":
         return <EmailSignInForm />;
       case "signUp":
-        return <SignUpForm />;
+        return <></>;
       default:
         return null;
     }

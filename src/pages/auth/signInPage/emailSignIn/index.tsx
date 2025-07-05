@@ -1,4 +1,4 @@
-import AuthContainer from "../../../../components/auth/AuthContainer";
+import AuthContainer from "../../../../components/auth/authContainer";
 
 const EmailSignInPage = () => {
   return <AuthContainer variant="emailsignIn" />;
