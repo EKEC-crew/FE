@@ -20,11 +20,14 @@ const SocialSignInButton = ({
   return (
     <Link
       to={to}
-      className={`w-full relative flex items-center justify-center h-[56.22px] box-border rounded-lg font-medium hover:shadow-md active:shadow-inner active:transform active:translate-y-0.5 ${border || ""}`}
-      style={bgColor ? { backgroundColor: bgColor } : {}}
+      className={`w-full relative flex items-center justify-center box-border rounded-lg font-medium hover:shadow-md active:shadow-inner active:transform active:translate-y-0.5 text-sm md:text-base lg:text-lg ${border || ""}`}
+      style={{
+        backgroundColor: bgColor || undefined,
+        aspectRatio: "520/68",
+      }}
     >
       <img src={imgSrc} alt={alt} className="absolute left-5" />
-      <div className="w-full text-center justify-center text-black text-l font-medium font-['Pretendard']">
+      <div className="w-full text-center justify-center text-black font-medium font-['Pretendard']">
         {text}
       </div>
     </Link>
