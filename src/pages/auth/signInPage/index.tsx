@@ -1,14 +1,12 @@
-import SignInBackground from "../../../components/signIn/signInBackground";
-import SignInHeader from "../../../components/signIn/signInHeader";
-import SignInContainer from "../../../components/signIn/signInContainer";
+import AuthHeader from "../../../components/auth/authHeader";
+import AuthContainer from "../../../components/auth/AuthContainer";
 
 const SignInPage = () => {
   return (
-    <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-indigo-50 to-cyan-50">
-      <SignInBackground />
-      <SignInHeader />
-      <SignInContainer />
-    </div>
+    <>
+      <AuthHeader />
+      <AuthContainer variant="signIn" />
+    </>
   );
 };
 
