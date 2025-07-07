@@ -1,12 +1,12 @@
-import CrewCardList from "../../components/CrewList/CrewCardList";
-import CrewFilterBar from "../../components/CrewList/CrewFilterBar";
-import CrewSortBar from "../../components/CrewList/CrewSortBar";
-import Pagination from "../../components/CrewList/Pagination";
+import CrewCardList from "../../components/crewList/CrewCardList";
+import CrewFilterBar from "../../components/crewList/CrewFilterBar";
+import CrewSortBar from "../../components/crewList/CrewSortBar";
+import Pagination from "../../components/crewList/Pagination";
 
 const CrewListPage = () => {
   return (
     <div className="w-full flex justify-center">
-      <div className="w-[1620px] px-[150px] pt-[45px] pb-[80px]">
+      <div className="w-[1620px] px-[150px] pt-[100px] pb-[80px]">
         {/* 헤더 */}
         <h2 className="text-[36px] font-semibold text-[#000000] mb-[24px]">
           맞춤 크루를 찾아보세요!

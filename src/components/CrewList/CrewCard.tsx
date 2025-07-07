@@ -1,4 +1,4 @@
-import bannerImg from "../../assets/CrewList/Rectangle 4567.svg";
+import bannerImg from "../../assets/crewList/Rectangle 4567.svg";
 import starIcon from "../../assets/icons/ic_Star_36.svg";
 
 const CrewCard = () => {

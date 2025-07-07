@@ -2,6 +2,8 @@ import MultiSelectDropdown from "./MultiSelectDropdown";
 import RegionSelectDropdown from "./RegionSelectDropdown";
 import SingleSelectDropdown from "./SingleSelectDropdown";
 import resetIcon from "../../assets/icons/ic_reset_28.svg";
+import manIcon from "../../assets/icons/ic_man_28.svg";
+import womanIcon from "../../assets/icons/ic_woman_28.svg";
 
 const categoryOptions = [
   "스터디",
@@ -51,7 +53,7 @@ const styleOptions = [
   "실력향상",
 ];
 
-const regionData = {
+const regionOption = {
   서울: [
     "전지역",
     "강남구",
@@ -84,6 +86,24 @@ const regionData = {
   제주: ["제주시", "서귀포시"],
 };
 
+const ageOptions = [
+  { label: "1998" },
+  { label: "1999" },
+  { label: "2000" },
+  { label: "2001" },
+  { label: "2002" },
+  { label: "2003" },
+  { label: "2004" },
+  { label: "2005" },
+  { label: "2006" },
+];
+
+const genderOption = [
+  { label: "선택 안 함" },
+  { label: "남성", icon: <img src={manIcon} alt="남성" /> },
+  { label: "여성", icon: <img src={womanIcon} alt="여성" /> },
+];
+
 const CrewFilterBar = () => {
   return (
     <div className="flex gap-3 flex-wrap pb-[24px]">
@@ -98,15 +118,15 @@ const CrewFilterBar = () => {
       />
       <MultiSelectDropdown label="활동" options={activityOptions} />
       <MultiSelectDropdown label="스타일" options={styleOptions} />
-      <RegionSelectDropdown label="지역" regions={regionData} />
+      <RegionSelectDropdown label="지역" regions={regionOption} />
       <SingleSelectDropdown
         label="연령"
-        options={["10대", "20대", "30대", "40대 이상"]}
+        options={ageOptions}
         variant="filter"
       />
       <SingleSelectDropdown
         label="성별"
-        options={["선택 안 함", "남자", "여자"]}
+        options={genderOption}
         variant="filter"
       />
     </div>

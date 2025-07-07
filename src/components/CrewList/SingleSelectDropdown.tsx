@@ -2,9 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import downIcon24 from "../../assets/icons/ic_Down_24.svg";
 import downIcon28 from "../../assets/icons/ic_Down_28.svg";
 
+interface SingleOption {
+  label: string;
+  icon?: string | React.ReactNode;
+}
+
 interface SingleSelectDropdownProps {
   label: string;
-  options: string[];
+  options: SingleOption[];
   onSelect?: (selected: string) => void;
   variant?: "filter" | "sort"; // 버튼 스타일 구분
 }
@@ -66,11 +71,11 @@ const SingleSelectDropdown = ({
         <div className="absolute mt-2 pt-4 bg-white shadow-md rounded-md z-10 w-max min-w-full">
           <ul className="flex flex-col gap-2 max-h-[250px] overflow-y-auto">
             {options.map((opt) => {
-              const isOptSelected = selected === opt;
+              const isOptSelected = selected === opt.label;
               return (
                 <li
-                  key={opt}
-                  onClick={() => handleSelect(opt)}
+                  key={opt.label}
+                  onClick={() => handleSelect(opt.label)}
                   className="cursor-pointer w-full"
                 >
                   <div
@@ -81,7 +86,12 @@ const SingleSelectDropdown = ({
                     : "text-[#000000] hover:bg-[#3A3ADB] hover:text-white hover:font-medium"
                 }`}
                   >
-                    {opt}
+                    <div className="flex items-center gap-2">
+                      {opt.icon && (
+                        <span className="inline-block">{opt.icon}</span>
+                      )}
+                      {opt.label}
+                    </div>
                   </div>
                 </li>
               );
