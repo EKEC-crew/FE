@@ -1,9 +1,13 @@
-const emailSignIn = () => {
+import AuthHeader from "../../../../components/auth/authHeader";
+import AuthContainer from "../../../../components/auth/AuthContainer";
+
+const EmailSignInPage = () => {
   return (
     <>
-      <div>이크에크로그인페이지</div>
+      <AuthHeader />
+      <AuthContainer variant="emailsignIn" />
     </>
   );
 };
 
-export default emailSignIn;
+export default EmailSignInPage;
