@@ -1,0 +1,33 @@
+import CrewCardList from "../../components/CrewList/CrewCardList";
+import CrewFilterBar from "../../components/CrewList/CrewFilterBar";
+import CrewSortBar from "../../components/CrewList/CrewSortBar";
+import Pagination from "../../components/CrewList/Pagination";
+
+const CrewListPage = () => {
+  return (
+    <div className="w-full flex justify-center">
+      <div className="w-[1620px] px-[150px] pt-[45px] pb-[80px]">
+        {/* 헤더 */}
+        <h2 className="text-[36px] font-semibold text-[#000000] mb-[24px]">
+          맞춤 크루를 찾아보세요!
+        </h2>
+
+        {/* 필터 옵션 */}
+        <CrewFilterBar />
+
+        {/* 크루 개수 + 정렬 옵션 */}
+        <CrewSortBar />
+
+        {/* 카드 리스트 */}
+        <CrewCardList />
+
+        {/* 페이지네이션 */}
+        <div className="mt-12 flex justify-center">
+          <Pagination currentPage={1} totalPages={5} onPageChange={() => {}} />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CrewListPage;
