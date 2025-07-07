@@ -117,8 +117,8 @@ const CrewCalendar: React.FC = () => {
         calendarType="gregory"
         tileContent={tileContent}
         locale="ko-US"
-        formatDay={(locale, date) => String(date.getDate())}
-        formatMonthYear={(locale, date) =>
+        formatDay={(_locale, date) => String(date.getDate())}
+        formatMonthYear={(_locale, date) =>
           date.toLocaleString("en-US", { month: "long" })
         }
       />

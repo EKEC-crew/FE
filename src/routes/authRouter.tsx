@@ -50,20 +50,6 @@ const AuthRouter = [
       },
     ],
   },
-  {
-    path: "/detail",
-    element: <AuthLayout />,
-    children: [
-      {
-        index: true,
-        element: <Detail />,
-      },
-      {
-        path: "schedule",
-        element: <Schedule />,
-      },
-    ],
-  },
 ];
 
 export default AuthRouter;

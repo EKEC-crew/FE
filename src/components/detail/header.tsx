@@ -1,8 +1,7 @@
 function Header() {
   return (
-    <div className="w-full ">
+    <div className="w-full py-10">
       <div className="flex justify-between bg-white p-6 shadow-lg w-full">
-        {/* 왼쪽: 로고 + 동호회 정보 */}
         <div className="flex items-center gap-6">
           <img
             src="/DefaultCrewProfile.png"
@@ -32,7 +31,6 @@ function Header() {
             </div>
           </div>
         </div>
-        {/* 오른쪽: 유저 정보 */}
         <div className="flex flex-col items-center gap-2">
           <div className="flex items-center justify-between w-full px-4 py-2">
             <img

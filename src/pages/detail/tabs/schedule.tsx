@@ -1,12 +1,11 @@
 import Header from "../../../components/detail/header";
 import Notice from "../../../components/detail/notice";
 import Tabs from "../../../components/detail/tabs";
-import AboutSection from "../../../components/detail/about";
 import Calendar from "../../../components/CrewSchedule/calendar";
 import ScheduleList from "../../../components/CrewSchedule/ScheduleList";
-import Pagination from "../../../components/CrewSchedule/button/Pagination";
+import Pagination from "../../../components/CrewSchedule/button/pagination";
 import Post from "../../../components/CrewSchedule/button/post";
-function Detail() {
+function Schedule() {
   return (
     <div className="bg-gray-100">
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
@@ -33,4 +32,4 @@ function Detail() {
   );
 }
 
-export default Detail;
+export default Schedule;
