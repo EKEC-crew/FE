@@ -48,8 +48,8 @@ const SingleSelectDropdown = ({
     <div className="relative inline-block" ref={ref}>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className={`inline-flex items-center gap-2 rounded-full text-[20px] font-normal
-        ${isFilter ? "h-[50px] px-[20px]" : "h-[40px] px-[16px]"}
+        className={`inline-flex items-center gap-2 rounded-full text-xl font-normal
+        ${isFilter ? "h-12 px-5" : "h-10 px-4"}
         ${
           isFilter
             ? isSelected
@@ -60,11 +60,7 @@ const SingleSelectDropdown = ({
         `}
       >
         {buttonLabel}
-        <img
-          src={isFilter ? downIcon28 : downIcon24}
-          alt="열기"
-          className={isFilter ? "w-[28px] h-[28px]" : "w-[24px] h-[24px]"}
-        />
+        <img src={isFilter ? downIcon28 : downIcon24} alt="열기" />
       </button>
 
       {open && (
@@ -79,7 +75,7 @@ const SingleSelectDropdown = ({
                   className="cursor-pointer w-full"
                 >
                   <div
-                    className={`w-full px-4 py-2 text-[18px] text-left whitespace-nowrap
+                    className={`w-full px-4 py-2 text-lg text-left whitespace-nowrap
                 ${
                   isOptSelected
                     ? "bg-[#3A3ADB] text-white font-medium"

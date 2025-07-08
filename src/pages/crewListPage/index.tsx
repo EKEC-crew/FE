@@ -6,9 +6,9 @@ import Pagination from "../../components/crewList/Pagination";
 const CrewListPage = () => {
   return (
     <div className="w-full flex justify-center">
-      <div className="w-[1620px] px-[150px] pt-[100px] pb-[80px]">
+      <div className="w-full max-w-[1620px] px-50 lg:px-[150px] pt-25 pb-20">
         {/* 헤더 */}
-        <h2 className="text-[36px] font-semibold text-[#000000] mb-[24px]">
+        <h2 className="text-4xl font-semibold text-[#000000] mb-6">
           맞춤 크루를 찾아보세요!
         </h2>
 

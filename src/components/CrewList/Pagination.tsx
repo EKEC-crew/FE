@@ -22,7 +22,7 @@ const Pagination = ({
       <button
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className="w-[42px] h-[42px] flex items-center justify-center rounded-full border-[2px] border-[#D9DADD] disabled:cursor-not-allowed"
+        className="w-11 h-11 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD] disabled:cursor-not-allowed"
       >
         <img src={currentPage === 1 ? leftIconDisabled : leftIcon} alt="이전" />
       </button>
@@ -33,7 +33,7 @@ const Pagination = ({
           key={page}
           onClick={() => onPageChange(page)}
           className={`
-            w-[42px] h-[42px] flex items-center justify-center rounded-full border-[2px] text-[24px] font-medium
+            w-11 h-11 flex items-center justify-center rounded-full border-[2px] text-2xl font-medium
             ${
               page === currentPage
                 ? "border-[#3A3ADB] bg-[#3A3ADB] text-white"
@@ -49,7 +49,7 @@ const Pagination = ({
       <button
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className="w-[42px] h-[42px] flex items-center justify-center rounded-full border-[2px] border-[#D9DADD] disabled:cursor-not-allowed"
+        className="w-11 h-11 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD] disabled:cursor-not-allowed"
       >
         <img
           src={currentPage === totalPages ? rightIconDisabled : rightIcon}

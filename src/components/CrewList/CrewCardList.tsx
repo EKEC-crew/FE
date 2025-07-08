@@ -2,7 +2,7 @@ import CrewCard from "./CrewCard";
 
 const CrewCardList = () => {
   return (
-    <div className="flex flex-col gap-[24px]">
+    <div className="flex flex-col gap-6">
       <CrewCard />
       <CrewCard />
       <CrewCard />

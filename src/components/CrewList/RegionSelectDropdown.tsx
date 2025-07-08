@@ -84,7 +84,7 @@ const RegionSelectDropdown = ({
       <button
         onClick={() => setOpen((prev) => !prev)}
         className={`
-          inline-flex items-center gap-2 px-[20px] h-[50px] rounded-full border-[2px] text-[20px] font-normal
+          inline-flex items-center gap-2 px-5 h-12 rounded-full border-[2px] text-xl font-normal
           ${isSelected ? "border-[#3A3ADB] bg-[#ECECFC]" : "border-[#D9DADD] bg-white"}
           text-[#000000] max-w-[250px] overflow-hidden whitespace-nowrap text-ellipsis
         `}
@@ -94,10 +94,10 @@ const RegionSelectDropdown = ({
       </button>
 
       {open && (
-        <div className="absolute mt-2 pt-2 bg-white shadow-md rounded-md z-10 flex flex-col w-[500px]">
-          <div className="flex h-[370px]">
+        <div className="absolute mt-2 pt-2 bg-white shadow-md rounded-md z-10 flex flex-col w-[90vw] max-w-[500px]">
+          <div className="flex h-[70vh] max-h-[370px]">
             {/* 시/도 */}
-            <div className="w-1/2 overflow-y-auto pr-2 text-[20px]">
+            <div className="w-1/2 overflow-y-auto pr-2 text-xl">
               {Object.keys(regions).map((city) => (
                 <div
                   key={city}
@@ -110,7 +110,7 @@ const RegionSelectDropdown = ({
             </div>
 
             {/* 구/군 */}
-            <div className="w-1/2 overflow-y-auto pl-2 bg-[#F7F7FB] text-[20px]">
+            <div className="w-1/2 overflow-y-auto pl-2 bg-[#F7F7FB] text-xl">
               {selectedCity &&
                 regions[selectedCity].map((district) => {
                   const selected = selectedRegions.find(
@@ -135,7 +135,7 @@ const RegionSelectDropdown = ({
               {selectedRegions.map((r, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-1 px-2 py-1 bg-[#C5C6CB] rounded-md text-[16px] font-medium text-[#5E6068]"
+                  className="flex items-center gap-1 px-2 py-1 bg-[#C5C6CB] rounded-md text-base font-medium text-[#5E6068]"
                 >
                   {r.city} {r.district}
                   <button
@@ -151,19 +151,15 @@ const RegionSelectDropdown = ({
             <div className="flex justify-end items-center gap-2 p-4">
               <button
                 onClick={reset}
-                className="w-[101px] h-[30px] flex items-center justify-center gap-1 bg-[#C5C6CB] rounded text-[#37383E] text-[16px]"
+                className="w-24 h-8 flex items-center justify-center gap-1 bg-[#C5C6CB] rounded text-[#37383E] text-base"
               >
-                <img
-                  src={resetIcon}
-                  alt="초기화"
-                  className="w-[20px] h-[20px]"
-                />
+                <img src={resetIcon} alt="초기화" className="w-5 h-5" />
                 초기화
               </button>
 
               <button
                 onClick={apply}
-                className="w-[91px] h-[29px] bg-[#3A3ADB] rounded text-white text-[16px]"
+                className="w-24 h-8 bg-[#3A3ADB] rounded text-white text-base"
               >
                 적용하기
               </button>

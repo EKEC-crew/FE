@@ -23,11 +23,11 @@ const sortOptions = [
 
 const CrewSortBar = () => {
   return (
-    <div className="flex items-center justify-between mb-[12px]">
+    <div className="flex items-center justify-between mb-3">
       {/* 크루 개수 */}
-      <p className="text-[22px] font-medium text-[#5E6068]">전체 00건</p>
+      <p className="text-xl font-medium text-[#5E6068]">전체 00건</p>
       {/* 정렬 옵션 */}
-      <div className="flex gap-[12px]">
+      <div className="flex gap-3">
         <SingleSelectDropdown
           label="인원수"
           options={headcountOptions}

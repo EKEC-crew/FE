@@ -106,10 +106,10 @@ const genderOption = [
 
 const CrewFilterBar = () => {
   return (
-    <div className="flex gap-3 flex-wrap pb-[24px]">
+    <div className="flex gap-3 flex-wrap pb-6">
       {/* 새로고침 버튼 */}
-      <button className="h-[50px] w-[50px] flex items-center justify-center rounded-full border-[2px] border-[#D9DADD]">
-        <img src={resetIcon} alt="필터 초기화" className="w-[28px] h-[28px]" />
+      <button className="h-12 w-12 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD]">
+        <img src={resetIcon} alt="필터 초기화" />
       </button>
       <MultiSelectDropdown
         label="카테고리"

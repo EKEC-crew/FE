@@ -72,7 +72,7 @@ const MultiSelectDropdown = ({
       <button
         onClick={() => setOpen((prev) => !prev)}
         className={`
-          inline-flex items-center gap-2 px-[20px] h-[50px] rounded-full border-[2px] text-[20px] font-normal
+          inline-flex items-center gap-2 px-5 h-12 rounded-full border-[2px] text-xl font-normal
           ${isSelected ? "border-[#3A3ADB] bg-[#ECECFC]" : "border-[#D9DADD] bg-white"}
           text-[#000000] max-w-[250px] overflow-hidden whitespace-nowrap text-ellipsis
         `}
@@ -83,22 +83,22 @@ const MultiSelectDropdown = ({
 
       {open && (
         <div className="absolute mt-2 p-6 bg-white shadow-md rounded-xl z-10">
-          <div className="flex gap-x-[80px] mb-8 pr-[80px]">
+          <div className="flex gap-x-20 mb-8 pr-20">
             {columns.map((column, colIdx) => (
-              <div key={colIdx} className="flex flex-col gap-y-[20px]">
+              <div key={colIdx} className="flex flex-col gap-y-5">
                 {column.map((opt) => {
                   const isChecked = selected.includes(opt);
                   return (
                     <label
                       key={opt}
-                      className="w-[120px] flex items-center gap-2 cursor-pointer whitespace-nowrap"
+                      className="w-30 flex items-center gap-2 cursor-pointer whitespace-nowrap"
                     >
                       <img
                         src={isChecked ? checkedIcon : checkIcon}
                         alt={isChecked ? "선택됨" : "선택 안됨"}
-                        className="w-[26px] h-[26px] flex-shrink-0"
+                        className="flex-shrink-0"
                       />
-                      <span className="text-[20px] font-[400] text-[#000000]">
+                      <span className="text-xl font-regular text-[#000000]">
                         {opt}
                       </span>
                       <input
@@ -117,15 +117,15 @@ const MultiSelectDropdown = ({
           <div className="flex justify-end items-center gap-2">
             <button
               onClick={reset}
-              className="w-[101px] h-[30px] flex items-center justify-center gap-1 bg-[#C5C6CB] rounded text-[#37383E] text-[14px]"
+              className="w-24 h-8 flex items-center justify-center gap-1 bg-[#C5C6CB] rounded text-[#37383E] text-base"
             >
-              <img src={resetIcon} alt="초기화" className="w-[16px] h-[16px]" />
+              <img src={resetIcon} alt="초기화" className="w-5 h-5" />
               초기화
             </button>
 
             <button
               onClick={apply}
-              className="w-[91px] h-[29px] bg-[#3A3ADB] rounded text-white text-[14px]"
+              className="w-24 h-8 bg-[#3A3ADB] rounded text-white text-base"
             >
               적용하기
             </button>
