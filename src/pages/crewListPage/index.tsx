@@ -1,7 +1,7 @@
-import CrewCardList from "../../components/crewList/CrewCardList";
-import CrewFilterBar from "../../components/crewList/CrewFilterBar";
-import CrewSortBar from "../../components/crewList/CrewSortBar";
-import Pagination from "../../components/crewList/Pagination";
+import CrewCardList from "../../components/crew_List/CrewCardList";
+import CrewFilterBar from "../../components/crew_List/CrewFilterBar";
+import CrewSortBar from "../../components/crew_List/CrewSortBar";
+import Pagination from "../../components/crew_List/Pagination";
 
 const CrewListPage = () => {
   return (
