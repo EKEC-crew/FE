@@ -1,8 +1,7 @@
 function Header() {
   return (
-    <div className="w-full ">
+    <div className="w-full gap-5">
       <div className="flex justify-between bg-white p-6 shadow-lg w-full">
-        {/* 왼쪽: 로고 + 동호회 정보 */}
         <div className="flex items-center gap-6">
           <img
             src="/DefaultCrewProfile.png"
@@ -23,16 +22,32 @@ function Header() {
               <span className="text-xs bg-indigo-500 text-white px-2 py-1 rounded-lg">
                 크루 45/50
               </span>
-              <span className="text-sm text-yellow-500 ml-2">★</span>
+              <img
+                src="/header/ReviewStar.png"
+                alt="프로필"
+                className="w-6 h-6 rounded-full bg-gray-300"
+              />
               <span className="text-sm text-gray-700">4.8</span>
             </div>
           </div>
         </div>
-        {/* 오른쪽: 유저 정보 */}
         <div className="flex flex-col items-center gap-2">
-          <span className="text-lg">👑</span>
-          <span className="text-sm font-bold">000님</span>
-          <button className="bg-gray-100 px-6 py-1 text-xs fond-bold rounded-lg hover:bg-indigo-50 shadow-md transition-colors duration-200 text-left">
+          <div className="flex items-center justify-between w-full px-4 py-2">
+            <img
+              src="/profile.png"
+              alt="프로필"
+              className="w-6 h-6 rounded-full bg-gray-300"
+            />
+
+            <div className="flex items-center gap-1 px-2">
+              <img src="/header/crown.png" alt="왕관" className="w-4 h-4" />
+              <span className="text-sm">0000님</span>
+            </div>
+
+            <button className="text-gray-500 text-xl leading-none">⋮</button>
+          </div>
+
+          <button className="bg-gray-100 px-6 py-1 text-xs font-bold rounded-lg hover:bg-indigo-50 shadow-md transition-colors duration-200 text-left">
             수정하기
           </button>
         </div>

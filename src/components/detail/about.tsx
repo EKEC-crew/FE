@@ -1,4 +1,4 @@
-import Album from '../../components/detail/album';
+import Album from "../../components/detail/album";
 const AboutSection: React.FC = () => {
   return (
     <div className="bg-white rounded-xl shadow-md p-14 space-y-8">
