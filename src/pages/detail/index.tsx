@@ -4,14 +4,14 @@ import Tabs from "../../components/detail/tabs";
 import AboutSection from "../../components/detail/about";
 function Detail() {
   return (
-    <div className="bg-gray-100 !importent">
+    <div className="bg-gray-100 shadow-none">
       <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
-        <div className="shadow-md overflow-hidden">
+        <div className="shadow-none overflow-hidden">
           <Header />
           <Tabs />
         </div>
         <Notice />
-        <div className="shadow-md overflow-hidden">
+        <div className="shadow-none overflow-hidden">
           <AboutSection />
         </div>
       </div>
