@@ -6,7 +6,6 @@ import KakaoSignIn from "../pages/auth/signInPage/kakaoSignIn";
 import NaverSignIn from "../pages/auth/signInPage/naverSignIn";
 import SignUpPage from "../pages/auth/signUpPage";
 import Complete from "../pages/auth/signUpPage/complete";
-import Detail from "../pages/detail/index";
 
 const AuthRouter = [
   {
@@ -46,16 +45,6 @@ const AuthRouter = [
       {
         path: "completed",
         element: <Complete />,
-      },
-    ],
-  },
-  {
-    path: "/detail",
-    element: <AuthLayout />,
-    children: [
-      {
-        index: true,
-        element: <Detail />,
       },
     ],
   },
