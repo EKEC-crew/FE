@@ -1,6 +1,6 @@
 function Header() {
   return (
-    <div className="w-full py-10">
+    <div className="w-full gap-5">
       <div className="flex justify-between bg-white p-6 shadow-lg w-full">
         <div className="flex items-center gap-6">
           <img
