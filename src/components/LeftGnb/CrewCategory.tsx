@@ -3,6 +3,7 @@ import categoryIconBk from "../../assets/icons/ic_category_36.svg";
 import categoryIconWt from "../../assets/icons/ic_category_white_36.svg";
 import pressedRadioBtn from "../../assets/icons/ic_radio_pressed.svg";
 import depressedRadioBtn from "../../assets/icons/ic_radio_de.svg";
+
 import { useCategoryStore } from "../../store/categoryStore";
 const categoryList = [
   "사교",
@@ -20,12 +21,15 @@ const categoryList = [
 const CrewCategory = () => {
   const [isOpen, setOpen] = useState(true);
   const [isSelected] = useState("");
+  const [isHover, setHover] = useState(false);
   const { selectedCategory, setCategory } = useCategoryStore();
 
   return (
     <div>
       <button
         onClick={() => setOpen(!isOpen)}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
         className={`flex items-center gap-2 w-full h-[48px] text-left px-4 py-2 rounded-[8px] transition-colors focus:outline-none ${
           isOpen
             ? "bg-[#3A3ADB] text-white"
@@ -33,7 +37,7 @@ const CrewCategory = () => {
         }`}
       >
         <img
-          src={isOpen ? categoryIconWt : categoryIconBk}
+          src={isOpen || isHover ? categoryIconWt : categoryIconBk}
           alt="카테고리 아이콘"
           className="w-7 h-7 object-contain align-middle"
           style={{ marginTop: "-2px" }}

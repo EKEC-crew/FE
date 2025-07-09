@@ -34,7 +34,7 @@ export default function SearchBar({ variant }: Props) {
   }, [location.pathname]);
 
   useEffect(() => {
-    const isHome = location.pathname === "/home";
+    const isHome = location.pathname === "/";
 
     if (variant === "compact") {
       if (!isHome) {

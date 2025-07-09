@@ -43,15 +43,16 @@ export default function CrewCard({ crew }: CrewCardProps) {
   };
   return (
     <div
-      className="rounded-xl overflow-hidden bg-white p-2 w-[442px] h-[347px]"
+      className="rounded-xl overflow-hidden bg-white p-2 w-[442px] h-[347px] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 
+             cursor-pointer"
       onClick={handleClick}
     >
       <img
         src={crew.imageUrl ? crew.imageUrl : bennerLogo}
         alt={crew.name}
-        className="w-[442px] h-[225px] object-cover rounded-lg mb-4"
+        className="w-[442px] h-[225px] object-cover rounded-lg mb-2"
       />
-      <div className="relative w-fit h-[26px] mb-1">
+      <div className="relative w-fit h-[26px] mb-0">
         <img
           src={categoryBackgrounds[crew.category.trim()] ?? btn48}
           alt={crew.category}
