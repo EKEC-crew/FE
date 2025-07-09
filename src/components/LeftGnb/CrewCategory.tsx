@@ -3,6 +3,7 @@ import categoryIconBk from "../../assets/icons/ic_category_36.svg";
 import categoryIconWt from "../../assets/icons/ic_category_white_36.svg";
 import pressedRadioBtn from "../../assets/icons/ic_radio_pressed.svg";
 import depressedRadioBtn from "../../assets/icons/ic_radio_de.svg";
+import { useCategoryStore } from "../../store/categoryStore";
 const categoryList = [
   "사교",
   "운동/등산",
@@ -18,7 +19,8 @@ const categoryList = [
 
 const CrewCategory = () => {
   const [isOpen, setOpen] = useState(true);
-  const [isSelected, setSelected] = useState("");
+  const [isSelected] = useState("");
+  const { selectedCategory, setCategory } = useCategoryStore();
 
   return (
     <div>
@@ -54,13 +56,15 @@ const CrewCategory = () => {
                 type="radio"
                 name="category"
                 value={category}
-                checked={isSelected === category}
-                onChange={() => setSelected(category)}
+                checked={selectedCategory === category}
+                onChange={() => setCategory(category)}
                 className="hidden"
               />
               <img
                 src={
-                  isSelected === category ? pressedRadioBtn : depressedRadioBtn
+                  selectedCategory === category
+                    ? pressedRadioBtn
+                    : depressedRadioBtn
                 }
                 alt="radio"
                 className="w-5 h-5"

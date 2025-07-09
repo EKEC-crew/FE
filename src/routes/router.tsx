@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "../layout/rootLayout";
 import MyPage from "../pages/myPage";
 import NotFoundPage from "../pages/404";
-import Main from "../pages/homPage";
+import Main from "../pages/homePage";
 import AuthRouter from "./authRouter";
 import CrewPage from "../pages/crewPage";
 import SearchPage from "../pages/searchPage";
