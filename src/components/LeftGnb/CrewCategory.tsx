@@ -19,7 +19,7 @@ const categoryList = [
 
 const CrewCategory = () => {
   const [isOpen, setOpen] = useState(true);
-  const [isSelected, setSelected] = useState("");
+  const [isSelected] = useState("");
   const { selectedCategory, setCategory } = useCategoryStore();
 
   return (
