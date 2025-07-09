@@ -1,5 +1,11 @@
+import AuthContainer from "../../../components/auth/AuthContainer";
+
 const SignUpPage = () => {
-  return <div>회원가입 페이지</div>;
+  return (
+    <>
+      <AuthContainer variant="signUp" />
+    </>
+  );
 };
 
 export default SignUpPage;
