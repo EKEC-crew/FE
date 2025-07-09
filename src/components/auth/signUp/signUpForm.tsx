@@ -1,15 +1,28 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import EkecLogo from "../../../assets/icons/ic_logo_graphic_45.svg";
-import emailSignInBtn from "../../../assets/signIn/btn_login_520x68.svg";
+import signUpBtn from "../../../assets/signIn/btn_login_520x68.svg";
 import Input from "../input";
-import { z } from "zod";
+import { getValidationErrors } from "../../../schemas/auth/signUpSchema";
 
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
   const [email, setEmail] = useState("");
-  const [emailError, setEmailError] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+
+  // 실시간 검증 에러 (6글자 이상 입력했을 때만 검증)
+  const emailErrors =
+    email.length >= 6 ? getValidationErrors("email", email) : [];
+
+  const passwordErrors = getValidationErrors("password", password);
+
+  const passwordMatchErrors = getValidationErrors(
+    "passwordMatch",
+    password,
+    passwordConfirm
+  );
 
   const handlePasswordToggle = () => {
     setShowPassword(!showPassword);
@@ -19,27 +32,18 @@ const SignUpForm = () => {
     setShowPasswordConfirm(!showPasswordConfirm);
   };
 
-  const validateEmail = (email: string) => {
-    const emailSchema = z
-      .string()
-      .email({ message: "올바른 이메일 형식이 아닙니다" });
-    const result = emailSchema.safeParse(email);
-
-    if (!result.success) {
-      setEmailError(result.error.errors[0].message);
-    } else {
-      setEmailError("");
-    }
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
   };
 
-  const handleEmailChange = (e: { target: { value: any } }) => {
-    const value = e.target.value;
-    setEmail(value);
-    if (value.trim() !== "") {
-      validateEmail(value);
-    } else {
-      setEmailError("");
-    }
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+  };
+
+  const handlePasswordConfirmChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setPasswordConfirm(e.target.value);
   };
 
   return (
@@ -60,33 +64,67 @@ const SignUpForm = () => {
           value={email}
           onChange={handleEmailChange}
         />
-        {emailError && (
+        {emailErrors.length > 0 && (
           <div className="text-red-500 text-sm font-['Pretendard'] mt-1 mb-3 px-1">
-            {emailError}
+            {emailErrors[0]}
           </div>
         )}
       </div>
 
-      <Input
-        type="password"
-        placeholder="비밀번호"
-        showPassword={showPassword}
-        togglePassword={handlePasswordToggle}
-      />
+      <div className="w-full max-w-[32.5rem]">
+        <Input
+          type="password"
+          placeholder="비밀번호"
+          value={password}
+          onChange={handlePasswordChange}
+          showPassword={showPassword}
+          togglePassword={handlePasswordToggle}
+        />
+      </div>
 
-      <Input
-        type="password"
-        placeholder="비밀번호 확인"
-        showPassword={showPasswordConfirm}
-        togglePassword={handlePasswordConfirmToggle}
-      />
+      <div className="w-full max-w-[32.5rem]">
+        <Input
+          type="password"
+          placeholder="비밀번호 확인"
+          value={passwordConfirm}
+          onChange={handlePasswordConfirmChange}
+          showPassword={showPasswordConfirm}
+          togglePassword={handlePasswordConfirmToggle}
+        />
+      </div>
+
+      {/* 비밀번호 유효성 메시지 */}
+      <div className="w-full max-w-[32.5rem] mb-3">
+        {passwordErrors.length > 0 && (
+          <div className="space-y-1">
+            {passwordErrors.map((error, index) => (
+              <div
+                key={index}
+                className="text-red-500 text-sm font-['Pretendard']"
+              >
+                {error}
+              </div>
+            ))}
+          </div>
+        )}
+        {passwordErrors.length === 0 && password.length > 0 && (
+          <div className="text-green-500 text-sm font-['Pretendard']">
+            사용 가능한 비밀번호입니다
+          </div>
+        )}
+        {passwordMatchErrors.length > 0 && (
+          <div className="text-red-500 text-sm font-['Pretendard'] mt-1">
+            {passwordMatchErrors[0]}
+          </div>
+        )}
+      </div>
 
       <Link
         to="/signUp/completed"
         className="w-full max-w-[32.5rem] relative flex items-center justify-center h-12 md:h-14 lg:h-[4.25rem] transition-all duration-200 hover:opacity-90 active:transform active:translate-y-0.5 mb-6"
       >
         <img
-          src={emailSignInBtn}
+          src={signUpBtn}
           alt="회원가입 버튼"
           className="w-full h-full object-contain"
         />

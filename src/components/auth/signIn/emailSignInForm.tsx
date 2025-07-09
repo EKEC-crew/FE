@@ -1,15 +1,21 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
-
 import EkecLogo from "../../../assets/icons/ic_logo_graphic_45.svg";
 import emailSignInBtn from "../../../assets/signIn/btn_login_520x68.svg";
 import checkBoxIcon from "../../../assets/icons/ic_check_de.svg";
 import pressedCheckBoxIcon from "../../../assets/icons/ic_check_pressed.svg";
+import { useState } from "react";
 import Input from "../input";
+import { getValidationErrors } from "../../../schemas/auth/signUpSchema";
 
 const EmailSignInForm: React.FC = () => {
   const [isAutoLogin, setIsAutoLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // 이메일 검증 (6글자 이상 입력했을 때만 검증)
+  const emailErrors =
+    email.length >= 6 ? getValidationErrors("email", email) : [];
 
   const handleCheckboxToggle = () => {
     setIsAutoLogin(!isAutoLogin);
@@ -17,6 +23,14 @@ const EmailSignInForm: React.FC = () => {
 
   const handlePasswordToggle = () => {
     setShowPassword(!showPassword);
+  };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
   };
 
   return (
@@ -30,16 +44,31 @@ const EmailSignInForm: React.FC = () => {
         이크에크는 크루 참여 및 관리가 편리해요
       </div>
 
-      <Input type="email" placeholder="이메일을 입력하세요" />
+      <div className="w-full max-w-[32.5rem]">
+        <Input
+          type="email"
+          placeholder="이메일을 입력하세요"
+          value={email}
+          onChange={handleEmailChange}
+        />
+        {emailErrors.length > 0 && (
+          <div className="text-red-500 text-sm font-['Pretendard'] mt-1 mb-3 px-1">
+            {emailErrors[0]}
+          </div>
+        )}
+      </div>
 
-      <Input
-        type="password"
-        placeholder="비밀번호를 입력하세요"
-        showPassword={showPassword}
-        togglePassword={handlePasswordToggle}
-      />
+      <div className="w-full max-w-[32.5rem]">
+        <Input
+          type="password"
+          placeholder="비밀번호를 입력하세요"
+          value={password}
+          onChange={handlePasswordChange}
+          showPassword={showPassword}
+          togglePassword={handlePasswordToggle}
+        />
+      </div>
 
-      {/* 자동 로그인 체크박스 */}
       <div className="flex items-center mb-6 w-full max-w-[32.5rem]">
         <div
           className="flex items-center cursor-pointer select-none"
