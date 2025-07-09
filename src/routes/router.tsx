@@ -6,7 +6,8 @@ import Main from "../pages/homPage";
 import AuthRouter from "./authRouter";
 import CrewPage from "../pages/crewPage";
 import SearchPage from "../pages/searchPage";
-import Detail from "../pages//detail/index";
+import CrewListPage from "../pages/crewListPage";
+import Detail from "../pages/detail/index";
 import Schedule from "../pages/detail/tabs/schedule";
 
 const router = createBrowserRouter([
@@ -51,7 +52,17 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "/detail",
+        path: "crewListPage",
+        errorElement: <NotFoundPage />,
+        children: [
+          {
+            index: true,
+            element: <CrewListPage />,
+          },
+        ],
+      },
+      {
+        path: "detail",
         children: [
           {
             index: true,
