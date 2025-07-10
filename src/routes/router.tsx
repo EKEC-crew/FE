@@ -6,9 +6,11 @@ import Main from "../pages/homePage";
 import AuthRouter from "./authRouter";
 import CrewPage from "../pages/crewPage";
 import SearchPage from "../pages/searchPage";
+import Detail from "../pages/detail";
+import Schedule from "../pages/detail/schedule";
+import NoticeList from "../pages/detail/tabs/noticeList";
+import ScheduleDetail from "../pages/detail/schedule/scheduleDetail";
 import CrewListPage from "../pages/crewListPage";
-import Detail from "../pages/detail/index";
-import Schedule from "../pages/detail/tabs/schedule";
 
 const router = createBrowserRouter([
   {
@@ -71,6 +73,14 @@ const router = createBrowserRouter([
           {
             path: "schedule",
             element: <Schedule />,
+          },
+          {
+          path: "schedule/:id", 
+          element: <ScheduleDetail />,
+          },
+          {
+            path: "notice/:id",
+            element: <NoticeList />,
           },
         ],
       },
