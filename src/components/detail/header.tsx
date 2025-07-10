@@ -4,8 +4,8 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false); // 메뉴 토글 상태
 
   return (
-<div className="bg-white w-full shadow-lg">
-  <div className="w-full px-4 py-6 flex justify-between">
+    <div className="bg-white w-full shadow-lg">
+      <div className="w-full px-4 py-6 flex justify-between">
         <div className="flex items-center gap-6">
           <img
             src="/header/DefaultCrewProfile.png"
@@ -66,6 +66,5 @@ function Header() {
     </div>
   );
 }
-
 
 export default Header;
