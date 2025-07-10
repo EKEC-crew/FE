@@ -1,5 +1,6 @@
 import EmailSignInForm from "./signIn/emailSignInForm";
 import SignInForm from "./signIn/signInForm";
+import SignUpForm from "./signUp/signUpForm";
 
 interface AuthContainerProps {
   variant: "signIn" | "emailsignIn" | "signUp";
@@ -13,7 +14,7 @@ const AuthContainer: React.FC<AuthContainerProps> = ({ variant }) => {
       case "emailsignIn":
         return <EmailSignInForm />;
       case "signUp":
-        return <></>;
+        return <SignUpForm />;
       default:
         return null;
     }

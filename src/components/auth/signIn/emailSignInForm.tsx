@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
+
 import EkecLogo from "../../../assets/icons/ic_logo_graphic_45.svg";
-import EyeOffIcon from "../../../assets/icons/ic_eyeoff_24.svg";
-import EyeIcon from "../../../assets/icons/ic_eye_24.svg";
 import emailSignInBtn from "../../../assets/signIn/btn_login_520x68.svg";
 import checkBoxIcon from "../../../assets/icons/ic_check_de.svg";
 import pressedCheckBoxIcon from "../../../assets/icons/ic_check_pressed.svg";
-import { useState } from "react";
+import Input from "../input";
 
 const EmailSignInForm: React.FC = () => {
   const [isAutoLogin, setIsAutoLogin] = useState(false);
@@ -30,28 +30,16 @@ const EmailSignInForm: React.FC = () => {
         이크에크는 크루 참여 및 관리가 편리해요
       </div>
 
-      <div className="w-full max-w-[32.5rem] h-12 md:h-14 lg:h-16 bg-white rounded-[10px] border-2 border-stone-300 mb-4 relative">
-        <input
-          type="email"
-          placeholder="이메일을 입력하세요"
-          className="w-full h-full rounded-[10px] px-4 text-sm md:text-base lg:text-lg font-['Pretendard'] focus:outline-none"
-        />
-      </div>
+      <Input type="email" placeholder="이메일을 입력하세요" />
 
-      <div className="w-full max-w-[32.5rem] h-12 md:h-14 lg:h-16 bg-white rounded-[10px] border-2 border-stone-300 mb-4 relative">
-        <input
-          type={showPassword ? "text" : "password"}
-          placeholder="비밀번호를 입력하세요"
-          className="w-full h-full rounded-[10px] px-4 pr-12 text-sm md:text-base lg:text-lg font-['Pretendard'] focus:outline-none"
-        />
-        <img
-          src={showPassword ? EyeIcon : EyeOffIcon}
-          alt={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
-          className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 cursor-pointer"
-          onClick={handlePasswordToggle}
-        />
-      </div>
+      <Input
+        type="password"
+        placeholder="비밀번호를 입력하세요"
+        showPassword={showPassword}
+        togglePassword={handlePasswordToggle}
+      />
 
+      {/* 자동 로그인 체크박스 */}
       <div className="flex items-center mb-6 w-full max-w-[32.5rem]">
         <div
           className="flex items-center cursor-pointer select-none"
