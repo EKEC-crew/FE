@@ -7,15 +7,15 @@ import Pagination from "../../../components/CrewSchedule/button/pagination";
 import Post from "../../../components/CrewSchedule/button/post";
 function Schedule() {
   return (
-    <div className="bg-gray-100">
-      <div className="max-w-3xl mx-auto px-4 py-8 space-y-6">
-        <div className="shadow-md overflow-hidden">
-          <Header />
-          <Tabs />
-          <div className="mt-4">
-            <Notice />
-
-            <div className="mt-4 shadow-md overflow-hidden bg-white rounded-lg p-6 flex flex-col items-center">
+<div className = "bg-gray-100">
+      <div className="py-6 space-y-6 pt-12"> 
+      <div>
+      <Header />
+      <Tabs />
+      </div>
+      <div className="px-6 py-6 space-y-3 pt-0"> 
+      <Notice />
+      <div className="mt-4 shadow-md overflow-hidden bg-white rounded-lg p-6 flex flex-col items-center">
               <Calendar />
               <div className="mt-6">
                 <ScheduleList />
@@ -25,11 +25,20 @@ function Schedule() {
                 <Post />
               </div>
             </div>
-          </div>
-        </div>
       </div>
+    </div>
     </div>
   );
 }
-
 export default Schedule;
+
+{/* <div className="mt-4 shadow-md overflow-hidden bg-white rounded-lg p-6 flex flex-col items-center">
+              <Calendar />
+              <div className="mt-6">
+                <ScheduleList />
+              </div>
+              <Pagination />
+              <div className="mt-4">
+                <Post />
+              </div>
+            </div> */}

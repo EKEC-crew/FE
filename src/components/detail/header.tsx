@@ -1,10 +1,14 @@
+import { useState } from "react";
+
 function Header() {
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // 메뉴 토글 상태
+
   return (
-    <div className="w-full gap-5">
-      <div className="flex justify-between bg-white p-6 shadow-lg w-full">
+<div className="bg-white w-full shadow-lg">
+  <div className="w-full px-4 py-6 flex justify-between">
         <div className="flex items-center gap-6">
           <img
-            src="/DefaultCrewProfile.png"
+            src="/header/DefaultCrewProfile.png"
             className="w-16 h-16 rounded-lg object-cover"
             alt="로고"
           />
@@ -24,36 +28,44 @@ function Header() {
               </span>
               <img
                 src="/header/ReviewStar.png"
-                alt="프로필"
-                className="w-6 h-6 rounded-full bg-gray-300"
+                alt="별"
+                className="w-6 h-6 rounded-full bg-white"
               />
               <span className="text-sm text-gray-700">4.8</span>
             </div>
           </div>
         </div>
-        <div className="flex flex-col items-center gap-2">
+
+        <div className="flex flex-col items-center gap-2 relative">
           <div className="flex items-center justify-between w-full px-4 py-2">
             <img
-              src="/profile.png"
+              src="/header/UserCircle.svg"
               alt="프로필"
-              className="w-6 h-6 rounded-full bg-gray-300"
+              className="w-6 h-6 rounded-full bg-white"
             />
-
             <div className="flex items-center gap-1 px-2">
               <img src="/header/crown.png" alt="왕관" className="w-4 h-4" />
-              <span className="text-sm">0000님</span>
+              <span className="text-sm">000님</span>
             </div>
 
-            <button className="text-gray-500 text-xl leading-none">⋮</button>
+            <button
+              className="text-gray-500 text-xl leading-none"
+              onClick={() => setIsMenuOpen((prev) => !prev)}
+            >
+              ⋮
+            </button>
           </div>
 
-          <button className="bg-gray-100 px-6 py-1 text-xs font-bold rounded-lg hover:bg-indigo-50 shadow-md transition-colors duration-200 text-left">
-            수정하기
-          </button>
+          {isMenuOpen && (
+            <button className="bg-gray-100 px-6 py-1 text-xs font-bold rounded-lg hover:bg-indigo-50 shadow-md transition-colors duration-200 text-left">
+              수정하기
+            </button>
+          )}
         </div>
       </div>
     </div>
   );
 }
+
 
 export default Header;
