@@ -1,4 +1,3 @@
-import { useParams } from "react-router-dom";
 import { useState } from "react";
 import Header from "../../../components/detail/header";
 import Tabs from "../../../components/detail/tabs";
@@ -7,7 +6,6 @@ import ScheduleAction from "../../../components/ScheduleDetail/ScheduleAction";
 import ScheduleComments from "../../../components/ScheduleDetail/ScheduleComments";
 
 const ScheduleDetail = () => {
-  const { id } = useParams();
   const [isCommentOpen, setIsCommentOpen] = useState(false);
   const [comments] = useState([
     { id: 2, text: "확인 완료! 열심히 활동하겠습니다.", date: "2025.06.18" },
