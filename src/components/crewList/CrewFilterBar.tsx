@@ -14,6 +14,8 @@ const categoryOptions = [
   "음식",
   "음악/악기",
   "스포츠관람",
+  "문화/공연",
+  "자기계발",
   "사진/영상",
 ];
 
@@ -53,7 +55,7 @@ const styleOptions = [
   "실력향상",
 ];
 
-const regionOption = {
+const regionOptions = {
   서울: [
     "전지역",
     "강남구",
@@ -98,7 +100,7 @@ const ageOptions = [
   { label: "2006" },
 ];
 
-const genderOption = [
+const genderOptions = [
   { label: "선택 안 함" },
   { label: "남성", icon: <img src={manIcon} alt="남성" /> },
   { label: "여성", icon: <img src={womanIcon} alt="여성" /> },
@@ -106,7 +108,7 @@ const genderOption = [
 
 const CrewFilterBar = () => {
   return (
-    <div className="flex gap-3 flex-wrap pb-6">
+    <div className="flex gap-3 flex-wrap pb-8">
       {/* 새로고침 버튼 */}
       <button className="h-12 w-12 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD]">
         <img src={resetIcon} alt="필터 초기화" />
@@ -118,7 +120,7 @@ const CrewFilterBar = () => {
       />
       <MultiSelectDropdown label="활동" options={activityOptions} />
       <MultiSelectDropdown label="스타일" options={styleOptions} />
-      <RegionSelectDropdown label="지역" regions={regionOption} />
+      <RegionSelectDropdown label="지역" regions={regionOptions} />
       <SingleSelectDropdown
         label="연령"
         options={ageOptions}
@@ -126,7 +128,7 @@ const CrewFilterBar = () => {
       />
       <SingleSelectDropdown
         label="성별"
-        options={genderOption}
+        options={genderOptions}
         variant="filter"
       />
     </div>

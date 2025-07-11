@@ -1,4 +1,4 @@
-import bannerImg from "../../assets/crewList/Rectangle 4567.svg";
+import bannerImg from "../../assets/crewList/img_crew_banner.svg";
 import starIcon from "../../assets/icons/ic_Star_36.svg";
 
 const CrewCard = () => {
@@ -8,7 +8,7 @@ const CrewCard = () => {
       <div className="relative w-1/3 aspect-[3/2] rounded-lg overflow-hidden min-w-[280px] max-w-[360px]">
         <img
           src={bannerImg}
-          alt="사이클링히트"
+          alt="배너이미지"
           className="w-full h-full object-cover"
         />
 

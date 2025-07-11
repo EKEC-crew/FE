@@ -9,6 +9,7 @@ import SearchPage from "../pages/searchPage";
 import CrewListPage from "../pages/crewListPage";
 import Detail from "../pages/detail/index";
 import Schedule from "../pages/detail/tabs/schedule";
+import CrewFilterPage from "../pages/crewFilterPage";
 
 const router = createBrowserRouter([
   {
@@ -48,6 +49,16 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <MyPage />,
+          },
+        ],
+      },
+      {
+        path: "crewFilterPage",
+        errorElement: <NotFoundPage />,
+        children: [
+          {
+            index: true,
+            element: <CrewFilterPage />,
           },
         ],
       },
