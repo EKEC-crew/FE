@@ -10,7 +10,7 @@ import {
   styleLabels,
   regionOptions,
   ageOptions,
-} from "./DummyOptions";
+} from "./Options.ts";
 
 const genderOptions = [
   { label: "선택 안 함" },

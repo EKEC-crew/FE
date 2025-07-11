@@ -9,7 +9,7 @@ import {
   styleOptions,
   regionOptions,
   ageOptions,
-} from "../../components/crewList/DummyOptions";
+} from "../../components/crewList/Options.ts";
 
 const crewFilterPage = () => {
   return (
