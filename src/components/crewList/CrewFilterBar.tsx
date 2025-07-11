@@ -5,12 +5,12 @@ import resetIcon from "../../assets/icons/ic_reset_28.svg";
 import manIcon from "../../assets/icons/ic_man_28.svg";
 import womanIcon from "../../assets/icons/ic_woman_28.svg";
 import {
-  categoryLabels,
   activityLabels,
-  styleLabels,
-  regionOptions,
   ageOptions,
-} from "./Options.ts";
+  categoryLabels,
+  regionOptions,
+  styleLabels,
+} from "./optionsDummy";
 
 const genderOptions = [
   { label: "선택 안 함" },
