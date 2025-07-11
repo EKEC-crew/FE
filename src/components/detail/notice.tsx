@@ -1,8 +1,18 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Notice: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/detail/notice/1");
+  };
+
   return (
-    <div className="flex items-center justify-between bg-white shadow-lg px-4 py-2 rounded-full">
+    <div
+      onClick={handleClick}
+      className="flex items-center justify-between bg-white shadow-lg px-4 py-2 rounded-full cursor-pointer hover:bg-gray-50 transition-colors"
+    >
       <span className="bg-blue-700 text-white text-sm px-3 py-1 rounded-full mr-2">
         공지사항
       </span>
