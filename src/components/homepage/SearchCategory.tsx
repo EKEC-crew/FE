@@ -28,9 +28,14 @@ const categoryItems = [
 ];
 
 const divCss =
-  "h-[110px] w-[70px] flex flex-col items-center gap-2 cursor-pointer";
-const imgCss = "w-[60px] h-[60px] rounded-xl shadow-md bg-white";
-const textCss = "text-[#37383E]";
+  "h-auto w-16 sm:w-20 md:w-[70px] flex flex-col items-center gap-2 rounded-xl cursor-pointer \
+   transition-transform duration-300 ease-in-out \
+   \ hover:scale-110";
+
+const imgCss =
+  "w-14 h-14 sm:w-[60px] sm:h-[60px] rounded-xl shadow-md bg-white";
+
+const textCss = "text-[#37383E] text-xs sm:text-sm md:text-base";
 
 const SearchCategory = () => {
   const navigate = useNavigate();

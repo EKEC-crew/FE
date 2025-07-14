@@ -9,10 +9,12 @@ const exCrews = ["ex크루1", "ex크루2", "ex크루3"];
 const LeftGnbMyCrew = () => {
   const [isOpen, setOpen] = useState(false);
   const [isSelected, setSelected] = useState("");
-
+  const [isHover, setHover] = useState(false);
   return (
     <div>
       <button
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
         onClick={() => setOpen(!isOpen)}
         className={`flex items-center gap-2 w-full h-[48px] text-left px-4 py-2 rounded-[8px] transition-colors focus:outline-none ${
           isOpen
@@ -21,7 +23,7 @@ const LeftGnbMyCrew = () => {
         }`}
       >
         <img
-          src={isOpen ? userIconWt : userIconBk}
+          src={isOpen || isHover ? userIconWt : userIconBk}
           alt="유저아이콘"
           className="w-7 h-7 object-contain align-middle"
           style={{ marginTop: "-3px" }}
