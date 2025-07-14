@@ -11,6 +11,7 @@ import Schedule from "../pages/detail/schedule";
 import NoticeList from "../pages/detail/tabs/noticeList";
 import ScheduleDetail from "../pages/detail/schedule/scheduleDetail";
 import CrewListPage from "../pages/crewListPage";
+import CrewFilterPage from "../pages/crewFilterPage";
 
 const router = createBrowserRouter([
   {
@@ -53,6 +54,16 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: "crewFilterPage",
+        errorElement: <NotFoundPage />,
+        children: [
+          {
+            index: true,
+            element: <CrewFilterPage />,
+          },
+        ],
+      },
+      {
         path: "crewListPage",
         errorElement: <NotFoundPage />,
         children: [
@@ -74,8 +85,8 @@ const router = createBrowserRouter([
             element: <Schedule />,
           },
           {
-          path: "schedule/:id", 
-          element: <ScheduleDetail />,
+            path: "schedule/:id",
+            element: <ScheduleDetail />,
           },
           {
             path: "notice/:id",
