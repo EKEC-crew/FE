@@ -10,6 +10,7 @@ import Detail from "../pages//detail/index";
 import Schedule from "../pages/detail/schedule";
 import NoticeList from "../pages/detail/tabs/noticeList";
 import ScheduleDetail from "../pages/detail/schedule/scheduleDetail";
+import ReviewPage from "../pages/detail/review/index";
 
 const router = createBrowserRouter([
   {
@@ -64,12 +65,16 @@ const router = createBrowserRouter([
             element: <Schedule />,
           },
           {
-          path: "schedule/:id", 
-          element: <ScheduleDetail />,
+            path: "schedule/:id",
+            element: <ScheduleDetail />,
           },
           {
             path: "notice/:id",
             element: <NoticeList />,
+          },
+          {
+            path: "review",
+            element: <ReviewPage />,
           },
         ],
       },
