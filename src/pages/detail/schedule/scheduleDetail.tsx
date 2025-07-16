@@ -1,9 +1,9 @@
 import { useState } from "react";
 import Header from "../../../components/detail/header";
 import Tabs from "../../../components/detail/tabs";
-import ScheduleNotice from "../../../components/ScheduleDetail/ScheduleNotice";
-import ScheduleAction from "../../../components/ScheduleDetail/ScheduleAction";
-import ScheduleComments from "../../../components/ScheduleDetail/ScheduleComments";
+import ScheduleNotice from "../../../components/detail/Schedule/ScheduleNotice";
+import ScheduleAction from "../../../components/detail/Schedule/ScheduleAction";
+import ScheduleComments from "../../../components/detail/Schedule/ScheduleComments";
 
 const ScheduleDetail = () => {
   const [isCommentOpen, setIsCommentOpen] = useState(false);
