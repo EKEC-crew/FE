@@ -1,7 +1,7 @@
 ## 👥 Web Developers
 
 | <img src="https://avatars.githubusercontent.com/u/158552165" width=100> | <img src="https://avatars.githubusercontent.com/u/160628390?s=96&v=4" width=100> | <img src="https://avatars.githubusercontent.com/u/163666284?s=96&v=4" width=100> |<img src="https://avatars.githubusercontent.com/u/202471958?s=96&v=4" width=100> |
-| :---: | :---: | :---: | :---: | :---: |
+| :---: | :---: | :---: | :---: |
 | [김정현](https://github.com/hyeeon)) | [임혜미](https://github.com/wendy0802) | [유상완](https://github.com/wantkdd) | [정동열](https://github.com/dongyeol02) |
 
 
