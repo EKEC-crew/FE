@@ -5,7 +5,6 @@ import checkBoxIcon from "../../../assets/icons/ic_check_de.svg";
 import pressedCheckBoxIcon from "../../../assets/icons/ic_check_pressed.svg";
 import nextBtn from "../../../assets/signIn/btn_login_520x68.svg";
 import addProfileImage from "../../../assets/icons/createProfile/addProfileImage.svg";
-import logo from "../../../assets/icons/ic_logo graphic_74.svg";
 
 import BirthDropDown from "./birthDropDown";
 import Input from "../input";
@@ -27,8 +26,8 @@ const CreateProfileForm = () => {
       <div className="text-center text-neutral-800 text-base font-normal mb-8">
         이크에크 활동을 위한 기본 프로필 설정을 도와주세요
       </div>
+
       <img src={addProfileImage} alt="프로필 이미지 추가" />
-      <img src={logo} alt="로고" />
 
       <div className="text-center mb-4">
         <span className="text-zinc-800 text-xl font-semibold">이름</span>
