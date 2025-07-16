@@ -1,3 +1,4 @@
+import CreateProfilePage from "../pages/auth/createProfilePage";
 import AuthLayout from "../layout/authLayout";
 import SignInPage from "../pages/auth/signInPage/";
 import EmailSignIn from "../pages/auth/signInPage/emailSignIn";
@@ -45,6 +46,16 @@ const AuthRouter = [
       {
         path: "completed",
         element: <Complete />,
+      },
+    ],
+  },
+  {
+    path: "createProfile",
+    element: <AuthLayout />,
+    children: [
+      {
+        index: true,
+        element: <CreateProfilePage />,
       },
     ],
   },

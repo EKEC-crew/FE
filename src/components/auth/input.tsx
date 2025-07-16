@@ -3,12 +3,13 @@ import EyeOffIcon from "../../assets/icons/ic_eyeoff_24.svg";
 import EyeIcon from "../../assets/icons/ic_eye_24.svg";
 
 interface InputProps {
-  type: "email" | "password";
+  type: "email" | "password" | "text";
   placeholder: string;
   showPassword?: boolean;
   togglePassword?: () => void;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  width?: string;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -18,12 +19,16 @@ const Input: React.FC<InputProps> = ({
   togglePassword,
   value,
   onChange,
+  width = "27.08vw",
 }) => {
   const isPasswordType = type === "password";
   const inputType = isPasswordType && showPassword ? "text" : type;
 
   return (
-    <div className="w-full max-w-[32.5rem] h-12 md:h-14 lg:h-16 bg-white rounded-[10px] border-2 border-stone-300 mb-4 relative">
+    <div
+      className="h-12 md:h-14 lg:h-16 bg-white rounded-[10px] border-2 border-stone-300 mb-4 relative"
+      style={{ width }}
+    >
       <input
         type={inputType}
         placeholder={placeholder}
