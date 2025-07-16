@@ -2,15 +2,17 @@ import { createBrowserRouter } from "react-router-dom";
 import RootLayout from "../layout/rootLayout";
 import MyPage from "../pages/myPage";
 import NotFoundPage from "../pages/404";
-import Main from "../pages/homPage";
+import Main from "../pages/homePage";
 import AuthRouter from "./authRouter";
 import CrewPage from "../pages/crewPage";
 import SearchPage from "../pages/searchPage";
-import Detail from "../pages//detail/index";
+import Detail from "../pages/detail";
 import Schedule from "../pages/detail/schedule";
 import NoticeList from "../pages/detail/tabs/noticeList";
 import ScheduleDetail from "../pages/detail/schedule/scheduleDetail";
 import ReviewPage from "../pages/detail/review/index";
+import CrewListPage from "../pages/crewListPage";
+import CrewFilterPage from "../pages/crewFilterPage";
 
 const router = createBrowserRouter([
   {
@@ -20,7 +22,6 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        path: "home",
         element: <Main />,
       },
       {
@@ -54,7 +55,27 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "/detail",
+        path: "crewFilterPage",
+        errorElement: <NotFoundPage />,
+        children: [
+          {
+            index: true,
+            element: <CrewFilterPage />,
+          },
+        ],
+      },
+      {
+        path: "crewListPage",
+        errorElement: <NotFoundPage />,
+        children: [
+          {
+            index: true,
+            element: <CrewListPage />,
+          },
+        ],
+      },
+      {
+        path: "detail",
         children: [
           {
             index: true,
