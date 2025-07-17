@@ -1,5 +1,5 @@
 import { useState } from "react";
-import CustomDropdown from "./CustomDropdown";
+import DropDown from "./dropDown";
 
 const BirthDropDown = () => {
   // 현재 날짜 정보 가져오기
@@ -64,10 +64,13 @@ const BirthDropDown = () => {
 
   return (
     <div>
-      <div className="flex gap-4 justify-center items-center mb-6">
+      <div
+        className="flex justify-between items-center mb-6"
+        style={{ width: "27.08vw" }}
+      >
         {/* 년도 드롭다운 */}
-        <CustomDropdown
-          width="9.375vw"
+        <DropDown
+          width="8.33vw" // (27.08vw - 2*1.04vw) / 3 = 8.33vw
           height="4.63vh"
           placeholder={`${currentYear}년생`}
           options={yearOptions}
@@ -77,8 +80,8 @@ const BirthDropDown = () => {
         />
 
         {/* 월 드롭다운 */}
-        <CustomDropdown
-          width="6.77vw"
+        <DropDown
+          width="8.33vw" // (27.08vw - 2*1.04vw) / 3 = 8.33vw
           height="4.63vh"
           placeholder={`${currentMonth.toString().padStart(2, "0")}월`}
           options={monthOptions}
@@ -88,8 +91,8 @@ const BirthDropDown = () => {
         />
 
         {/* 일 드롭다운 */}
-        <CustomDropdown
-          width="6.77vw"
+        <DropDown
+          width="8.33vw" // (27.08vw - 2*1.04vw) / 3 = 8.33vw
           height="4.63vh"
           placeholder={`${currentDay.toString().padStart(2, "0")}일`}
           options={dayOptions}

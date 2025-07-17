@@ -6,7 +6,7 @@ interface DropdownOption {
   label: string;
 }
 
-interface CustomDropdownProps {
+interface DropDownProps {
   width: string; // 1920*1080 기준 상대 단위 (예: "9.375vw" = 180px)
   height: string; // 1920*1080 기준 상대 단위 (예: "4.63vh" = 50px)
   placeholder: string;
@@ -16,7 +16,7 @@ interface CustomDropdownProps {
   getDisplayValue: (value: string) => string;
 }
 
-const CustomDropdown = ({
+const DropDown = ({
   width,
   height,
   placeholder,
@@ -24,7 +24,7 @@ const CustomDropdown = ({
   value,
   onChange,
   getDisplayValue,
-}: CustomDropdownProps) => {
+}: DropDownProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOptionClick = (optionValue: string) => {
@@ -81,4 +81,4 @@ const CustomDropdown = ({
   );
 };
 
-export default CustomDropdown;
+export default DropDown;
