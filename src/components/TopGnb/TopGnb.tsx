@@ -5,9 +5,13 @@ import SearchBar from "./SearchBar";
 const TopGnb = () => {
   const navigate = useNavigate();
   return (
-    <nav className="w-full h-16 pl-5 pr-15 flex items-center justify-between bg-white shadow-sm fixed top-0 z-50 ">
+    <nav className="w-full h-16 pl-5 pr-15 flex items-center justify-between  bg-white shadow-sm fixed top-0 z-50  ">
       <button onClick={() => navigate("/")}>
-        <img src={mainLogo} alt="logo" className="w-50 h-7" />
+        <img
+          src={mainLogo}
+          alt="logo"
+          className="w-50 h-7 transition-transform duration-300 ease-in-out hover:scale-110 cursor-pointer"
+        />
       </button>
       <SearchBar variant={"compact"} />
       <AuthSection />
