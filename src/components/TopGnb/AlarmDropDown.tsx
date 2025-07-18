@@ -1,3 +1,4 @@
+import { createPortal } from "react-dom";
 import AlarmItem from "./AlarmItem";
 import { useNavigate } from "react-router-dom";
 
@@ -16,8 +17,8 @@ interface Props {
 export default function AlarmDropdown({ alarms }: Props) {
   const navigate = useNavigate();
 
-  return (
-    <div className="absolute right-0 top-15 w-100 bg-[#F7F7FB] rounded-2xl shadow-md overflow-auto z-50">
+  return createPortal(
+    <div className="fixed top-[60px] right-[16px] w-[25rem] bg-[#F7F7FB] rounded-2xl shadow-md overflow-auto z-[9999]">
       <div className="p-4 font-bold mb-3 bg-white sticky top-0 z-10">알림</div>
       <ul
         className="max-h-80 overflow-y-scroll space-y-3"
@@ -33,6 +34,7 @@ export default function AlarmDropdown({ alarms }: Props) {
           />
         ))}
       </ul>
-    </div>
+    </div>,
+    document.body
   );
 }
