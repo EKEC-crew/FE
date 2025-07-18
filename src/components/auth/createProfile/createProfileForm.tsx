@@ -1,18 +1,34 @@
-import { useState } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Link } from "react-router-dom";
 
 import nextBtn from "../../../assets/signIn/btn_login_520x68.svg";
 import addProfileImage from "../../../assets/icons/createProfile/addProfileImage.svg";
+import disabledBtn from "../../../assets/buttons/disabled.svg";
 
 import BirthDropDown from "./birthDropDown";
 import Input from "../input";
 import GenderSelect from "./genderSelect";
+import {
+  createProfileSchema,
+  type CreateProfileFormValues,
+} from "../../../schemas/auth/createProfileSchema";
 
 const CreateProfileForm = () => {
-  const [isDefine, setIsDefine] = useState(false);
-  const [name, setName] = useState("");
-  const [nickname, setNickname] = useState("");
-  const [selectedGender, setSelectedGender] = useState("");
+  const { control, watch, setValue } = useForm<CreateProfileFormValues>({
+    resolver: zodResolver(createProfileSchema),
+    mode: "onChange",
+    defaultValues: {
+      name: "",
+      nickname: "",
+      gender: undefined as any,
+      birthDate: "",
+    },
+  });
+
+  const watchedValues = watch();
+  const isDefine = watchedValues.gender === "not-defined";
+  const schemaValid = createProfileSchema.safeParse(watchedValues).success;
 
   return (
     <div
@@ -32,12 +48,18 @@ const CreateProfileForm = () => {
         <span className="text-zinc-800 text-xl font-semibold">이름</span>
         <span className="text-red-500 text-xl font-semibold">*</span>
       </div>
-      <Input
-        type="text"
-        placeholder="이름을 입력하세요"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        width="27.08vw"
+      <Controller
+        name="name"
+        control={control}
+        render={({ field }) => (
+          <Input
+            type="text"
+            placeholder="이름을 입력하세요"
+            value={field.value}
+            onChange={field.onChange}
+            width="27.08vw"
+          />
+        )}
       />
 
       <div className="mb-2" style={{ width: "27.08vw" }}>
@@ -47,12 +69,18 @@ const CreateProfileForm = () => {
         </span>
       </div>
       <div className="flex items-start gap-[1.04vw]">
-        <Input
-          type="text"
-          placeholder="닉네임을 입력하세요"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
-          width="19.79vw"
+        <Controller
+          name="nickname"
+          control={control}
+          render={({ field }) => (
+            <Input
+              type="text"
+              placeholder="닉네임을 입력하세요"
+              value={field.value}
+              onChange={field.onChange}
+              width="19.79vw"
+            />
+          )}
         />
         <button
           className="h-12 md:h-14 lg:h-16 bg-gray-200 rounded-[10px] border-2 border-stone-300 text-zinc-800 text-sm md:text-base lg:text-lg font-medium hover:bg-gray-300 transition-colors"
@@ -63,10 +91,12 @@ const CreateProfileForm = () => {
       </div>
 
       <GenderSelect
-        selectedGender={selectedGender}
-        onGenderChange={setSelectedGender}
+        selectedGender={watchedValues.gender || ""}
+        onGenderChange={(gender) => setValue("gender", gender as any)}
         isNotDefine={isDefine}
-        onNotDefineChange={setIsDefine}
+        onNotDefineChange={(value) =>
+          setValue("gender", value ? "not-defined" : ("" as any))
+        }
       />
 
       <div className="mb-2" style={{ width: "27.08vw" }}>
@@ -74,13 +104,16 @@ const CreateProfileForm = () => {
         <span className="text-red-500 text-xl font-semibold">*</span>
       </div>
 
-      <BirthDropDown />
+      <BirthDropDown
+        birthDate={watchedValues.birthDate}
+        setBirthDate={(date) => setValue("birthDate", date)}
+      />
       <Link
         to="/createProfile/phoneNumber"
         className="w-full max-w-[32.5rem] relative flex items-center justify-center h-12 md:h-14 lg:h-[4.25rem] transition-all duration-200 hover:opacity-90 active:transform active:translate-y-0.5 mb-6"
       >
         <img
-          src={nextBtn}
+          src={schemaValid ? nextBtn : disabledBtn}
           alt="다음으로 버튼"
           className="w-full h-full object-contain"
         />
