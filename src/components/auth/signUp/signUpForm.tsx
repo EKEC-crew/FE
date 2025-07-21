@@ -80,7 +80,7 @@ const SignUpForm = () => {
       />
 
       <Link
-        to="/signUp/completed"
+        to="/createProfile"
         className="w-full max-w-[32.5rem] relative flex items-center justify-center h-12 md:h-14 lg:h-[4.25rem] transition-all duration-200 hover:opacity-90 active:transform active:translate-y-0.5 mb-6"
       >
         <img
