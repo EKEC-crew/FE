@@ -26,7 +26,6 @@ const router = createBrowserRouter([
       },
       {
         path: "crewPage",
-        errorElement: <NotFoundPage />,
         children: [
           {
             index: true,
@@ -36,7 +35,6 @@ const router = createBrowserRouter([
       },
       {
         path: "searchPage",
-        errorElement: <NotFoundPage />,
         children: [
           {
             index: true,
@@ -46,7 +44,6 @@ const router = createBrowserRouter([
       },
       {
         path: "myPage",
-        errorElement: <NotFoundPage />,
         children: [
           {
             index: true,
@@ -56,7 +53,6 @@ const router = createBrowserRouter([
       },
       {
         path: "crewFilterPage",
-        errorElement: <NotFoundPage />,
         children: [
           {
             index: true,
@@ -66,7 +62,6 @@ const router = createBrowserRouter([
       },
       {
         path: "crewListPage",
-        errorElement: <NotFoundPage />,
         children: [
           {
             index: true,
