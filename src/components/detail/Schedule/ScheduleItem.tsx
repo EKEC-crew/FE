@@ -13,7 +13,7 @@ const ScheduleItem = ({ type, label, title, date, status, isNew }: Props) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    // id가 있다면 `/detail/schedule/${id}` 등으로 변경하세요
+    // id가 있다면 `/detail/schedule/${id}` 등으로 변경 가능
     navigate(`/detail/schedule/1`);
   };
 
