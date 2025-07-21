@@ -7,7 +7,7 @@ import food from "../../assets/icons/category/ic_food_60.svg";
 import music from "../../assets/icons/category/ic_music_60.svg";
 import sports from "../../assets/icons/category/ic_sports_60.svg";
 import performance from "../../assets/icons/category/ic_performance_60.svg";
-import self from "../../assets/icons/category/ic_self_60.svg";
+import self from "../../assets/icons/category/ic_Self_60.svg";
 import video from "../../assets/icons/category/ic_video_60.svg";
 
 import afterParty from "../../assets/icons/activity/ic_after party_60.svg";
