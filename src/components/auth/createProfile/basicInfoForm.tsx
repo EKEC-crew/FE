@@ -1,5 +1,4 @@
 import { Controller } from "react-hook-form";
-
 import nextBtn from "../../../assets/signIn/btn_login_520x68.svg";
 import addProfileImage from "../../../assets/icons/createProfile/addProfileImage.svg";
 import disabledBtn from "../../../assets/buttons/disabled.svg";
@@ -24,25 +23,21 @@ const BasicInfoForm = ({
 }: BasicInfoFormProps) => {
   const isDefine = watchedValues.gender === "not-defined";
   const schemaValid = createProfileSchema.safeParse(watchedValues).success;
+  const isNicknameSkipped = watchedValues.nickname === null;
 
   const handleSkipNickname = () => {
-    if (isNicknameSkipped) {
-      setValue("nickname", "");
-    } else {
-      setValue("nickname", null);
-    }
+    setValue("nickname", isNicknameSkipped ? "" : null);
   };
 
   const handleNicknameChange = (value: string) => {
     setValue("nickname", value);
   };
 
-  const isNicknameSkipped = watchedValues.nickname === null;
-
   return (
     <div className="flex flex-col items-center w-full">
       <img src={addProfileImage} alt="프로필 이미지 추가" />
 
+      {/* 이름 */}
       <div className="mb-2" style={{ width: "27.08vw" }}>
         <span className="text-zinc-800 text-xl font-semibold">이름</span>
         <span className="text-red-500 text-xl font-semibold">*</span>
@@ -61,6 +56,7 @@ const BasicInfoForm = ({
         )}
       />
 
+      {/* 닉네임 */}
       <div className="mb-2" style={{ width: "27.08vw" }}>
         <span className="text-zinc-800 text-xl font-semibold">닉네임</span>
         <span className="text-red-500 text-lg font-normal ml-[0.47vw]">
@@ -77,10 +73,11 @@ const BasicInfoForm = ({
               placeholder="닉네임을 입력하세요"
               value={isNicknameSkipped ? "" : field.value || ""}
               onChange={(e) => {
-                if (isNicknameSkipped) return;
-                const value = e.target.value;
-                field.onChange(value);
-                handleNicknameChange(value);
+                if (!isNicknameSkipped) {
+                  const value = e.target.value;
+                  field.onChange(value);
+                  handleNicknameChange(value);
+                }
               }}
               width="19.79vw"
             />
@@ -98,25 +95,27 @@ const BasicInfoForm = ({
         </button>
       </div>
 
+      {/* 성별 */}
       <GenderSelect
         selectedGender={watchedValues.gender || ""}
         onGenderChange={(gender) => setValue("gender", gender as any)}
         isNotDefine={isDefine}
         onNotDefineChange={(value) =>
-          setValue("gender", value ? "not-defined" : ("" as any))
+          setValue("gender", value ? "not-defined" : "")
         }
       />
 
+      {/* 생년월일 */}
       <div className="mb-2" style={{ width: "27.08vw" }}>
         <span className="text-zinc-800 text-xl font-semibold">생년월일</span>
         <span className="text-red-500 text-xl font-semibold">*</span>
       </div>
-
       <BirthDropDown
         birthDate={watchedValues.birthDate}
         setBirthDate={(date) => setValue("birthDate", date)}
       />
 
+      {/* 다음 버튼 */}
       <button
         onClick={onNext}
         disabled={!schemaValid}

@@ -15,12 +15,7 @@ export const createProfileSchema = z
   .refine(
     (data) => {
       if (data.nickname === null) return true;
-      if (
-        data.nickname &&
-        data.nickname.length >= 3 &&
-        /^[가-힣]{3,}$/.test(data.nickname)
-      )
-        return true;
+      if (data.nickname && data.nickname.length >= 2) return true;
       return false;
     },
     {
