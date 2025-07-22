@@ -53,19 +53,17 @@ const SignUpForm = () => {
         이크에크는 크루 참여 및 관리가 편리해요
       </div>
 
-      <div className="w-full max-w-[32.5rem]">
-        <Input
-          type="email"
-          placeholder="이메일"
-          value={email}
-          onChange={handleEmailChange}
-        />
-        {emailError && (
-          <div className="text-red-500 text-sm font-['Pretendard'] mt-1 mb-3 px-1">
-            {emailError}
-          </div>
-        )}
-      </div>
+      <Input
+        type="email"
+        placeholder="이메일"
+        value={email}
+        onChange={handleEmailChange}
+      />
+      {emailError && (
+        <div className="text-red-500 text-sm font-['Pretendard'] mt-1 mb-3 px-1 w-full max-w-[27.08vw]">
+          {emailError}
+        </div>
+      )}
 
       <Input
         type="password"
@@ -82,7 +80,7 @@ const SignUpForm = () => {
       />
 
       <Link
-        to="/signUp/completed"
+        to="/createProfile"
         className="w-full max-w-[32.5rem] relative flex items-center justify-center h-12 md:h-14 lg:h-[4.25rem] transition-all duration-200 hover:opacity-90 active:transform active:translate-y-0.5 mb-6"
       >
         <img

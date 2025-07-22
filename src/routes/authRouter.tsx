@@ -1,3 +1,4 @@
+import CreateProfilePage from "../pages/auth/createProfilePage";
 import AuthLayout from "../layout/authLayout";
 import SignInPage from "../pages/auth/signInPage/";
 import EmailSignIn from "../pages/auth/signInPage/emailSignIn";
@@ -5,7 +6,6 @@ import GoogleSignIn from "../pages/auth/signInPage/googleSignIn";
 import KakaoSignIn from "../pages/auth/signInPage/kakaoSignIn";
 import NaverSignIn from "../pages/auth/signInPage/naverSignIn";
 import SignUpPage from "../pages/auth/signUpPage";
-import Complete from "../pages/auth/signUpPage/complete";
 
 const AuthRouter = [
   {
@@ -42,9 +42,15 @@ const AuthRouter = [
         index: true,
         element: <SignUpPage />,
       },
+    ],
+  },
+  {
+    path: "createProfile",
+    element: <AuthLayout />,
+    children: [
       {
-        path: "completed",
-        element: <Complete />,
+        index: true,
+        element: <CreateProfilePage />,
       },
     ],
   },
