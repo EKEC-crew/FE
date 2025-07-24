@@ -6,9 +6,9 @@ import signUpBtn from "../../../assets/signIn/btn_login_520x68.svg";
 import disabledBtn from "../../../assets/buttons/disabled.svg";
 import Input from "../input";
 import {
-  signUpSchema,
-  type SignUpFormValues,
-} from "../../../schemas/auth/signUpSchema";
+  authSchema,
+  type AuthFormValues,
+} from "../../../schemas/auth/authSchema";
 
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,8 +18,8 @@ const SignUpForm = () => {
     register,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<SignUpFormValues>({
-    resolver: zodResolver(signUpSchema),
+  } = useForm<AuthFormValues>({
+    resolver: zodResolver(authSchema),
     mode: "onBlur",
     defaultValues: {
       email: "",
@@ -36,7 +36,7 @@ const SignUpForm = () => {
     setShowPasswordConfirm(!showPasswordConfirm);
   };
 
-  const onSubmit = async (data: SignUpFormValues) => {
+  const onSubmit = async (data: AuthFormValues) => {
     try {
       console.log("회원가입 데이터:", data);
       //회원가입 로직 추가

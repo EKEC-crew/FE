@@ -1,14 +1,33 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import EkecLogo from "../../../assets/icons/ic_logo_graphic_45.svg";
 import emailSignInBtn from "../../../assets/signIn/btn_login_520x68.svg";
 import checkBoxIcon from "../../../assets/icons/ic_check_de.svg";
 import pressedCheckBoxIcon from "../../../assets/icons/ic_check_pressed.svg";
 import Input from "../input";
+import {
+  authSchema,
+  type AuthFormValues,
+} from "../../../schemas/auth/authSchema";
 
 const EmailSignInForm: React.FC = () => {
   const [isAutoLogin, setIsAutoLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const {
+    register,
+    formState: { errors },
+  } = useForm<AuthFormValues>({
+    resolver: zodResolver(authSchema),
+    mode: "onChange",
+    defaultValues: {
+      email: "",
+      password: "",
+      passwordCheck: "",
+    },
+  });
 
   const handleCheckboxToggle = () => {
     setIsAutoLogin(!isAutoLogin);
@@ -30,10 +49,21 @@ const EmailSignInForm: React.FC = () => {
         이크에크는 크루 참여 및 관리가 편리해요
       </div>
 
-      <Input type="email" placeholder="이메일을 입력하세요" />
+      <Input
+        type="email"
+        placeholder="이메일을 입력하세요"
+        register={register("email")}
+      />
+      {errors?.email && (
+        <div className="text-red-500 text-sm mt-1 mb-3 px-1 w-full max-w-[27.08vw]">
+          {errors.email.message}
+        </div>
+      )}
+
       <Input
         type="password"
         placeholder="비밀번호를 입력하세요"
+        register={register("password")}
         showPassword={showPassword}
         togglePassword={handlePasswordToggle}
       />

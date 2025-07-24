@@ -24,7 +24,7 @@ const passwordValidation = z.string().superRefine((password, ctx) => {
   }
 });
 
-export const signUpSchema = z
+export const authSchema = z
   .object({
     email: z.string().email({ message: "올바른 이메일 형식이 아닙니다" }),
     password: passwordValidation,
@@ -35,13 +35,4 @@ export const signUpSchema = z
     path: ["passwordCheck"],
   });
 
-// 유틸리티 함수
-export const validatePassword = (password: string) => {
-  const result = passwordValidation.safeParse(password);
-  return {
-    isValid: result.success,
-    errors: result.success ? [] : result.error.errors.map((e) => e.message),
-  };
-};
-
-export type SignUpFormValues = z.infer<typeof signUpSchema>;
+export type AuthFormValues = z.infer<typeof authSchema>;
