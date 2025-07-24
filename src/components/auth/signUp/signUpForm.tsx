@@ -6,20 +6,23 @@ import signUpBtn from "../../../assets/signIn/btn_login_520x68.svg";
 import disabledBtn from "../../../assets/buttons/disabled.svg";
 import Input from "../input";
 import {
-  authSchema,
-  type AuthFormValues,
+  signUpSchema,
+  type SignUpFormValues,
 } from "../../../schemas/auth/authSchema";
+import { useNavigate } from "react-router-dom";
 
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
+  const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
-  } = useForm<AuthFormValues>({
-    resolver: zodResolver(authSchema),
+  } = useForm<SignUpFormValues>({
+    resolver: zodResolver(signUpSchema),
     mode: "onBlur",
     defaultValues: {
       email: "",
@@ -36,9 +39,10 @@ const SignUpForm = () => {
     setShowPasswordConfirm(!showPasswordConfirm);
   };
 
-  const onSubmit = async (data: AuthFormValues) => {
+  const onSubmit = async (data: SignUpFormValues) => {
     try {
       console.log("회원가입 데이터:", data);
+      navigate("/createProfile");
       //회원가입 로직 추가
     } catch (error) {
       console.error("회원가입 에러:", error);

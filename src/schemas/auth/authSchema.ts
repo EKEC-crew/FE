@@ -24,7 +24,7 @@ const passwordValidation = z.string().superRefine((password, ctx) => {
   }
 });
 
-export const authSchema = z
+export const signUpSchema = z
   .object({
     email: z.string().email({ message: "올바른 이메일 형식이 아닙니다" }),
     password: passwordValidation,
@@ -35,4 +35,10 @@ export const authSchema = z
     path: ["passwordCheck"],
   });
 
-export type AuthFormValues = z.infer<typeof authSchema>;
+export const signInSchema = z.object({
+  email: z.string().email({ message: "올바른 이메일 형식이 아닙니다" }),
+  password: z.string().min(1),
+});
+
+export type SignUpFormValues = z.infer<typeof signUpSchema>;
+export type SignInFormValues = z.infer<typeof signInSchema>;
