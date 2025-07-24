@@ -98,7 +98,7 @@ const MultiSelectDropdown = ({
                         alt={isChecked ? "선택됨" : "선택 안됨"}
                         className="flex-shrink-0"
                       />
-                      <span className="text-xl font-regular text-[#000000]">
+                      <span className="text-xl font-normal text-[#000000]">
                         {opt}
                       </span>
                       <input

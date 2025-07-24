@@ -11,7 +11,7 @@ const GenderSelect = () => {
   ];
 
   return (
-    <div className="flex gap-4 mt-4">
+    <div className="flex gap-4">
       {genderOptions.map(({ label, value, icon }) => {
         const isActive = selected === value;
         return (

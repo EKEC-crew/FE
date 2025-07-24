@@ -7,8 +7,8 @@ import food from "../../assets/icons/category/ic_food_60.svg";
 import music from "../../assets/icons/category/ic_music_60.svg";
 import sports from "../../assets/icons/category/ic_sports_60.svg";
 import performance from "../../assets/icons/category/ic_performance_60.svg";
-import self from "../../assets/icons/category/ic_self_60.svg";
-import video from "../../assets/icons/category/ic_video_60.svg";
+import self from "../../assets/icons/category/ic_Self_60.svg";
+import video from "../../assets/icons/category/ic_Video_60.svg";
 
 import afterParty from "../../assets/icons/activity/ic_after party_60.svg";
 import offline from "../../assets/icons/activity/ic_Offline_60.svg";
@@ -135,6 +135,14 @@ export const ageOptions = [
   { label: "2004" },
   { label: "2005" },
   { label: "2006" },
+];
+
+export const ageGroupOptions = [
+  { label: "10대" },
+  { label: "20대" },
+  { label: "30대" },
+  { label: "40대" },
+  { label: "50대 이상" },
 ];
 
 export const categoryLabels = categoryOptions.map((item) => item.label);

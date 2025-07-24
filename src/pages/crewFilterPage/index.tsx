@@ -61,7 +61,7 @@ const crewFilterPage = () => {
           </div>
         </div>
         <div className="px-18 mt-20">
-          <h2 className="text-[32px] font-bold text-[#000000]">성별</h2>
+          <h2 className="text-[32px] font-bold text-[#000000] mb-4">성별</h2>
           <GenderSelect />
         </div>
         {/* 크루 찾아보기 버튼 */}

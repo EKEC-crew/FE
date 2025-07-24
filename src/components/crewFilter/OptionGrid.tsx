@@ -74,7 +74,7 @@ const OptionGrid = ({
                 className={`mt-2 text-lg ${
                   isSelected
                     ? "text-[#3A3ADB] font-medium"
-                    : "text-[#37383E] font-reqular"
+                    : "text-[#37383E] font-normal"
                 }`}
               >
                 {option.label}
