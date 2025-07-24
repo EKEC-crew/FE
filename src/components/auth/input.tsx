@@ -10,6 +10,7 @@ interface InputProps {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   width?: string;
+  register?: any;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -20,6 +21,7 @@ const Input: React.FC<InputProps> = ({
   value,
   onChange,
   width = "27.08vw",
+  register,
 }) => {
   const isPasswordType = type === "password";
   const inputType = isPasswordType && showPassword ? "text" : type;
@@ -30,6 +32,7 @@ const Input: React.FC<InputProps> = ({
       style={{ width }}
     >
       <input
+        {...(register || {})}
         type={inputType}
         placeholder={placeholder}
         value={value}

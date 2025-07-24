@@ -1,6 +1,14 @@
 import { z } from "zod";
 
 const passwordValidation = z.string().superRefine((password, ctx) => {
+  if (password.length > 0 && !/^[A-Za-z0-9.!@#$%^&*]+$/.test(password)) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "영어 외의 다른 언어를 사용할 수 없어요",
+    });
+    return;
+  }
+
   if (password.length < 7 || password.length > 12) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
@@ -12,13 +20,6 @@ const passwordValidation = z.string().superRefine((password, ctx) => {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
       message: "특수문자(!@#$%^&* 등)를 포함해주세요",
-    });
-  }
-
-  if (!/^[A-Za-z0-9.!@#$%^&*]*$/.test(password)) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: "영어 외의 다른 언어를 사용할 수 없어요",
     });
   }
 });
