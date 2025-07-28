@@ -4,9 +4,16 @@ import { useState, useEffect } from "react";
 interface BirthDropDownProps {
   birthDate?: string;
   setBirthDate: (date: string) => void;
+  disabled?: boolean; // 수정 불가 가능 하도록 props 추가
+  width?: string;
 }
 
-const BirthDropDown = ({ birthDate, setBirthDate }: BirthDropDownProps) => {
+const BirthDropDown = ({
+  birthDate,
+  setBirthDate,
+  disabled,
+  width = "27.08vw",
+}: BirthDropDownProps) => {
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
   const [day, setDay] = useState("");
@@ -61,7 +68,7 @@ const BirthDropDown = ({ birthDate, setBirthDate }: BirthDropDownProps) => {
   return (
     <div
       className="flex justify-between items-center mb-6"
-      style={{ width: "27.08vw" }}
+      style={{ width: width }}
     >
       <DropDown
         width="8.33vw"
@@ -70,6 +77,7 @@ const BirthDropDown = ({ birthDate, setBirthDate }: BirthDropDownProps) => {
         options={yearOptions}
         value={year}
         onChange={setYear}
+        disabled={disabled} //드롭다운 수정 시 비활성화 적용
       />
       <DropDown
         width="8.33vw"
@@ -78,6 +86,7 @@ const BirthDropDown = ({ birthDate, setBirthDate }: BirthDropDownProps) => {
         options={monthOptions}
         value={month}
         onChange={setMonth}
+        disabled={disabled} //드롭다운 수정 시 비활성화 적용
       />
       <DropDown
         width="8.33vw"
@@ -86,6 +95,7 @@ const BirthDropDown = ({ birthDate, setBirthDate }: BirthDropDownProps) => {
         options={dayOptions}
         value={day}
         onChange={setDay}
+        disabled={disabled} //드롭다운 수정 시 비활성화 적용
       />
     </div>
   );
