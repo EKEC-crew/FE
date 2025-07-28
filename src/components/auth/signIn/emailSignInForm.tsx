@@ -8,6 +8,7 @@ import emailSignInBtn from "../../../assets/signIn/btn_login_520x68.svg";
 import checkBoxIcon from "../../../assets/icons/ic_check_de.svg";
 import pressedCheckBoxIcon from "../../../assets/icons/ic_check_pressed.svg";
 import disabledBtn from "../../../assets/buttons/disabled.svg";
+import warnIcon from "../../../assets/icons/auth/warn.svg";
 
 import Input from "../input";
 import {
@@ -74,7 +75,11 @@ const EmailSignInForm: React.FC = () => {
           register={register("email")}
         />
         {errors?.email && (
-          <div className="text-red-500 text-sm mt-1 mb-3 px-1 w-full max-w-[27.08vw]">
+          <div
+            className="flex items-center justify-start text-red-500 text-sm mt-1 mb-3"
+            style={{ width: "27.08vw" }}
+          >
+            <img src={warnIcon} alt="경고" className="w-4 h-4 mr-2" />
             {errors.email.message}
           </div>
         )}

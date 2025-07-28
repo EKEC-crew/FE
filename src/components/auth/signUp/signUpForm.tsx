@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import EkecLogo from "../../../assets/icons/ic_logo_graphic_45.svg";
 import signUpBtn from "../../../assets/signIn/btn_login_520x68.svg";
 import disabledBtn from "../../../assets/buttons/disabled.svg";
+import warnIcon from "../../../assets/icons/auth/warn.svg";
+import okIcon from "../../../assets/icons/auth/ok.svg";
 import Input from "../input";
 import {
   signUpSchema,
@@ -20,6 +22,7 @@ const SignUpForm = () => {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors, isValid },
   } = useForm<SignUpFormValues>({
     resolver: zodResolver(signUpSchema),
@@ -30,6 +33,8 @@ const SignUpForm = () => {
       passwordCheck: "",
     },
   });
+
+  const watchedPassword = watch("password");
 
   const handlePasswordToggle = () => {
     setShowPassword(!showPassword);
@@ -66,7 +71,15 @@ const SignUpForm = () => {
       >
         <Input type="email" placeholder="이메일" register={register("email")} />
         {errors?.email && (
-          <div className="text-red-500 text-sm mt-1 mb-3 px-1 w-full max-w-[27.08vw]">
+          <div
+            className="flex items-center justify-start text-red-500 text-sm mt-1 mb-3"
+            style={{ width: "27.08vw" }}
+          >
+            <img
+              src={warnIcon}
+              alt="경고"
+              className="w-4 h-4 mr-2 flex-shrink-0"
+            />
             {errors.email.message}
           </div>
         )}
@@ -86,13 +99,39 @@ const SignUpForm = () => {
           showPassword={showPasswordConfirm}
           togglePassword={handlePasswordConfirmToggle}
         />
-        {errors?.password && (
-          <div className="text-red-500 text-sm mt-1 px-1 w-full max-w-[27.08vw]">
-            {errors.password.message}
+
+        {errors?.password ? (
+          <div
+            className="text-red-500 text-sm mt-1 space-y-1"
+            style={{ width: "27.08vw" }}
+          >
+            {errors.password.message?.split("\n").map((msg, index) => (
+              <div key={index} className="flex items-center justify-start">
+                <img src={warnIcon} alt="경고" className="w-4 h-4 mr-2" />
+                {msg}
+              </div>
+            ))}
           </div>
-        )}
+        ) : !errors?.password && watchedPassword ? (
+          <div
+            className="flex items-center justify-start text-green-500 text-sm mt-1"
+            style={{ width: "27.08vw" }}
+          >
+            <img src={okIcon} alt="성공" className="w-4 h-4 mr-2" />
+            사용 가능한 비밀번호입니다
+          </div>
+        ) : null}
+
         {errors?.passwordCheck && (
-          <div className="text-red-500 text-sm mt-1 px-1 w-full max-w-[27.08vw]">
+          <div
+            className="flex items-center justify-start text-red-500 text-sm mt-1"
+            style={{ width: "27.08vw" }}
+          >
+            <img
+              src={warnIcon}
+              alt="경고"
+              className="w-4 h-4 mr-2 flex-shrink-0"
+            />
             {errors.passwordCheck.message}
           </div>
         )}
@@ -100,7 +139,7 @@ const SignUpForm = () => {
         <button
           type="submit"
           disabled={!isValid}
-          className="relative flex items-center justify-center h-12 md:h-14 lg:h-16 transition-all duration-200 hover:opacity-90 active:transform active:translate-y-0.5 mb-6 disabled:pointer-events-none"
+          className="relative flex items-center justify-center h-12 md:h-14 lg:h-16 transition-all duration-200 hover:opacity-90 active:transform active:translate-y-0.5 mb-6 mt-10 disabled:pointer-events-none"
           style={{ width: "27.08vw" }}
         >
           <img
