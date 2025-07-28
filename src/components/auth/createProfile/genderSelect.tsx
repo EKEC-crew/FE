@@ -10,7 +10,7 @@ interface GenderSelectProps {
   onNotDefineChange: (isNotDefine: boolean) => void;
   disabled?: boolean; // 남/여 버튼 제어
   notDefineDisabled?: boolean; // 밝히지 않음 버튼 제어
-  originalGender?: "male" | "female" | "not-defined";
+  originalGender?: "male" | "female" | "not-defined"; //수정할때 원래 성별을 기억해아함
   buttonWidth?: string;
   buttonHeight?: string;
   checkBoxWidth?: string;

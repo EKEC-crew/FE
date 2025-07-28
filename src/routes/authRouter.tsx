@@ -45,7 +45,7 @@ const AuthRouter = [
     ],
   },
   {
-    path: "createProfile",
+    path: "/createProfile",
     element: <AuthLayout />,
     children: [
       {

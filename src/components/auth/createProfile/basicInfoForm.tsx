@@ -1,4 +1,5 @@
 import { Controller } from "react-hook-form";
+import { useCallback } from "react";
 import nextBtn from "../../../assets/signIn/btn_login_520x68.svg";
 import addProfileImage from "../../../assets/icons/createProfile/addProfileImage.svg";
 import disabledBtn from "../../../assets/buttons/disabled.svg";
@@ -32,6 +33,13 @@ const BasicInfoForm = ({
   const handleNicknameChange = (value: string) => {
     setValue("nickname", value);
   };
+
+  const handleBirthDateChange = useCallback(
+    (date: string) => {
+      setValue("birthDate", date);
+    },
+    [setValue]
+  );
 
   return (
     <div className="flex flex-col items-center w-full">
@@ -116,7 +124,7 @@ const BasicInfoForm = ({
       </div>
       <BirthDropDown
         birthDate={watchedValues.birthDate}
-        setBirthDate={(date) => setValue("birthDate", date)}
+        setBirthDate={handleBirthDateChange}
       />
 
       {/* 다음 버튼 */}

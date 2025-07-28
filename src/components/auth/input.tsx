@@ -16,6 +16,7 @@ interface InputProps {
   rightButtonLabel?: string;
   onRightButtonClick?: () => void;
   rightButtonDisabled?: boolean;
+  register?: any;
 }
 
 const Input: React.FC<InputProps> = ({
@@ -30,6 +31,7 @@ const Input: React.FC<InputProps> = ({
   rightButtonLabel,
   onRightButtonClick,
   rightButtonDisabled,
+  register,
 }) => {
   const isPasswordType = type === "password";
   const inputType = isPasswordType && showPassword ? "text" : type;
@@ -45,6 +47,7 @@ const Input: React.FC<InputProps> = ({
       style={{ width }}
     >
       <input
+        {...(register || {})}
         type={inputType}
         placeholder={placeholder}
         value={value}

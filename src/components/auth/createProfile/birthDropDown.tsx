@@ -33,7 +33,7 @@ const BirthDropDown = ({
     } else {
       setBirthDate("");
     }
-  }, [year, month, day, setBirthDate]);
+  }, [year, month, day]);
 
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
