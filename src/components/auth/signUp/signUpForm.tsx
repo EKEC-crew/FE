@@ -124,7 +124,7 @@ const SignUpForm = () => {
 
         {errors?.passwordCheck && (
           <div
-            className="flex items-center justify-start text-red-500 text-sm mt-1"
+            className="flex items-center justify-start text-red-500 text-sm mt-1 mb-2"
             style={{ width: "27.08vw" }}
           >
             <img
@@ -135,19 +135,18 @@ const SignUpForm = () => {
             {errors.passwordCheck.message}
           </div>
         )}
-
         <button
           type="submit"
           disabled={!isValid}
-          className="relative flex items-center justify-center h-12 md:h-14 lg:h-16 transition-all duration-200 hover:opacity-90 active:transform active:translate-y-0.5 mb-6 mt-4 disabled:pointer-events-none"
+          className="relative flex items-center justify-center lg:h-[4.25rem] transition-all duration-200 hover:opacity-90 active:transform active:translate-y-0.5 mb-6 disabled:pointer-events-none"
           style={{ width: "27.08vw" }}
         >
           <img
             src={isValid ? signUpBtn : disabledBtn}
             alt="회원가입 버튼"
-            className="w-full h-full object-fill"
+            className="w-full h-full object-contain"
           />
-          <div className="absolute inset-0 flex items-center justify-center text-white text-sm md:text-base lg:text-lg font-medium">
+          <div className="absolute inset-0 flex items-center justify-center text-white text-sm md:text-base lg:text-lg font-medium font-['Pretendard']">
             회원가입하기
           </div>
         </button>

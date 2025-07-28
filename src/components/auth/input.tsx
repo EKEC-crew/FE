@@ -28,7 +28,7 @@ const Input: React.FC<InputProps> = ({
 
   return (
     <div
-      className="h-12 md:h-14 lg:h-16 bg-white rounded-[10px] border-2 border-stone-300 mb-2 relative"
+      className="h-12 md:h-14 lg:h-16 bg-white rounded-[10px] border-2 border-stone-300 mb-4 relative"
       style={{ width }}
     >
       <input
