@@ -13,6 +13,11 @@ import ScheduleDetail from "../pages/detail/schedule/scheduleDetail";
 import ReviewPage from "../pages/detail/review/index";
 import CrewListPage from "../pages/crewListPage";
 import CrewFilterPage from "../pages/crewFilterPage";
+import SchedulePage from "../pages/myPage/SchedulePage";
+import EditProfilePage from "../pages/myPage/EditProfilePage";
+import AppliedCrewPage from "../pages/myPage/AppliedCrewPage";
+import CreatedCrewPage from "../pages/myPage/CreatedCrewPage";
+import AlarmPage from "../pages/myPage/AlarmPage";
 
 const router = createBrowserRouter([
   {
@@ -44,11 +49,16 @@ const router = createBrowserRouter([
       },
       {
         path: "myPage",
+        element: <MyPage />,
         children: [
           {
             index: true,
-            element: <MyPage />,
+            element: <SchedulePage />,
           },
+          { path: "edit-profile", element: <EditProfilePage /> },
+          { path: "applied-crews", element: <AppliedCrewPage /> },
+          { path: "created-crews", element: <CreatedCrewPage /> },
+          { path: "my-alarm", element: <AlarmPage /> },
         ],
       },
       {

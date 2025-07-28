@@ -104,6 +104,10 @@ const BasicInfoForm = ({
       </div>
 
       {/* 성별 */}
+      <div className="mb-2" style={{ width: "27.08vw" }}>
+        <span className="text-zinc-800 text-xl font-semibold">성별</span>
+        <span className="text-red-500 text-xl font-semibold">*</span>
+      </div>
       <GenderSelect
         selectedGender={watchedValues.gender || ""}
         onGenderChange={(gender) => setValue("gender", gender as any)}
