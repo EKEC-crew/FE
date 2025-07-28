@@ -1,12 +1,14 @@
+import { useNavigate } from "react-router-dom";
 import Header from "../../../components/detail/header";
 import Notice from "../../../components/detail/notice";
 import Tabs from "../../../components/detail/tabs";
-import Calendar from "../../../components/detail/Schedule/calendar";
+import Calendar from "../../../components/detail/Schedule/Calendar";
 import ScheduleList from "../../../components/detail/Schedule/ScheduleList";
 import Pagination from "../../../components/detail/Schedule/button/pagination";
 import Post from "../../../components/detail/Schedule/button/post";
 
 function Schedule() {
+  const navigate = useNavigate();
   return (
     <div className="bg-gray-100 min-h-screen shadow-none">
       <div className="mt-12">
@@ -25,7 +27,7 @@ function Schedule() {
             <Pagination />
           </div>
           <div className="mt-4">
-            <Post />
+            <Post onClick={() => navigate("/detail/schedule/post")} />
           </div>
         </div>
       </div>

@@ -9,10 +9,11 @@ import SearchPage from "../pages/searchPage";
 import Detail from "../pages/detail";
 import Schedule from "../pages/detail/schedule";
 import NoticeList from "../pages/detail/tabs/noticeList";
-import ScheduleDetail from "../pages/detail/schedule/scheduleDetail";
+import ScheduleDetail from "../pages/detail/schedule/ScheduleDetail";
 import ReviewPage from "../pages/detail/review/index";
 import CrewListPage from "../pages/crewListPage";
 import CrewFilterPage from "../pages/crewFilterPage";
+import PostScheduleForm from "./../components/detail/Schedule/PostForm/PostScheduleForm";
 
 const router = createBrowserRouter([
   {
@@ -83,6 +84,10 @@ const router = createBrowserRouter([
           {
             path: "schedule/:id",
             element: <ScheduleDetail />,
+          },
+          {
+            path: "schedule/post",
+            element: <PostScheduleForm />,
           },
           {
             path: "notice/:id",

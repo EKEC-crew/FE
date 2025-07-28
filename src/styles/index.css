@@ -28,3 +28,28 @@ body {
   -ms-overflow-style: none; /* IE, Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+/* 글쓰기 에디터 수정 */
+
+.toastui-editor-contents:empty::before {
+  content: "내용을 입력해주세요";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  color: #999;
+  font-style: italic;
+  pointer-events: none;
+}
+
+:root {
+  --toastui-editor-primary-color: #3a3adb;
+}
+
+.toastui-editor-defaultUI .toastui-editor-toolbar-icons.active {
+  color: #3a3adb !important;
+}
+
+/* 툴바 hover 시 색상 변경 */
+.toastui-editor-defaultUI .toastui-editor-toolbar-icons:hover {
+  color: #3a3adb !important;
+}

@@ -8,7 +8,7 @@ function Header() {
       <div className="w-full px-4 py-6 flex justify-between">
         <div className="flex items-center gap-6">
           <img
-            src="/header/DefaultCrewProfile.png"
+            src="/assets/header/DefaultCrewProfile.png"
             className="w-16 h-16 rounded-lg object-cover"
             alt="로고"
           />
@@ -27,7 +27,7 @@ function Header() {
                 크루 45/50
               </span>
               <img
-                src="/header/ReviewStar.png"
+                src="/assets/header/ReviewStar.png"
                 alt="별"
                 className="w-6 h-6 rounded-full bg-white"
               />
@@ -39,12 +39,12 @@ function Header() {
         <div className="flex flex-col items-center gap-2 relative">
           <div className="flex items-center justify-between w-full px-4 py-2">
             <img
-              src="/header/UserCircle.svg"
+              src="/assets/header/UserCircle.svg"
               alt="프로필"
               className="w-6 h-6 rounded-full bg-white"
             />
             <div className="flex items-center gap-1 px-2">
-              <img src="/header/crown.png" alt="왕관" className="w-4 h-4" />
+              <img src="/assets/header/crown.png" alt="왕관" className="w-4 h-4" />
               <span className="text-sm">000님</span>
             </div>
 
