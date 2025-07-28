@@ -139,7 +139,7 @@ const SignUpForm = () => {
         <button
           type="submit"
           disabled={!isValid}
-          className="relative flex items-center justify-center h-12 md:h-14 lg:h-16 transition-all duration-200 hover:opacity-90 active:transform active:translate-y-0.5 mb-6 mt-10 disabled:pointer-events-none"
+          className="relative flex items-center justify-center h-12 md:h-14 lg:h-16 transition-all duration-200 hover:opacity-90 active:transform active:translate-y-0.5 mb-6 mt-4 disabled:pointer-events-none"
           style={{ width: "27.08vw" }}
         >
           <img
