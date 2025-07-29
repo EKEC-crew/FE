@@ -26,7 +26,7 @@ const Input: React.FC<InputProps> = ({
   togglePassword,
   value,
   onChange,
-  width = "27.08vw",
+  width,
   disabled,
   rightButtonLabel,
   onRightButtonClick,
@@ -36,16 +36,17 @@ const Input: React.FC<InputProps> = ({
   const isPasswordType = type === "password";
   const inputType = isPasswordType && showPassword ? "text" : type;
 
+  const containerClasses = `h-12 md:h-14 lg:h-16 rounded-[10px] border-2 mb-2 relative 
+    ${
+      disabled
+        ? "bg-gray-100 border-gray-300 cursor-not-allowed"
+        : "bg-white border-stone-300"
+    } ${width ? "" : "w-full"}`;
+
+  const containerStyle = width ? { width } : {};
+
   return (
-    <div
-      className={`h-12 md:h-14 lg:h-16 rounded-[10px] border-2 mb-2 relative 
-        ${
-          disabled
-            ? "bg-gray-100 border-gray-300 cursor-not-allowed"
-            : "bg-white border-stone-300"
-        }`}
-      style={{ width }}
-    >
+    <div className={containerClasses} style={containerStyle}>
       <input
         {...(register || {})}
         type={inputType}

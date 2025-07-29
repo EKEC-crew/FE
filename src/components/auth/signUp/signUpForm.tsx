@@ -12,6 +12,7 @@ import {
   type SignUpFormValues,
 } from "../../../schemas/auth/authSchema";
 import { useNavigate } from "react-router-dom";
+import AuthBtn from "../authBtn";
 
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -55,102 +56,96 @@ const SignUpForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-full px-[12.86%]">
-      <img src={EkecLogo} alt="EKEC 로고" className="mb-4 w-11 h-11" />
+    <div className="flex flex-col items-center justify-center w-full h-full px-2">
+      <img src={EkecLogo} alt="EKEC 로고" className="mb-3 w-10 h-10" />
 
-      <div className="text-center text-neutral-800 text-2xl md:text-3xl lg:text-4xl font-bold mb-2">
+      <div className="text-center text-neutral-800 text-xl md:text-2xl font-bold mb-1">
         EKEC ID 회원가입
       </div>
-      <div className="text-center text-neutral-800 text-base md:text-lg font-normal mb-8">
+      <div className="text-center text-neutral-800 text-sm md:text-base font-normal mb-6">
         이크에크는 크루 참여 및 관리가 편리해요
       </div>
 
-      <form
-        className="flex flex-col items-center w-full"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <Input type="email" placeholder="이메일" register={register("email")} />
-        {errors?.email && (
-          <div
-            className="flex items-center justify-start text-red-500 text-sm mt-1 mb-3"
-            style={{ width: "27.08vw" }}
+      <div className="w-full flex justify-center">
+        <div className="w-full max-w-[90%] min-w-[320px]">
+          <form
+            className="flex flex-col items-center w-full"
+            onSubmit={handleSubmit(onSubmit)}
           >
-            <img
-              src={warnIcon}
-              alt="경고"
-              className="w-4 h-4 mr-2 flex-shrink-0"
-            />
-            {errors.email.message}
-          </div>
-        )}
+            <div className="w-full mt-4">
+              <Input
+                type="email"
+                placeholder="이메일"
+                register={register("email")}
+              />
+              {errors?.email && (
+                <div className="flex items-center justify-start text-red-500 text-sm mt-1 mb-3 w-full">
+                  <img
+                    src={warnIcon}
+                    alt="경고"
+                    className="w-4 h-4 mr-2 flex-shrink-0"
+                  />
+                  {errors.email.message}
+                </div>
+              )}
+            </div>
 
-        <Input
-          type="password"
-          placeholder="비밀번호"
-          register={register("password")}
-          showPassword={showPassword}
-          togglePassword={handlePasswordToggle}
-        />
+            <div className="w-full mt-2">
+              <Input
+                type="password"
+                placeholder="비밀번호"
+                register={register("password")}
+                showPassword={showPassword}
+                togglePassword={handlePasswordToggle}
+              />
+            </div>
 
-        <Input
-          type="password"
-          placeholder="비밀번호 확인"
-          register={register("passwordCheck")}
-          showPassword={showPasswordConfirm}
-          togglePassword={handlePasswordConfirmToggle}
-        />
+            <div className="w-full mt-2 ">
+              <Input
+                type="password"
+                placeholder="비밀번호 확인"
+                register={register("passwordCheck")}
+                showPassword={showPasswordConfirm}
+                togglePassword={handlePasswordConfirmToggle}
+              />
+            </div>
 
-        {errors?.password ? (
-          <div
-            className="text-red-500 text-sm mt-1 space-y-1"
-            style={{ width: "27.08vw" }}
-          >
-            {errors.password.message?.split("\n").map((msg, index) => (
-              <div key={index} className="flex items-center justify-start">
-                <img src={warnIcon} alt="경고" className="w-4 h-4 mr-2" />
-                {msg}
+            {/* 비밀번호 유효성 메시지 */}
+            {errors?.password ? (
+              <div className="text-red-500 text-sm mt-1 space-y-1 w-full">
+                {errors.password.message?.split("\n").map((msg, index) => (
+                  <div key={index} className="flex items-center justify-start">
+                    <img src={warnIcon} alt="경고" className="w-4 h-4 mr-2" />
+                    {msg}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        ) : !errors?.password && watchedPassword ? (
-          <div
-            className="flex items-center justify-start text-green-500 text-sm mt-1"
-            style={{ width: "27.08vw" }}
-          >
-            <img src={okIcon} alt="성공" className="w-4 h-4 mr-2" />
-            사용 가능한 비밀번호입니다
-          </div>
-        ) : null}
+            ) : !errors?.password && watchedPassword ? (
+              <div className="flex items-center justify-start text-green-500 text-sm mt-1 w-full">
+                <img src={okIcon} alt="성공" className="w-4 h-4 mr-2" />
+                사용 가능한 비밀번호입니다
+              </div>
+            ) : null}
 
-        {errors?.passwordCheck && (
-          <div
-            className="flex items-center justify-start text-red-500 text-sm mt-1 mb-2"
-            style={{ width: "27.08vw" }}
-          >
-            <img
-              src={warnIcon}
-              alt="경고"
-              className="w-4 h-4 mr-2 flex-shrink-0"
-            />
-            {errors.passwordCheck.message}
-          </div>
-        )}
-        <button
-          type="submit"
-          disabled={!isValid}
-          className="relative flex items-center justify-center lg:h-[4.25rem] transition-all duration-200 hover:opacity-90 active:transform active:translate-y-0.5 mb-6 disabled:pointer-events-none"
-          style={{ width: "27.08vw" }}
-        >
-          <img
-            src={isValid ? signUpBtn : disabledBtn}
-            alt="회원가입 버튼"
-            className="w-full h-full object-contain"
-          />
-          <div className="absolute inset-0 flex items-center justify-center text-white text-sm md:text-base lg:text-lg font-medium font-['Pretendard']">
-            회원가입하기
-          </div>
-        </button>
-      </form>
+            {/* 비밀번호 확인 에러 메시지 */}
+            {errors?.passwordCheck && (
+              <div className="flex items-center justify-start text-red-500 text-sm mt-1 mb-2 w-full">
+                <img
+                  src={warnIcon}
+                  alt="경고"
+                  className="w-4 h-4 mr-2 flex-shrink-0"
+                />
+                {errors.passwordCheck.message}
+              </div>
+            )}
+
+            {/* AuthBtn 사용 */}
+            <AuthBtn type="submit" disabled={!isValid} className="mb-4">
+              회원가입하기
+            </AuthBtn>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
