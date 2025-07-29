@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Kakao from "../../../assets/signIn/signInKakaoLogo.svg";
 import Google from "../../../assets/signIn/signInGoogleLogo.svg";

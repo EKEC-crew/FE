@@ -57,16 +57,16 @@ const EmailSignInForm: React.FC = () => {
       {/* 로고와 타이틀 */}
       <img src={EkecLogo} alt="EKEC 로고" className="mb-3 w-10 h-10" />
 
-      <div className="text-center text-neutral-800 text-xl md:text-2xl font-bold font-['Pretendard'] mb-1">
+      <div className="text-center text-neutral-800 text-xl md:text-2xl font-bold mb-1">
         EKEC ID 로그인
       </div>
 
-      <div className="text-center text-neutral-800 text-sm md:text-base font-normal font-['Pretendard'] mb-6">
+      <div className="text-center text-neutral-800 text-sm md:text-base font-normal mb-6">
         이크에크는 크루 참여 및 관리가 편리해요
       </div>
 
       {/* 폼 서브 컨테이너 */}
-      <div className="w-full flex justify-center">
+      <div className="w-full flex justify-center mt-6 ">
         <div className="w-full max-w-[90%] min-w-[300px]">
           <form
             className="flex flex-col items-center w-full gap-3"
@@ -108,7 +108,7 @@ const EmailSignInForm: React.FC = () => {
                     className="w-full h-full"
                   />
                 </div>
-                <div className="text-neutral-400 text-sm font-medium font-['Pretendard']">
+                <div className="text-neutral-400 text-sm md:text-lg font-medium">
                   자동 로그인
                 </div>
               </div>
@@ -120,7 +120,7 @@ const EmailSignInForm: React.FC = () => {
           </form>
 
           {/* 하단 링크들 */}
-          <div className="flex justify-center items-center space-x-8 text-neutral-400 text-sm font-['Pretendard'] w-full">
+          <div className="flex justify-center items-center space-x-10 text-neutral-400 text-sm w-full">
             <Link to="/findId" className="hover:underline">
               아이디 찾기
             </Link>

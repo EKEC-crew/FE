@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import EkecLogo from "../../../assets/icons/ic_logo_graphic_45.svg";
-import signUpBtn from "../../../assets/signIn/btn_login_520x68.svg";
-import disabledBtn from "../../../assets/buttons/disabled.svg";
 import warnIcon from "../../../assets/icons/auth/warn.svg";
 import okIcon from "../../../assets/icons/auth/ok.svg";
 import Input from "../input";
@@ -140,7 +138,7 @@ const SignUpForm = () => {
             )}
 
             {/* AuthBtn 사용 */}
-            <AuthBtn type="submit" disabled={!isValid} className="mb-4">
+            <AuthBtn type="submit" disabled={!isValid} className="mb-4 mt-2">
               회원가입하기
             </AuthBtn>
           </form>

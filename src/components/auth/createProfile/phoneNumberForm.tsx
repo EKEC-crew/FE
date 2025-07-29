@@ -17,9 +17,7 @@ const PhoneNumberForm = () => {
         style={{ width: "27.08vw" }}
       >
         <div className="mb-2">
-          <span className="text-zinc-800 text-xl font-semibold font-['Pretendard']">
-            전화번호
-          </span>
+          <span className="text-zinc-800 text-xl font-semibold">전화번호</span>
           <span className="text-red-500 text-xl font-semibold">*</span>
         </div>
 

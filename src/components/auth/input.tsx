@@ -40,7 +40,7 @@ const Input: React.FC<InputProps> = ({
     ${
       disabled
         ? "bg-gray-100 border-gray-300 cursor-not-allowed"
-        : "bg-white border-stone-300"
+        : "bg-white border-stone-300 focus-within:border-[#3A3ADB]"
     } ${width ? "" : "w-full"}`;
 
   const containerStyle = width ? { width } : {};
@@ -56,7 +56,7 @@ const Input: React.FC<InputProps> = ({
         disabled={disabled}
         className={`w-full h-full rounded-[10px] px-4 ${
           isPasswordType ? "pr-12" : ""
-        } text-sm md:text-base lg:text-lg font-['Pretendard'] focus:outline-none 
+        } text-sm md:text-base lg:text-lg focus:outline-none 
         ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
       />
 
