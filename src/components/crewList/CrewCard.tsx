@@ -24,7 +24,7 @@ const CrewCard = () => {
       <div className="flex flex-col justify-between flex-1 pl-6 py-1 gap-1">
         {/* 크루명, 소개 */}
         <div className="flex flex-col items-start text-left">
-          <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold text-[#000000] pb-2">
+          <h3 className="text-2xl sm:text-3xl md:text-4xl font-semibold pb-2">
             사이클링히트
           </h3>
           <p className="text-base sm:text-lg md:text-xl font-medium text-[#5E6068] mt-1">

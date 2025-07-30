@@ -1,9 +1,21 @@
+import { useState } from "react";
 import CrewCardList from "../../components/crewList/CrewCardList";
 import CrewFilterBar from "../../components/crewList/CrewFilterBar";
 import CrewSortBar from "../../components/crewList/CrewSortBar";
 import Pagination from "../../components/crewList/Pagination";
+import type { CrewFilter } from "../../components/crewList/CrewFilterBar";
 
 const CrewListPage = () => {
+  const [filters, setFilters] = useState<CrewFilter>({
+    category: [],
+    activity: [],
+    style: [],
+    regionSido: "",
+    regionGu: "",
+    age: "",
+    gender: "",
+  });
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-[1620px] px-50 lg:px-[150px] pt-30 pb-20">
@@ -13,7 +25,7 @@ const CrewListPage = () => {
         </h2>
 
         {/* 필터 옵션 */}
-        <CrewFilterBar />
+        <CrewFilterBar filters={filters} setFilters={setFilters} />
 
         {/* 크루 개수 + 정렬 옵션 */}
         <CrewSortBar />

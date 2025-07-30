@@ -137,6 +137,14 @@ export const ageOptions = [
   { label: "2006" },
 ];
 
+export const ageGroupOptions = [
+  { label: "10대" },
+  { label: "20대" },
+  { label: "30대" },
+  { label: "40대" },
+  { label: "50대 이상" },
+];
+
 export const categoryLabels = categoryOptions.map((item) => item.label);
 export const activityLabels = activityOptions.map((item) => item.label);
 export const styleLabels = styleOptions.map((item) => item.label);
