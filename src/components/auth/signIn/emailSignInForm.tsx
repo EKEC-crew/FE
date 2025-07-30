@@ -57,11 +57,11 @@ const EmailSignInForm: React.FC = () => {
       {/* 로고와 타이틀 */}
       <img src={EkecLogo} alt="EKEC 로고" className="mb-3 w-10 h-10" />
 
-      <div className="text-center text-neutral-800 text-xl md:text-2xl font-bold mb-1">
+      <div className="text-center text-[#222222] text-xl md:text-2xl font-bold mb-1">
         EKEC ID 로그인
       </div>
 
-      <div className="text-center text-neutral-800 text-sm md:text-base font-normal mb-6">
+      <div className="text-center text-[#222222] text-sm md:text-base font-normal mb-6">
         이크에크는 크루 참여 및 관리가 편리해요
       </div>
 
@@ -69,7 +69,7 @@ const EmailSignInForm: React.FC = () => {
       <div className="w-full flex justify-center mt-6 ">
         <div className="w-full max-w-[90%] min-w-[300px]">
           <form
-            className="flex flex-col items-center w-full gap-3"
+            className="flex flex-col items-center w-full gap-2"
             onSubmit={handleSubmit(onSubmit)}
           >
             <div className="w-full">
@@ -96,12 +96,12 @@ const EmailSignInForm: React.FC = () => {
               />
             </div>
 
-            <div className="mb-4 w-full">
+            <div className="mb-4 w-full ml-6">
               <div
                 className="flex items-center cursor-pointer select-none"
                 onClick={handleCheckboxToggle}
               >
-                <div className="w-5 h-5 relative mr-3 flex-shrink-0">
+                <div className="w-5 h-5 relative mr-2 flex-shrink-0">
                   <img
                     src={isAutoLogin ? pressedCheckBoxIcon : checkBoxIcon}
                     alt={isAutoLogin ? "체크박스 선택됨" : "체크박스"}
@@ -120,7 +120,7 @@ const EmailSignInForm: React.FC = () => {
           </form>
 
           {/* 하단 링크들 */}
-          <div className="flex justify-center items-center space-x-10 text-neutral-400 text-sm w-full">
+          <div className="flex justify-center items-center space-x-2 sm:space-x-4 md:space-x-8 text-neutral-400 text-sm w-full">
             <Link to="/findId" className="hover:underline">
               아이디 찾기
             </Link>

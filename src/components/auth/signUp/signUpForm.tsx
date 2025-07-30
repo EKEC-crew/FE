@@ -57,10 +57,10 @@ const SignUpForm = () => {
     <div className="flex flex-col items-center justify-center w-full h-full px-2">
       <img src={EkecLogo} alt="EKEC 로고" className="mb-3 w-10 h-10" />
 
-      <div className="text-center text-neutral-800 text-xl md:text-2xl font-bold mb-1">
+      <div className="text-center text-[#222222] text-xl md:text-2xl font-bold mb-1">
         EKEC ID 회원가입
       </div>
-      <div className="text-center text-neutral-800 text-sm md:text-base font-normal mb-6">
+      <div className="text-center text-[#222222] text-sm md:text-base font-normal mb-6">
         이크에크는 크루 참여 및 관리가 편리해요
       </div>
 
@@ -77,7 +77,7 @@ const SignUpForm = () => {
                 register={register("email")}
               />
               {errors?.email && (
-                <div className="flex items-center justify-start text-red-500 text-sm mt-1 mb-3 w-full">
+                <div className="flex items-center justify-start text-[#FF4949] text-sm mt-1 mb-3 w-full">
                   <img
                     src={warnIcon}
                     alt="경고"
@@ -110,7 +110,7 @@ const SignUpForm = () => {
 
             {/* 비밀번호 유효성 메시지 */}
             {errors?.password ? (
-              <div className="text-red-500 text-sm mt-1 space-y-1 w-full">
+              <div className="text-[#FF4949] text-sm mt-1 space-y-1 w-full">
                 {errors.password.message?.split("\n").map((msg, index) => (
                   <div key={index} className="flex items-center justify-start">
                     <img src={warnIcon} alt="경고" className="w-4 h-4 mr-2" />
@@ -127,7 +127,7 @@ const SignUpForm = () => {
 
             {/* 비밀번호 확인 에러 메시지 */}
             {errors?.passwordCheck && (
-              <div className="flex items-center justify-start text-red-500 text-sm mt-1 mb-2 w-full">
+              <div className="flex items-center justify-start text-[#FF4949] text-sm mt-1 mb-2 w-full">
                 <img
                   src={warnIcon}
                   alt="경고"

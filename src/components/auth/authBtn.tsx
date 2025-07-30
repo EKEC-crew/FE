@@ -5,6 +5,7 @@ interface AuthBtnProps {
   type?: "button" | "submit" | "reset";
   className?: string;
   hasLeftIcon?: boolean;
+  variant?: "default" | "pass" | "disabled";
 }
 
 const AuthBtn: React.FC<AuthBtnProps> = ({
@@ -14,15 +15,19 @@ const AuthBtn: React.FC<AuthBtnProps> = ({
   type = "button",
   className = "",
   hasLeftIcon = false,
+  variant = "default",
 }) => {
   return (
     <button
       type={type}
       disabled={disabled}
       onClick={onClick}
-      className={`relative flex items-center justify-center h-12 md:h-14 lg:h-16 w-full min-w-[280px] transition-all duration-200 hover:opacity-90 active:transform active:translate-y-0.5 disabled:pointer-events-none ${className}`}
+      className={`relative flex items-center justify-center h-16 w-full min-w-[280px] transition
+        duration-200 hover:opacity-90 active:transform active:translate-y-0.5 disabled:pointer-events-none cursor-pointer ${className}
+        ease-in-out duration-300
+        `}
     >
-      {disabled ? (
+      {variant === "disabled" || disabled ? (
         // Disabled 상태 SVG
         <svg
           className="w-full h-full"
@@ -33,8 +38,19 @@ const AuthBtn: React.FC<AuthBtnProps> = ({
         >
           <rect width="520" height="68" rx="10" fill="#93959D" />
         </svg>
+      ) : variant === "pass" ? (
+        // Pass 상태 SVG
+        <svg
+          className="w-full h-full"
+          viewBox="0 0 520 68"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          preserveAspectRatio="none"
+        >
+          <rect width="520" height="68" rx="10" fill="#FF4949" />
+        </svg>
       ) : (
-        // Active 상태 SVG
+        // Default 상태 SVG
         <svg
           className="w-full h-full"
           viewBox="0 0 520 68"
@@ -67,7 +83,7 @@ const AuthBtn: React.FC<AuthBtnProps> = ({
 
       {/* 텍스트 오버레이 */}
       <div
-        className={`absolute inset-0 flex items-center justify-center text-white text-sm md:text-lg  font-semibold pointer-events-none ${hasLeftIcon ? "pl-12" : ""}`}
+        className={`absolute inset-0 flex items-center justify-center text-white text-lg font-semibold pointer-events-none ${hasLeftIcon ? "pl-12" : ""}`}
       >
         {children}
       </div>

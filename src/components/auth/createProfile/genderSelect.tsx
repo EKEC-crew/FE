@@ -102,7 +102,7 @@ const GenderSelect = ({
               className="w-full h-full"
             />
           </div>
-          <span className="text-sm md:text-base lg:text-xl font-medium text-[#5E6068]">
+          <span className="text-xl font-medium text-[#5E6068]">
             밝히고 싶지 않음
           </span>
         </button>

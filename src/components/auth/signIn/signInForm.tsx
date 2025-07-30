@@ -18,10 +18,10 @@ const SignInForm = () => {
   return (
     <>
       <div className="text-center mb-15">
-        <div className="text-4xl font-semibold text-neutral-800 mb-2 text-center leading-relaxed">
+        <div className="text-4xl font-semibold text-[#222222] mb-2 text-center leading-relaxed">
           손쉽게 내 성향에 맞는 <br /> 모임을 찾아봐요!
         </div>
-        <div className="justify-center text-neutral-800 text-lg font-normal font-['Pretendard']">
+        <div className="justify-center text-[#222222] text-lg font-normal font-['Pretendard']">
           이크에크는 크루 참여 및 관리가 편리해요
         </div>
       </div>

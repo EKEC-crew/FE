@@ -36,11 +36,11 @@ const Input: React.FC<InputProps> = ({
   const isPasswordType = type === "password";
   const inputType = isPasswordType && showPassword ? "text" : type;
 
-  const containerClasses = `h-12 md:h-14 lg:h-16 rounded-[10px] border-2 mb-2 relative 
+  const containerClasses = `w-full h-16 rounded-[10px] box-border border-2 mb-2 relative 
     ${
       disabled
         ? "bg-gray-100 border-gray-300 cursor-not-allowed"
-        : "bg-white border-stone-300 focus-within:border-[#3A3ADB]"
+        : "bg-white border-stone-300 box-border focus-within:border-[#3A3ADB]"
     } ${width ? "" : "w-full"}`;
 
   const containerStyle = width ? { width } : {};
@@ -56,7 +56,7 @@ const Input: React.FC<InputProps> = ({
         disabled={disabled}
         className={`w-full h-full rounded-[10px] px-4 ${
           isPasswordType ? "pr-12" : ""
-        } text-sm md:text-base lg:text-lg focus:outline-none 
+        } text-lg focus:outline-none 
         ${disabled ? "bg-gray-100 cursor-not-allowed" : ""}`}
       />
 
