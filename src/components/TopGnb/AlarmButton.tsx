@@ -62,7 +62,10 @@ export default function AlarmButton() {
   return (
     <div className="relative" ref={dropdownRef}>
       <div className="flex items-center gap-3">
-        <button onClick={() => setOpen((prev) => !prev)} className="text-xl">
+        <button
+          onClick={() => setOpen((prev) => !prev)}
+          className="text-xl cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
+        >
           <img
             src={unreadCount ? newAlarm : noAlarm}
             alt="알람 아이콘"

@@ -1,5 +1,7 @@
+import MyPageLayout from "./MypageLayout";
+
 const MyPage = () => {
-  return <div>마이페이지</div>;
+  return <MyPageLayout />;
 };
 
 export default MyPage;

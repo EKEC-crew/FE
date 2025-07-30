@@ -20,7 +20,7 @@ const ScheduleList = () => {
       type: "번개" as const,
       title: "잠실 2030 여성 야구 직관 동호회",
       date: "2025.06.18",
-      status: "신청 하기",
+      status: "신청 완료",
     },
   ];
 
