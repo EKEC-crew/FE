@@ -1,3 +1,4 @@
+import { useState } from "react";
 import SingleSelectDropdown from "./SingleSelectDropdown";
 
 const headcountOptions = [
@@ -22,6 +23,11 @@ const sortOptions = [
 ];
 
 const CrewSortBar = () => {
+  const [selectedHeadcount, setSelectedHeadcount] = useState<string | null>(
+    null
+  );
+  const [selectedSort, setSelectedSort] = useState<string | null>(null);
+
   return (
     <div className="flex items-center justify-between mb-3">
       {/* 크루 개수 */}
@@ -31,11 +37,15 @@ const CrewSortBar = () => {
         <SingleSelectDropdown
           label="인원수"
           options={headcountOptions}
+          selected={selectedHeadcount}
+          onSelect={setSelectedHeadcount}
           variant="sort"
         />
         <SingleSelectDropdown
           label="리뷰순"
           options={sortOptions}
+          selected={selectedSort}
+          onSelect={setSelectedSort}
           variant="sort"
         />
       </div>

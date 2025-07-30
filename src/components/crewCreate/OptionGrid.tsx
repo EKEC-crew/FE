@@ -24,7 +24,6 @@ const OptionGrid = ({
   type,
   exclusivePairs = [],
   maxSelectCount,
-  minSelectCount,
   selected,
   onChange,
 }: OptionGridProps) => {
@@ -89,12 +88,12 @@ const OptionGrid = ({
             onClick={() => handleClick(label)}
             disabled={excluded}
             className={`
-              flex items-center gap-2 px-5 h-[50px] rounded-full border-[2px]
-              text-[20px] font-normal whitespace-nowrap transition
+              flex items-center gap-2 px-4 h-12 rounded-full border-[2px]
+              text-xl font-normal whitespace-nowrap transition cursor-pointer
               ${selectedItem ? "bg-[#ECECFC] border-[#3A3ADB]" : ""}
               ${excluded ? "bg-[#EFF0F4] border-[#93959D] text-[#93959D]" : ""}
               ${!selectedItem && !excluded ? "border-[#D9DADD] text-[#000000]" : ""}
-              ${disabled ? "cursor-not-allowed" : "hover:opacity-80"}
+              ${disabled ? "cursor-not-allowed" : ""}
             `}
           >
             {selectedItem ? (

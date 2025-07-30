@@ -72,7 +72,7 @@ const MultiSelectDropdown = ({
       <button
         onClick={() => setOpen((prev) => !prev)}
         className={`
-          inline-flex items-center gap-2 px-5 h-12 rounded-full border-[2px] text-xl font-normal
+          inline-flex items-center gap-2 px-5 h-12 rounded-full border-[2px] text-xl font-normal cursor-pointer
           ${isSelected ? "border-[#3A3ADB] bg-[#ECECFC]" : "border-[#D9DADD] bg-white"}
           text-[#000000] max-w-[250px] overflow-hidden whitespace-nowrap text-ellipsis
         `}

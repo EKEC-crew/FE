@@ -12,17 +12,45 @@ import {
   styleLabels,
 } from "./optionsDummy";
 
+export type CrewFilter = {
+  category: string[];
+  activity: string[];
+  style: string[];
+  regionSido: string;
+  regionGu: string;
+  age: string;
+  gender: string;
+};
+
+interface CrewFilterBarProps {
+  filters: CrewFilter;
+  setFilters: React.Dispatch<React.SetStateAction<CrewFilter>>;
+}
+
 const genderOptions = [
   { label: "선택 안 함" },
   { label: "남성", icon: <img src={manIcon} alt="남성" /> },
   { label: "여성", icon: <img src={womanIcon} alt="여성" /> },
 ];
 
-const CrewFilterBar = () => {
+const CrewFilterBar = ({ filters, setFilters }: CrewFilterBarProps) => {
   return (
     <div className="flex gap-3 flex-wrap pb-8">
       {/* 새로고침 버튼 */}
-      <button className="h-12 w-12 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD]">
+      <button
+        className="h-12 w-12 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD]"
+        onClick={() =>
+          setFilters({
+            category: [],
+            activity: [],
+            style: [],
+            regionSido: "",
+            regionGu: "",
+            age: "",
+            gender: "",
+          })
+        }
+      >
         <img src={resetIcon} alt="필터 초기화" />
       </button>
       <MultiSelectDropdown
@@ -32,15 +60,29 @@ const CrewFilterBar = () => {
       />
       <MultiSelectDropdown label="활동" options={activityLabels} />
       <MultiSelectDropdown label="스타일" options={styleLabels} />
-      <RegionSelectDropdown label="지역" regions={regionOptions} />
+      <RegionSelectDropdown
+        label="지역"
+        regions={regionOptions}
+        onChange={(sido, gu) =>
+          setFilters((prev) => ({
+            ...prev,
+            regionSido: sido,
+            regionGu: gu,
+          }))
+        }
+      />
       <SingleSelectDropdown
         label="연령"
         options={ageOptions}
+        selected={filters.age}
+        onSelect={(val) => setFilters((prev) => ({ ...prev, age: val }))}
         variant="filter"
       />
       <SingleSelectDropdown
         label="성별"
         options={genderOptions}
+        selected={filters.gender}
+        onSelect={(val) => setFilters((prev) => ({ ...prev, gender: val }))}
         variant="filter"
       />
     </div>

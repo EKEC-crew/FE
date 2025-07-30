@@ -10,17 +10,18 @@ interface SingleOption {
 interface SingleSelectDropdownProps {
   label: string;
   options: SingleOption[];
-  onSelect?: (selected: string) => void;
+  selected: string | null;
+  onSelect: (selected: string) => void;
   variant?: "filter" | "sort"; // 버튼 스타일 구분
 }
 
 const SingleSelectDropdown = ({
   label,
   options,
+  selected,
   onSelect,
   variant = "filter",
 }: SingleSelectDropdownProps) => {
-  const [selected, setSelected] = useState<string>("");
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -35,20 +36,19 @@ const SingleSelectDropdown = ({
   }, []);
 
   const handleSelect = (option: string) => {
-    setSelected(option);
     onSelect?.(option);
     setOpen(false);
   };
 
   const isFilter = variant === "filter";
-  const isSelected = selected !== "";
+  const isSelected = selected !== null && selected !== "";
   const buttonLabel = isSelected ? selected : label;
 
   return (
     <div className="relative inline-block" ref={ref}>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className={`inline-flex items-center gap-2 rounded-full text-xl font-normal
+        className={`inline-flex items-center gap-2 rounded-full text-xl font-normal cursor-pointer
         ${isFilter ? "h-12 px-5" : "h-10 px-4"}
         ${
           isFilter
