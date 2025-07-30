@@ -24,7 +24,7 @@ export default function AppliedCrewList({ crews }: Props) {
           description={crew.description}
           rightContent={
             <span
-              className={`w-[10.9rem] h-[3.4rem] flex items-center justify-center rounded-xl font-[1.625rem] font-semibold
+              className={`w-[10.9rem] h-[3.4rem] flex items-center justify-center rounded-xl font-[1.625rem] 
                 ${crew.status === "미승인" ? "bg-[#D9DADD] text-[#5E6068]" : "bg-[#3A3ADB] text-white"}`}
             >
               {crew.status}

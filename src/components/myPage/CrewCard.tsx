@@ -1,5 +1,5 @@
 import logo from "../../assets/logo/ic_logo graphic_45.svg";
-import { categoryBackgrounds } from "../../components/CategoryBackgrounds";
+import CategoryBgImgs from "../CategoryBgImgs";
 
 interface CrewCardProps {
   imageUrl?: string;
@@ -17,9 +17,6 @@ export default function CrewCard({
   rightContent,
 }: CrewCardProps) {
   const hasImage = imageUrl && imageUrl.trim() !== "";
-
-  // 카테고리 뱃지 이미지 가져오기
-  const categoryBg = category ? categoryBackgrounds[category] : null;
 
   return (
     <div className="flex items-center justify-between w-[56rem] h-[10rem] bg-[#F7F7FB] rounded-2xl px-6">
@@ -47,20 +44,8 @@ export default function CrewCard({
 
         {/* 텍스트 */}
         <div className="ml-6">
-          {/* 카테고리 뱃지 (이미지 + 글자 overlay) */}
-          {category && categoryBg && (
-            <div className="relative inline-block">
-              <img src={categoryBg} alt={category} className="h-[26px]" />
-              <span
-                className="
-                  absolute inset-0 flex items-center justify-center 
-                  text-white text-sm font-medium
-                "
-              >
-                {category}
-              </span>
-            </div>
-          )}
+          {/* 카테고리 뱃지 컴포넌트로 교체 */}
+          {category && <CategoryBgImgs category={category} />}
 
           <div className="text-[1.5rem] font-semibold">{title}</div>
           <p className="text-[1.125rem] text-[#222222]">{description}</p>

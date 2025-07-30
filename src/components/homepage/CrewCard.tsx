@@ -1,6 +1,6 @@
 import bennerLogo from "../../assets/logo/img_crew_banner.svg";
 import { useNavigate } from "react-router-dom";
-import { categoryBackgrounds } from "../CategoryBackgrounds";
+import CategoryBgImgs from "../CategoryBgImgs"; // CategoryBgImgs 가져오기
 
 interface Crew {
   id: number;
@@ -22,19 +22,12 @@ export default function CrewCard({ crew }: CrewCardProps) {
     navigate(`/crew/${crew.id}`);
   };
 
-  // categoryBackgrounds 안전 처리
-  const normalizeCategory = (category: string) =>
-    category.trim().replace(/\s/g, "");
-
-  const categoryBg =
-    categoryBackgrounds[normalizeCategory(crew.category)] ??
-    categoryBackgrounds["사교"]; // fallback
-
   return (
     <div
       className="rounded-xl overflow-hidden bg-white p-[0.5rem] w-[27.625rem] h-[21.6875rem] hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer"
       onClick={handleClick}
     >
+      {/* 이미지 */}
       <img
         src={crew.imageUrl || bennerLogo}
         alt={crew.name}
@@ -42,18 +35,14 @@ export default function CrewCard({ crew }: CrewCardProps) {
       />
 
       {/* 카테고리 뱃지 */}
-      <div className="relative w-fit h-[1.625rem] mb-0">
-        <img
-          src={categoryBg}
-          alt={crew.category}
-          className="w-full h-full object-cover rounded-full"
-        />
-        <span className="absolute inset-0 flex items-center justify-center text-white text-[1rem]">
-          {crew.category}
-        </span>
+      <div className="w-fit mb-1">
+        <CategoryBgImgs category={crew.category} />
       </div>
 
+      {/* 이름 */}
       <div className="font-bold text-black text-[1.25rem]">{crew.name}</div>
+
+      {/* 설명 */}
       <div className="text-[0.875rem] text-gray-500 line-clamp-2">
         {crew.description}
       </div>
