@@ -20,6 +20,7 @@ import AppliedCrewPage from "../pages/myPage/AppliedCrewPage";
 import CreatedCrewPage from "../pages/myPage/CreatedCrewPage";
 import AlarmPage from "../pages/myPage/AlarmPage";
 import PostNoticeForm from "../components/detail/notice/PostForm/PostNoticeForm";
+import NoticeDetail from "../components/detail/notice/detail/NoticeDetail";
 
 const router = createBrowserRouter([
   {
@@ -103,6 +104,10 @@ const router = createBrowserRouter([
           {
             path: "notice/:id",
             element: <NoticeList />,
+          },
+           {
+            path: "notice/:id/detail",
+            element: <NoticeDetail />,
           },
           {
             path: "review",
