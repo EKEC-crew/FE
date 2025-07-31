@@ -1,12 +1,12 @@
-import LeftGnbMyCrew from "./LeftGnbMyCrew";
+import LeftGnbMyCrew from "./MyCrew";
 import FilterButton from "./FilterButton";
-import CrewButton from "./CrewButton";
-import CrewCategory from "./CrewCategory";
+import CrewButton from "./CreateCrewButton";
+import CrewCategory from "./CrewCategoryButton";
 
 const LeftGnb = () => {
   return (
-    <nav className="fixed top-0 left-0 w-60 h-screen pl-2 pr-2 pt-20 bg-white overflow-y-auto nav-scroll-hide">
-      <div className="flex flex-col space-y-2 pb-4">
+    <nav className="fixed top-0 left-0 w-[18.75rem] h-screen px-2 pt-20 bg-white overflow-y-auto nav-scroll-hide">
+      <div className="flex flex-col space-y-2 items-center pb-4">
         <CrewButton />
         <LeftGnbMyCrew />
         <FilterButton />

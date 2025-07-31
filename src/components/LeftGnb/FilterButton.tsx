@@ -1,31 +1,21 @@
-import { useNavigate } from "react-router-dom";
-import ListIconBk from "../../assets/icons/ic_listsearch_36.svg";
-import ListIconWt from "../../assets/icons/ic_listsearch_white_36.svg";
-import { useState } from "react";
+import { useLocation } from "react-router-dom";
+import ActionButton from "./ActionButton";
+import listIconBk from "../../assets/icons/ic_listsearch_36.svg";
+import listIconWt from "../../assets/icons/ic_listsearch_white_36.svg";
+
 const FilterButton = () => {
-  const navigate = useNavigate();
-  const [isHover, setHover] = useState(false);
+  const location = useLocation();
+  const isActive = location.pathname === "/crewFilterPage"; // 현재 페이지 체크
+
   return (
-    <button
-      onClick={() => navigate("/searchPage")}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      className="flex items-center gap-2 w-full h-[48px] text-left px-4 py-2
-             rounded-[8px] bg-[#F7F7FB] focus:outline-none hover:bg-[#3A3ADB] hover:text-white"
-      style={{
-        border: "none",
-        outline: "none",
-        boxShadow: "none",
-        backgroundClip: "padding-box",
-      }}
-    >
-      <img
-        src={isHover ? ListIconWt : ListIconBk}
-        alt="list"
-        className="w-7 h-7"
-      />
-      필터 설정하기
-    </button>
+    <ActionButton
+      label="필터 설정하기"
+      icon={isActive ? listIconWt : listIconBk} // 활성화일 때 흰색 아이콘
+      iconHover={listIconWt}
+      to="/crewFilterPage"
+      isActive={isActive} // 활성화 상태 전달 -> 배경색이 바뀌어야 하니까
+    />
   );
 };
+
 export default FilterButton;
