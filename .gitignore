@@ -21,6 +21,9 @@ node_modules
 *.sln
 *.sw?
 
+dist
+dist-ssr
+
 .env
 
 # Local Netlify folder
