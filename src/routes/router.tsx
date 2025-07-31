@@ -14,6 +14,7 @@ import ReviewPage from "../pages/detail/review/index";
 import CrewListPage from "../pages/crewListPage";
 import CrewFilterPage from "../pages/crewFilterPage";
 import PostScheduleForm from "./../components/detail/Schedule/PostForm/PostScheduleForm";
+import CrewCreatePage from "../pages/crewCreatePage";
 import SchedulePage from "../pages/myPage/SchedulePage";
 import EditProfilePage from "../pages/myPage/EditProfilePage";
 import AppliedCrewPage from "../pages/myPage/AppliedCrewPage";
@@ -83,6 +84,15 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: "crewCreatePage",
+        children: [
+          {
+            index: true,
+            element: <CrewCreatePage />,
+          },
+        ],
+      },
+      {
         path: "detail",
         children: [
           {
@@ -105,7 +115,7 @@ const router = createBrowserRouter([
             path: "notice/:id",
             element: <NoticeList />,
           },
-           {
+          {
             path: "notice/:id/detail",
             element: <NoticeDetail />,
           },

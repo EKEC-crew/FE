@@ -10,8 +10,33 @@ import {
   regionOptions,
   ageOptions,
 } from "../../components/crewList/optionsDummy.ts";
+import { useState } from "react";
 
 const crewFilterPage = () => {
+  const [filters, setFilters] = useState({
+    category: "",
+    activity: [] as string[],
+    style: [] as string[],
+    regionSido: "",
+    regionGu: "",
+    age: "",
+    gender: "",
+  });
+
+  const isFilterSelected = () => {
+    const { category, activity, style, regionSido, regionGu, age, gender } =
+      filters;
+    return (
+      category !== "" ||
+      activity.length > 0 ||
+      style.length > 0 ||
+      regionSido !== "" ||
+      regionGu !== "" ||
+      age !== "" ||
+      gender !== ""
+    );
+  };
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-[1620px] px-50 lg:px-[235px] pt-20 pb-40">
@@ -20,14 +45,24 @@ const crewFilterPage = () => {
           <div className="flex justify-center mb-8">
             <img src={logo} alt="logo" />
           </div>
-          <h2 className="text-[40px] font-bold text-[#000000] mb-6">
+          <h2 className="text-[2.5rem] font-bold text-[#000000] mb-6">
             어떤 크루의 성향을 원하시나요?
           </h2>
         </div>
         {/* 옵션 */}
-        <h2 className="text-[32px] font-bold text-[#000000] px-18">카테고리</h2>
-        <OptionGrid type="single" options={categoryOptions} />
-        <h2 className="text-[32px] font-bold text-[#000000] px-18 mt-10">
+        <h2 className="text-[2rem] font-bold text-[#000000] px-18">카테고리</h2>
+        <OptionGrid
+          type="single"
+          options={categoryOptions}
+          selected={filters.category ? [filters.category] : []}
+          onChange={(val) =>
+            setFilters((prev) => ({
+              ...prev,
+              category: val.length > 0 ? val[0] : "",
+            }))
+          }
+        />
+        <h2 className="text-[2rem] font-bold text-[#000000] px-18 mt-10">
           활동
         </h2>
         <OptionGrid
@@ -37,36 +72,63 @@ const crewFilterPage = () => {
             ["오프라인", "온라인"],
             ["정기모임", "비정기모임"],
           ]}
+          selected={filters.activity}
+          onChange={(val) => setFilters((prev) => ({ ...prev, activity: val }))}
         />
-        <h2 className="text-[32px] font-bold text-[#000000] px-18 mt-10">
+        <h2 className="text-[2rem] font-bold text-[#000000] px-18 mt-10">
           스타일
         </h2>
         <OptionGrid
           type="multiple"
           options={styleOptions}
           exclusivePairs={[["장기참여", "단기참여"]]}
+          selected={filters.style}
+          onChange={(val) => setFilters((prev) => ({ ...prev, style: val }))}
         />
-        <div className="flex gap-64 px-18 mt-10">
+        <div className="flex gap-64 mt-10 px-18">
           <div className="flex flex-col gap-4">
-            <h2 className="text-[32px] font-bold text-[#000000]">지역</h2>
-            <RegionSelectDropdown label="지역" regions={regionOptions} />
+            <h2 className="text-[2rem] font-bold text-[#000000]">지역</h2>
+            <RegionSelectDropdown
+              label="지역"
+              regions={regionOptions}
+              onChange={(sido, gu) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  regionSido: sido,
+                  regionGu: gu,
+                }))
+              }
+            />
           </div>
           <div className="flex flex-col gap-4">
-            <h2 className="text-[32px] font-bold text-[#000000]">연령</h2>
+            <h2 className="text-[2rem] font-bold text-[#000000]">연령</h2>
             <SingleSelectDropdown
               label="연령"
               options={ageOptions}
+              selected={filters.age}
+              onSelect={(val) => setFilters((prev) => ({ ...prev, age: val }))}
               variant="filter"
             />
           </div>
         </div>
-        <div className="px-18 mt-20">
-          <h2 className="text-[32px] font-bold text-[#000000]">성별</h2>
-          <GenderSelect />
+        <div className=" mt-20  px-18">
+          <h2 className="text-[2rem] font-bold text-[#000000] mb-4">성별</h2>
+          <GenderSelect
+            value={filters.gender}
+            onChange={(val) => setFilters((prev) => ({ ...prev, gender: val }))}
+          />
         </div>
         {/* 크루 찾아보기 버튼 */}
-        <div className="w-full flex justify-center mt-20">
-          <button className="w-[961px] h-17 bg-[#EFF0F4] text-[#5E6068] text-[26px] font-semibold rounded-lg">
+        <div className="w-full flex justify-center mt-20  px-18">
+          <button
+            disabled={!isFilterSelected()}
+            className={`w-full h-17 text-[1.675rem] font-semibold rounded-lg 
+          ${
+            isFilterSelected()
+              ? "bg-[#3A3ADB] text-white cursor-pointer"
+              : "bg-[#EFF0F4] text-[#5E6068] cursor-not-allowed"
+          }`}
+          >
             크루 찾아보기
           </button>
         </div>

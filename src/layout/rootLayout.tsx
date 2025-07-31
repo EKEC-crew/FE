@@ -7,7 +7,7 @@ const RootLayout = () => {
     <div className="flex">
       <LeftGnb />
       <TopGnb />
-      <main className="ml-16 md:ml-60 flex-1 p-4">
+      <main className="ml-16 md:ml-60 flex-1">
         <Outlet />
       </main>
     </div>
