@@ -73,7 +73,7 @@ export default function EditProfilePage() {
     <FormProvider {...methods}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="max-w-[38.375rem] mx-auto space-y-6"
+        className="max-w-[38.375rem] mx-auto space-y-6 px-3 py-6"
       >
         {/* 이름 */}
         <div>

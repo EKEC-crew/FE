@@ -72,7 +72,7 @@ const MultiSelectDropdown = ({
       <button
         onClick={() => setOpen((prev) => !prev)}
         className={`
-          inline-flex items-center gap-2 px-5 h-12 rounded-full border-[2px] text-xl font-normal
+          inline-flex items-center gap-2 px-5 h-12 rounded-full border-[2px] text-xl font-normal cursor-pointer
           ${isSelected ? "border-[#3A3ADB] bg-[#ECECFC]" : "border-[#D9DADD] bg-white"}
           text-[#000000] max-w-[250px] overflow-hidden whitespace-nowrap text-ellipsis
         `}
@@ -98,7 +98,7 @@ const MultiSelectDropdown = ({
                         alt={isChecked ? "선택됨" : "선택 안됨"}
                         className="flex-shrink-0"
                       />
-                      <span className="text-xl font-regular text-[#000000]">
+                      <span className="text-xl font-normal text-[#000000]">
                         {opt}
                       </span>
                       <input

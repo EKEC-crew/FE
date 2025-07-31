@@ -10,11 +10,13 @@ interface RegionMap {
 interface RegionSelectDropdownProps {
   label: string;
   regions: RegionMap;
+  onChange: (city: string, gu: string) => void;
 }
 
 const RegionSelectDropdown = ({
   label,
   regions,
+  onChange,
 }: RegionSelectDropdownProps) => {
   const [open, setOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState<string>(""); // 선택된 시/도
@@ -66,7 +68,10 @@ const RegionSelectDropdown = ({
 
   const apply = () => {
     setOpen(false);
-    console.log("적용됨:", selectedRegions);
+    const first = selectedRegions[0];
+    if (first) {
+      onChange(first.city, first.district);
+    }
   };
 
   const getButtonLabel = () => {
@@ -84,7 +89,7 @@ const RegionSelectDropdown = ({
       <button
         onClick={() => setOpen((prev) => !prev)}
         className={`
-          inline-flex items-center gap-2 px-5 h-12 rounded-full border-[2px] text-xl font-normal
+          inline-flex items-center gap-2 px-5 h-12 rounded-full border-[2px] text-xl font-normal cursor-pointer
           ${isSelected ? "border-[#3A3ADB] bg-[#ECECFC]" : "border-[#D9DADD] bg-white"}
           text-[#000000] max-w-[250px] overflow-hidden whitespace-nowrap text-ellipsis
         `}
