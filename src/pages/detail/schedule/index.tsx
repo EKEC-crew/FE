@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../../components/detail/header";
 import Notice from "../../../components/detail/notice";
 import Tabs from "../../../components/detail/tabs";
-import CrewCalendar from "../../../components/detail/Schedule/Calendar";
+import CrewCalendar from "../../../components/detail/Schedule/calendar";
 import ScheduleList from "../../../components/detail/Schedule/ScheduleList";
 import Pagination from "../../../components/detail/Schedule/button/pagination";
 import Post from "../../../components/detail/Schedule/button/post";
