@@ -22,6 +22,9 @@ import CreatedCrewPage from "../pages/myPage/CreatedCrewPage";
 import AlarmPage from "../pages/myPage/AlarmPage";
 import PostNoticeForm from "../components/detail/notice/PostForm/PostNoticeForm";
 import NoticeDetail from "../components/detail/notice/detail/NoticeDetail";
+import Bulletin from "../pages/detail/bulletin";
+import BulletinDetail from "../components/detail/bulletin/detail/BulletinDetail";
+import PostBulletinForm from "../components/detail/bulletin/PostForm/PostBulletinForm";
 
 const router = createBrowserRouter([
   {
@@ -126,6 +129,18 @@ const router = createBrowserRouter([
           {
             path: "notice/post",
             element: <PostNoticeForm />,
+          },
+          {
+            path: "bulletin",
+            element: <Bulletin />,
+          },
+          {
+            path: "bulletin/:id/detail",
+            element: <BulletinDetail />,
+          },
+          {
+            path: "bulletin/post", 
+            element: <PostBulletinForm />, 
           },
         ],
       },

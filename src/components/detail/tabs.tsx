@@ -5,7 +5,7 @@ const tabItems = [
   { name: "일정", path: "/detail/schedule" },
   { name: "리뷰", path: "/detail/review" },
   { name: "앨범", path: "/detail/album" },
-  { name: "게시판", path: "/detail/board" },
+  { name: "게시판", path: "/detail/bulletin" },
 ];
 
 function Tabs() {
