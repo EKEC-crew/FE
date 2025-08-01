@@ -1,10 +1,12 @@
 import { useState } from "react";
-import DefaultCrewProfile from '/src/assets/header/ic_DefaultCrewProfile.png';
-import ReviewStar from '/src/assets/header/ic_ReviewStar.png';
-import UserCircle from '/src/assets/header/ic_UserCircle.svg';
-import crown from '/src/assets/header/ic_crown.png';
+import { useNavigate } from "react-router-dom"; // 추가
+import DefaultCrewProfile from "/src/assets/header/ic_DefaultCrewProfile.png";
+import ReviewStar from "/src/assets/header/ic_ReviewStar.png";
+import UserCircle from "/src/assets/header/ic_UserCircle.svg";
+import crown from "/src/assets/header/ic_crown.png";
 
 function Header() {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -27,9 +29,15 @@ function Header() {
               <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-lg">
                 스포츠관람
               </span>
-              <span className="text-xs bg-indigo-500 text-white px-2 py-1 rounded-lg">
+
+              {/* 버튼으로 수정 -> 클릭 시 이동 */}
+              <button
+                onClick={() => navigate("/detail/crewmemberlist")}
+                className="text-xs bg-indigo-500 text-white px-2 py-1 rounded-lg hover:bg-indigo-600 transition"
+              >
                 크루 45/50
-              </span>
+              </button>
+
               <img
                 src={ReviewStar}
                 alt="별"
