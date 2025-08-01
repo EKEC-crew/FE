@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // 추가
 
 function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // 메뉴 토글 상태
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate(); // 추가
 
   return (
     <div className="bg-white w-full shadow-lg">
@@ -23,9 +25,15 @@ function Header() {
               <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-lg">
                 스포츠관람
               </span>
-              <span className="text-xs bg-indigo-500 text-white px-2 py-1 rounded-lg">
+
+              {/* 버튼으로 수정 -> 클릭 시 이동 */}
+              <button
+                onClick={() => navigate("/detail/crewmemberlist")}
+                className="text-xs bg-indigo-500 text-white px-2 py-1 rounded-lg hover:bg-indigo-600 transition"
+              >
                 크루 45/50
-              </span>
+              </button>
+
               <img
                 src="/header/ReviewStar.png"
                 alt="별"

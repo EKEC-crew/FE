@@ -7,7 +7,7 @@ interface ActionButtonProps {
   iconHover?: string;
   bgImage?: string;
   to: string;
-  isActive?: boolean; // 추가: 활성화 상태 prop
+  isActive?: boolean; // 추가: 활성화 상태 prop 필터 페이지에서 활성화 되어애 함요
 }
 
 const ActionButton = ({

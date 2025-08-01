@@ -19,6 +19,9 @@ import EditProfilePage from "../pages/myPage/EditProfilePage";
 import AppliedCrewPage from "../pages/myPage/AppliedCrewPage";
 import CreatedCrewPage from "../pages/myPage/CreatedCrewPage";
 import AlarmPage from "../pages/myPage/AlarmPage";
+import CrewMemberListPage from "../pages/detail/crewMemberList";
+
+import ApplicantsListPage from "../pages/detail/applicants";
 
 const router = createBrowserRouter([
   {
@@ -111,6 +114,14 @@ const router = createBrowserRouter([
           {
             path: "review",
             element: <ReviewPage />,
+          },
+          {
+            path: "crewmemberlist",
+            element: <CrewMemberListPage />,
+          },
+          {
+            path: "applicants",
+            element: <ApplicantsListPage />,
           },
         ],
       },
