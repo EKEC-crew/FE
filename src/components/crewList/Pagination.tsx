@@ -14,7 +14,21 @@ const Pagination = ({
   totalPages,
   onPageChange,
 }: PaginationProps) => {
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+  // 최대 5개까지만 페이지 번호 표시
+  const getPageNumbers = () => {
+    const maxButtons = 5;
+    let start = Math.max(1, currentPage - 2);
+    let end = start + maxButtons - 1;
+
+    if (end > totalPages) {
+      end = totalPages;
+      start = Math.max(1, end - maxButtons + 1);
+    }
+
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  };
+
+  const pages = getPageNumbers();
 
   return (
     <div className="flex items-center gap-4">

@@ -1,14 +1,20 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // 추가
+import DefaultCrewProfile from "/src/assets/header/ic_DefaultCrewProfile.png";
+import ReviewStar from "/src/assets/header/ic_ReviewStar.png";
+import UserCircle from "/src/assets/header/ic_UserCircle.svg";
+import crown from "/src/assets/header/ic_crown.png";
 
 function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // 메뉴 토글 상태
+  const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
     <div className="bg-white w-full shadow-lg">
       <div className="w-full px-4 py-6 flex justify-between">
         <div className="flex items-center gap-6">
           <img
-            src="/header/DefaultCrewProfile.png"
+            src={DefaultCrewProfile}
             className="w-16 h-16 rounded-lg object-cover"
             alt="로고"
           />
@@ -23,11 +29,17 @@ function Header() {
               <span className="text-xs bg-blue-600 text-white px-2 py-1 rounded-lg">
                 스포츠관람
               </span>
-              <span className="text-xs bg-indigo-500 text-white px-2 py-1 rounded-lg">
+
+              {/* 버튼으로 수정 -> 클릭 시 이동 */}
+              <button
+                onClick={() => navigate("/detail/crewmemberlist")}
+                className="text-xs bg-indigo-500 text-white px-2 py-1 rounded-lg hover:bg-indigo-600 transition"
+              >
                 크루 45/50
-              </span>
+              </button>
+
               <img
-                src="/header/ReviewStar.png"
+                src={ReviewStar}
                 alt="별"
                 className="w-6 h-6 rounded-full bg-white"
               />
@@ -39,12 +51,12 @@ function Header() {
         <div className="flex flex-col items-center gap-2 relative">
           <div className="flex items-center justify-between w-full px-4 py-2">
             <img
-              src="/header/UserCircle.svg"
+              src={UserCircle}
               alt="프로필"
               className="w-6 h-6 rounded-full bg-white"
             />
             <div className="flex items-center gap-1 px-2">
-              <img src="/header/crown.png" alt="왕관" className="w-4 h-4" />
+              <img src={crown} alt="왕관" className="w-4 h-4" />
               <span className="text-sm">000님</span>
             </div>
 

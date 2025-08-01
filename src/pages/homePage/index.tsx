@@ -1,9 +1,9 @@
 import SearchBar from "../../components/TopGnb/SearchBar";
 import homepageLogo from "../../assets/logo/ic_logo graphic_45.svg";
 import SearchCategory from "../../components/homepage/SearchCategory";
-
 import HomeCrewSection from "../../components/homepage/HomeCrewSection";
 import HomeBackground from "../../components/homepage/HomeBackGround";
+
 const Main = () => {
   return (
     <div className="relative overflow-hidden">

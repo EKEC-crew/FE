@@ -12,7 +12,7 @@ const BirthDropDown = ({
   birthDate,
   setBirthDate,
   disabled,
-  width = "27.08vw",
+  width,
 }: BirthDropDownProps) => {
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
@@ -65,38 +65,38 @@ const BirthDropDown = ({
     label: d.toString().padStart(2, "0"),
   }));
 
+  const containerClasses = `flex w-full mb-6 ${width ? "" : "w-full"}`;
+  const containerStyle = width ? { width } : {};
+
   return (
-    <div
-      className="flex justify-between items-center mb-6"
-      style={{ width: width }}
-    >
-      <DropDown
-        width="8.33vw"
-        height="4.63vh"
-        placeholder={`${currentYear}년생`}
-        options={yearOptions}
-        value={year}
-        onChange={setYear}
-        disabled={disabled} //드롭다운 수정 시 비활성화 적용
-      />
-      <DropDown
-        width="8.33vw"
-        height="4.63vh"
-        placeholder={`${String(currentMonth).padStart(2, "0")}월`}
-        options={monthOptions}
-        value={month}
-        onChange={setMonth}
-        disabled={disabled} //드롭다운 수정 시 비활성화 적용
-      />
-      <DropDown
-        width="8.33vw"
-        height="4.63vh"
-        placeholder={`${String(currentDay).padStart(2, "0")}일`}
-        options={dayOptions}
-        value={day}
-        onChange={setDay}
-        disabled={disabled} //드롭다운 수정 시 비활성화 적용
-      />
+    <div className={containerClasses} style={containerStyle}>
+      <div className="flex-[180]">
+        <DropDown
+          placeholder={`${currentYear}년생`}
+          options={yearOptions}
+          value={year}
+          onChange={setYear}
+          disabled={disabled}
+        />
+      </div>
+
+      <div className="flex-[130] mx-10">
+        <DropDown
+          placeholder={`${String(currentMonth).padStart(2, "0")}월`}
+          options={monthOptions}
+          value={month}
+          onChange={setMonth}
+        />
+      </div>
+      <div className="flex-[130]">
+        <DropDown
+          placeholder={`${String(currentDay).padStart(2, "0")}일`}
+          options={dayOptions}
+          value={day}
+          onChange={setDay}
+          disabled={disabled}
+        />
+      </div>
     </div>
   );
 };

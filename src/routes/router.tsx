@@ -9,16 +9,22 @@ import SearchPage from "../pages/searchPage";
 import Detail from "../pages/detail";
 import Schedule from "../pages/detail/schedule";
 import NoticeList from "../pages/detail/tabs/noticeList";
-import ScheduleDetail from "../pages/detail/schedule/scheduleDetail";
+import ScheduleDetail from "../pages/detail/schedule/ScheduleDetail";
 import ReviewPage from "../pages/detail/review/index";
 import CrewListPage from "../pages/crewListPage";
 import CrewFilterPage from "../pages/crewFilterPage";
+import PostScheduleForm from "./../components/detail/Schedule/PostForm/PostScheduleForm";
 import CrewCreatePage from "../pages/crewCreatePage";
 import SchedulePage from "../pages/myPage/SchedulePage";
 import EditProfilePage from "../pages/myPage/EditProfilePage";
 import AppliedCrewPage from "../pages/myPage/AppliedCrewPage";
 import CreatedCrewPage from "../pages/myPage/CreatedCrewPage";
 import AlarmPage from "../pages/myPage/AlarmPage";
+import CrewMemberListPage from "../pages/detail/crewMemberList";
+
+import ApplicantsListPage from "../pages/detail/applicants";
+import PostNoticeForm from "../components/detail/notice/PostForm/PostNoticeForm";
+import NoticeDetail from "../components/detail/notice/detail/NoticeDetail";
 
 const router = createBrowserRouter([
   {
@@ -105,18 +111,37 @@ const router = createBrowserRouter([
             element: <ScheduleDetail />,
           },
           {
+            path: "schedule/post",
+            element: <PostScheduleForm />,
+          },
+          {
             path: "notice/:id",
             element: <NoticeList />,
+          },
+          {
+            path: "notice/:id/detail",
+            element: <NoticeDetail />,
           },
           {
             path: "review",
             element: <ReviewPage />,
           },
+          {
+            path: "crewmemberlist",
+            element: <CrewMemberListPage />,
+          },
+          {
+            path: "applicants",
+            element: <ApplicantsListPage />,
+          },
+          {
+            path: "notice/post",
+            element: <PostNoticeForm />,
+          },
         ],
       },
     ],
   },
-
   ...AuthRouter,
 ]);
 export default router;
