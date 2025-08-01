@@ -17,7 +17,7 @@ const ImageAttachment: React.FC = () => {
   const removeFile = (index: number) => {
     setSelectedFiles(selectedFiles.filter((_, i) => i !== index));
   };
-git 
+
   const handleAttachClick = () => {
     fileInputRef.current?.click();
   };
