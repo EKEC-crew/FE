@@ -9,8 +9,8 @@ export default function HomeCrewSection() {
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState<"popular" | "new">("popular");
 
-  // 여긴 더미 데이터지만 실제로는 fetch 상태에 따라 분기
-  const isLoading = true;
+  // 여긴 더미 데이터지만 실제로는 fetch 상태에 따라 분기 true->스켈레톤 false-> 일반 화면
+  const isLoading = false;
 
   const crewList =
     selectedTab === "popular" ? dummyPopularCrews : dummyNewCrews;
