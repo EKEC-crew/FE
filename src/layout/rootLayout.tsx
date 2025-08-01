@@ -47,7 +47,7 @@ const RootLayout = () => {
             className="relative w-full max-w-[560px] min-h-[552px] p-4"
             onClick={(e) => e.stopPropagation()}
           >
-            <CompleteModal />
+            <CompleteModal onClose={handleCloseModal} />
           </div>
         </div>
       )}
