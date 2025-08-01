@@ -7,7 +7,7 @@ const PhoneNumberForm = () => {
   const navigate = useNavigate();
 
   const handleComplete = () => {
-    navigate("/");
+    navigate("/?showCompleteModal=true");
   };
 
   return (
@@ -70,7 +70,7 @@ const PhoneNumberForm = () => {
         {/* 버튼 */}
         <div className="flex flex-col items-center w-full">
           {/* 프로필 설정 완료 버튼 */}
-          <AuthBtn onClick={handleComplete} disabled={true} className="mb-4">
+          <AuthBtn onClick={handleComplete} className="mb-4">
             프로필 설정 완료
           </AuthBtn>
 
