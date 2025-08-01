@@ -26,7 +26,6 @@ const GenderSelect = ({
   originalGender,
   buttonWidth = "13.02vw",
   buttonHeight = "4.63vh",
-  checkBoxWidth,
 }: GenderSelectProps) => {
   // 성별 옵션 배열
   const genderOptions = [

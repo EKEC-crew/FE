@@ -55,11 +55,18 @@ const DropDown = ({
   const containerClasses = `relative ${width ? "" : "w-full"}`;
   const containerStyle = width ? { width } : {};
 
+  const isActive = value !== "" && value !== null;
+
   return (
     <div className={containerClasses} style={containerStyle} ref={dropdownRef}>
       <div
-        className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-[50px] outline-2 outline-offset-[-2px] text-xl font-normal transition-all duration-200
-          ${disabled ? "bg-gray-100 text-gray-400 cursor-not-allowed opacity-50" : "bg-white text-black cursor-pointer outline-zinc-300"}`}
+        className={`w-full h-[50px] flex items-center justify-between px-3.5 py-2.5 rounded-[50px] border-2 text-xl font-normal transition-all duration-200 outline-none ${
+          disabled
+            ? "bg-gray-100 text-gray-400 cursor-not-allowed opacity-50 border-gray-400"
+            : isActive
+              ? "border-[#3A3ADB] bg-[#ECECFC] text-black cursor-pointer"
+              : "border-[#D9DADD] bg-white text-black cursor-pointer"
+        }`}
         onClick={() => {
           if (!disabled) toggleOpen();
         }}
