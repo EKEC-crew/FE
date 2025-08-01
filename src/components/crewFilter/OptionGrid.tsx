@@ -1,15 +1,15 @@
 interface OptionItem {
   label: string;
-  value: string;
+  value: number;
   icon: string;
 }
 
 interface OptionGridProps {
   options: OptionItem[];
   type: "single" | "multiple";
-  exclusivePairs?: [string, string][];
-  selected: string[];
-  onChange: (selected: string[]) => void;
+  exclusivePairs?: [number, number][];
+  selected: number[];
+  onChange: (selected: number[]) => void;
 }
 
 const OptionGrid = ({
@@ -19,7 +19,7 @@ const OptionGrid = ({
   selected,
   onChange,
 }: OptionGridProps) => {
-  const isOptionDisabled = (value: string) => {
+  const isOptionDisabled = (value: number) => {
     if (type === "single" && selected.length > 0 && !selected.includes(value)) {
       return true;
     }
@@ -32,8 +32,8 @@ const OptionGrid = ({
     return false;
   };
 
-  const toggleItem = (value: string) => {
-    let updated: string[];
+  const toggleItem = (value: number) => {
+    let updated: number[];
     if (type === "single") {
       updated = selected.includes(value) ? [] : [value];
     } else {

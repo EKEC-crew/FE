@@ -4,30 +4,45 @@ import minusIcon from "../../assets/icons/ic_minus_ arrow.svg";
 
 interface OptionItem {
   label: string;
-  icon?: string;
+  value: number;
 }
 
-type ExclusivePair = [string, string];
+type ExclusivePair = [number, number];
 
-interface OptionGridProps {
+interface OptionGridBaseProps {
   options: OptionItem[];
-  type: "single" | "multiple";
   exclusivePairs?: ExclusivePair[];
   maxSelectCount?: number;
   minSelectCount?: number;
-  selected: string[];
-  onChange: (selected: string[]) => void;
 }
 
-const OptionGrid = ({
-  options,
-  type,
-  exclusivePairs = [],
-  maxSelectCount,
-  selected,
-  onChange,
-}: OptionGridProps) => {
-  const exclusionMap = new Map<string, string[]>();
+type SingleSelectProps = {
+  type: "single";
+  selected: number | null;
+  onChange: (selected: number) => void;
+} & OptionGridBaseProps;
+
+type MultiSelectProps = {
+  type: "multiple";
+  selected: number[];
+  onChange: (selected: number[]) => void;
+} & OptionGridBaseProps;
+
+type OptionGridProps = SingleSelectProps | MultiSelectProps;
+
+const OptionGrid = (props: OptionGridProps) => {
+  const {
+    options,
+    type,
+    exclusivePairs = [],
+    maxSelectCount,
+    selected,
+    onChange,
+  } = props;
+
+  const isSingle = type === "single";
+
+  const exclusionMap = new Map<number, number[]>();
   exclusivePairs.forEach(([a, b]) => {
     if (!exclusionMap.has(a)) exclusionMap.set(a, []);
     if (!exclusionMap.has(b)) exclusionMap.set(b, []);
@@ -35,58 +50,61 @@ const OptionGrid = ({
     exclusionMap.get(b)!.push(a);
   });
 
-  const handleClick = (label: string) => {
-    const isSelected = selected.includes(label);
-
-    if (type === "single") {
-      onChange([label]);
+  const handleClick = (value: number) => {
+    if (isSingle) {
+      onChange(value);
       return;
     }
 
+    const isSelected = selected.includes(value);
     let updated = [...selected];
 
     if (isSelected) {
-      updated = updated.filter((item) => item !== label);
+      updated = updated.filter((item) => item !== value);
     } else {
       if (maxSelectCount && selected.length >= maxSelectCount) return;
 
-      // 배제되는 옵션 제거
-      const exclusives = exclusionMap.get(label) || [];
+      const exclusives = exclusionMap.get(value) || [];
       updated = updated.filter((item) => !exclusives.includes(item));
 
-      updated.push(label);
+      updated.push(value);
     }
 
     onChange(updated);
   };
 
-  const isExcluded = (label: string) => {
-    const exclusives = exclusionMap.get(label) || [];
+  const isSelected = (value: number) =>
+    isSingle ? selected === value : selected.includes(value);
+
+  const isExcluded = (value: number) => {
+    if (isSingle) return false;
+    const exclusives = exclusionMap.get(value) || [];
     return exclusives.some((ex) => selected.includes(ex));
   };
 
-  const isDisabled = (label: string) => {
+  const isDisabled = (value: number) => {
+    if (isSingle) return false;
     return (
-      !selected.includes(label) &&
+      !selected.includes(value) &&
       ((maxSelectCount && selected.length >= maxSelectCount) ||
-        isExcluded(label))
+        isExcluded(value))
     );
   };
 
   return (
     <div className="flex flex-wrap gap-3">
-      {options.map(({ label }) => {
-        const selectedItem = selected.includes(label);
-        const excluded = isExcluded(label);
-        const disabled = isDisabled(label);
+      {options.map(({ label, value }) => {
+        const selectedItem = isSelected(value);
+        const excluded = isExcluded(value);
+        const disabled = isDisabled(value);
         const showMinus = excluded;
 
         return (
           <button
-            key={label}
+            key={value}
             type="button"
-            onClick={() => handleClick(label)}
-            disabled={excluded}
+            onClick={() => handleClick(value)}
+            disabled={disabled}
             className={`
               flex items-center gap-2 px-4 h-12 rounded-full border-[2px]
               text-xl font-normal whitespace-nowrap transition cursor-pointer

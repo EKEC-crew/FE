@@ -12,8 +12,8 @@ const CrewListPage = () => {
     style: [],
     regionSido: "",
     regionGu: "",
-    age: "",
-    gender: "",
+    age: null,
+    gender: null,
   });
 
   return (

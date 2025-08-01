@@ -6,20 +6,20 @@ import manIcon from "../../assets/icons/ic_man_28.svg";
 import womanIcon from "../../assets/icons/ic_woman_28.svg";
 import {
   activityLabels,
-  ageOptions,
+  ageGroupOptions,
   categoryLabels,
   regionOptions,
   styleLabels,
 } from "./optionsDummy";
 
 export type CrewFilter = {
-  category: string[];
-  activity: string[];
-  style: string[];
+  category: number[];
+  activity: number[];
+  style: number[];
   regionSido: string;
   regionGu: string;
-  age: string;
-  gender: string;
+  age: number | null;
+  gender: number | null;
 };
 
 interface CrewFilterBarProps {
@@ -28,9 +28,9 @@ interface CrewFilterBarProps {
 }
 
 const genderOptions = [
-  { label: "선택 안 함" },
-  { label: "남성", icon: <img src={manIcon} alt="남성" /> },
-  { label: "여성", icon: <img src={womanIcon} alt="여성" /> },
+  { label: "선택 안 함", value: null },
+  { label: "남성", value: 1, icon: <img src={manIcon} alt="남성" /> },
+  { label: "여성", value: 2, icon: <img src={womanIcon} alt="여성" /> },
 ];
 
 const CrewFilterBar = ({ filters, setFilters }: CrewFilterBarProps) => {
@@ -46,8 +46,8 @@ const CrewFilterBar = ({ filters, setFilters }: CrewFilterBarProps) => {
             style: [],
             regionSido: "",
             regionGu: "",
-            age: "",
-            gender: "",
+            age: null,
+            gender: null,
           })
         }
       >
@@ -73,7 +73,7 @@ const CrewFilterBar = ({ filters, setFilters }: CrewFilterBarProps) => {
       />
       <SingleSelectDropdown
         label="연령"
-        options={ageOptions}
+        options={ageGroupOptions}
         selected={filters.age}
         onSelect={(val) => setFilters((prev) => ({ ...prev, age: val }))}
         variant="filter"

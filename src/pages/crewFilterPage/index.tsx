@@ -8,32 +8,32 @@ import {
   activityOptions,
   styleOptions,
   regionOptions,
-  ageOptions,
+  ageGroupOptions,
 } from "../../components/crewList/optionsDummy.ts";
 import { useState } from "react";
 
 const crewFilterPage = () => {
   const [filters, setFilters] = useState({
-    category: "",
-    activity: [] as string[],
-    style: [] as string[],
+    category: null as number | null,
+    activity: [] as number[],
+    style: [] as number[],
     regionSido: "",
     regionGu: "",
-    age: "",
-    gender: "",
+    age: null as number | null,
+    gender: null as number | null,
   });
 
   const isFilterSelected = () => {
     const { category, activity, style, regionSido, regionGu, age, gender } =
       filters;
     return (
-      category !== "" ||
+      category !== null ||
       activity.length > 0 ||
       style.length > 0 ||
       regionSido !== "" ||
       regionGu !== "" ||
-      age !== "" ||
-      gender !== ""
+      age !== null ||
+      gender !== null
     );
   };
 
@@ -58,7 +58,7 @@ const crewFilterPage = () => {
           onChange={(val) =>
             setFilters((prev) => ({
               ...prev,
-              category: val.length > 0 ? val[0] : "",
+              category: val.length > 0 ? val[0] : null,
             }))
           }
         />
@@ -69,8 +69,8 @@ const crewFilterPage = () => {
           type="multiple"
           options={activityOptions}
           exclusivePairs={[
-            ["오프라인", "온라인"],
-            ["정기모임", "비정기모임"],
+            [1, 2],
+            [10, 11],
           ]}
           selected={filters.activity}
           onChange={(val) => setFilters((prev) => ({ ...prev, activity: val }))}
@@ -81,7 +81,7 @@ const crewFilterPage = () => {
         <OptionGrid
           type="multiple"
           options={styleOptions}
-          exclusivePairs={[["장기참여", "단기참여"]]}
+          exclusivePairs={[[11, 12]]}
           selected={filters.style}
           onChange={(val) => setFilters((prev) => ({ ...prev, style: val }))}
         />
@@ -101,10 +101,10 @@ const crewFilterPage = () => {
             />
           </div>
           <div className="flex flex-col gap-4">
-            <h2 className="text-[2rem] font-bold text-[#000000]">연령</h2>
+            <h2 className="text-[2rem] font-bold text-[#000000]">연령대</h2>
             <SingleSelectDropdown
-              label="연령"
-              options={ageOptions}
+              label="00대"
+              options={ageGroupOptions}
               selected={filters.age}
               onSelect={(val) => setFilters((prev) => ({ ...prev, age: val }))}
               variant="filter"
