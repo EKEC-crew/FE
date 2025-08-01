@@ -1,7 +1,6 @@
-import iconMore from "../../../assets/schedule/ic_More.svg";
+import { AnimatePresence, motion } from "framer-motion";
 
-
-import { AnimatePresence, motion } from "framer-motion";type Comment = {
+type Comment = {
   id: number;
   text: string;
   date: string;
@@ -12,7 +11,7 @@ type Props = {
   comments: Comment[];
 };
 
-const ScheduleComments = ({ isOpen, comments }: Props) => {
+const NoticeComments = ({ isOpen, comments }: Props) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -48,7 +47,7 @@ const ScheduleComments = ({ isOpen, comments }: Props) => {
                     댓글
                   </button>
                   <button>
-                    <img src={iconMore} alt="더보기" className="w-5 h-5" />
+                    <img src="/schedule/iconMore.svg" alt="더보기" />
                   </button>
                 </div>
               </div>
@@ -60,4 +59,4 @@ const ScheduleComments = ({ isOpen, comments }: Props) => {
   );
 };
 
-export default ScheduleComments;
+export default NoticeComments;

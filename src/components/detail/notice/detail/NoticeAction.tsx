@@ -1,13 +1,12 @@
 import iconHeart from "../../../assets/schedule/ic_Heart.svg";
 import iconShare from "../../../assets/schedule/ic_Share.svg";
 import iconDown from "../../../assets/schedule/ic_Down.svg";
-
 type Props = {
   isCommentOpen: boolean;
   toggleComment: () => void;
 };
 
-const ScheduleAction = ({ isCommentOpen, toggleComment }: Props) => {
+const NoticeAction = ({ isCommentOpen, toggleComment }: Props) => {
   return (
     <div className="flex justify-between items-center mt-4">
       <div className="flex items-center gap-2">
@@ -47,4 +46,4 @@ const ScheduleAction = ({ isCommentOpen, toggleComment }: Props) => {
   );
 };
 
-export default ScheduleAction;
+export default NoticeAction;
