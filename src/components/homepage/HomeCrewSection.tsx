@@ -3,13 +3,19 @@ import CrewCard from "./CrewCard";
 import CrewSelector from "./CrewSelector";
 import { useNavigate } from "react-router-dom";
 import { dummyPopularCrews, dummyNewCrews } from "./crewDummy";
+import HomeCrewSectionSkeleton from "./HomeCrewSectionSkeleton";
 
 export default function HomeCrewSection() {
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState<"popular" | "new">("popular");
 
+  // 여긴 더미 데이터지만 실제로는 fetch 상태에 따라 분기
+  const isLoading = true;
+
   const crewList =
     selectedTab === "popular" ? dummyPopularCrews : dummyNewCrews;
+
+  if (isLoading) return <HomeCrewSectionSkeleton />;
 
   return (
     <section>
