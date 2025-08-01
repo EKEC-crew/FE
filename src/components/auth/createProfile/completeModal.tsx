@@ -1,8 +1,11 @@
 import CompleteLogo from "../../../assets/logo/completeLogo.svg";
+import Modal from "../../common/Modal";
 
-const CompleteModal = () => {
+type Props = { onClose: () => void };
+
+const CompleteModal = ({ onClose }: Props) => {
   return (
-    <div className="w-full max-w-[560px] h-auto min-h-[552px] bg-white rounded-[20px] flex flex-col items-center justify-center p-8 mx-auto">
+    <Modal onClose={onClose} maxWidth="max-w-[560px]" padding="p-8">
       <div className="flex flex-col items-center text-center space-y-6">
         <img
           src={CompleteLogo}
@@ -18,7 +21,7 @@ const CompleteModal = () => {
           자신에게 맞는 크루원을 찾아 활동해보세요
         </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 
