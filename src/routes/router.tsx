@@ -20,6 +20,9 @@ import EditProfilePage from "../pages/myPage/EditProfilePage";
 import AppliedCrewPage from "../pages/myPage/AppliedCrewPage";
 import CreatedCrewPage from "../pages/myPage/CreatedCrewPage";
 import AlarmPage from "../pages/myPage/AlarmPage";
+import CrewMemberListPage from "../pages/detail/crewMemberList";
+
+import ApplicantsListPage from "../pages/detail/applicants";
 import PostNoticeForm from "../components/detail/notice/PostForm/PostNoticeForm";
 import NoticeDetail from "../components/detail/notice/detail/NoticeDetail";
 import Bulletin from "../pages/detail/bulletin";
@@ -125,6 +128,14 @@ const router = createBrowserRouter([
           {
             path: "review",
             element: <ReviewPage />,
+          },
+          {
+            path: "crewmemberlist",
+            element: <CrewMemberListPage />,
+          },
+          {
+            path: "applicants",
+            element: <ApplicantsListPage />,
           },
           {
             path: "notice/post",
