@@ -7,8 +7,7 @@ interface DropdownOption {
 }
 
 interface DropDownProps {
-  width: string;
-  height: string;
+  width?: string;
   placeholder: string;
   options: DropdownOption[];
   value: string;
@@ -19,7 +18,6 @@ interface DropDownProps {
 
 const DropDown = ({
   width,
-  height,
   placeholder,
   options,
   value,
@@ -54,12 +52,14 @@ const DropDown = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const containerClasses = `relative ${width ? "" : "w-full"}`;
+  const containerStyle = width ? { width } : {};
+
   return (
-    <div className="relative" style={{ width }} ref={dropdownRef}>
+    <div className={containerClasses} style={containerStyle} ref={dropdownRef}>
       <div
         className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-[50px] outline-2 outline-offset-[-2px] text-xl font-normal transition-all duration-200
           ${disabled ? "bg-gray-100 text-gray-400 cursor-not-allowed opacity-50" : "bg-white text-black cursor-pointer outline-zinc-300"}`}
-        style={{ height }}
         onClick={() => {
           if (!disabled) toggleOpen();
         }}

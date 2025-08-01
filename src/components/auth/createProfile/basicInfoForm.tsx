@@ -130,7 +130,7 @@ const BasicInfoForm = ({
       </div>
 
       {/* 생년월일 */}
-      <div className="mb-2 w-full">
+      <div className="mb-3 w-full">
         <span className="text-[#2B2C31] text-xl font-semibold">생년월일</span>
         <span className="text-[#FF4949] text-xl font-semibold">*</span>
       </div>
@@ -142,7 +142,7 @@ const BasicInfoForm = ({
       </div>
 
       {/* 다음 버튼 */}
-      <div className="w-full mt-6">
+      <div className="w-full">
         <AuthBtn onClick={onNext} disabled={!schemaValid} className="mb-6">
           다음
         </AuthBtn>

@@ -26,7 +26,7 @@ const GenderSelect = ({
   originalGender,
   buttonWidth = "13.02vw",
   buttonHeight = "4.63vh",
-  checkBoxWidth = "27.08vw",
+  checkBoxWidth,
 }: GenderSelectProps) => {
   // 성별 옵션 배열
   const genderOptions = [
@@ -51,10 +51,10 @@ const GenderSelect = ({
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center w-full">
       {/* 성별 버튼 */}
       <div
-        className="flex justify-center items-center mb-4"
+        className="flex justify-center items-center mb-4 w-full"
         style={{ gap: "1.04vw" }}
       >
         {genderOptions.map(({ label, value, icon }) => {
@@ -84,7 +84,7 @@ const GenderSelect = ({
       </div>
 
       {/* 밝히고 싶지 않음 */}
-      <div className="flex items-center mb-6" style={{ width: checkBoxWidth }}>
+      <div className="flex items-center mb-6 w-full">
         <button
           type="button"
           disabled={notDefineDisabled}

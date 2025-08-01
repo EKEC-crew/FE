@@ -8,7 +8,7 @@ import SubmitButton from "./SubmitButton";
 import Header from "../../header";
 import Notice from "../../notice";
 import Tabs from "../../tabs";
-import "../../../../index.css";
+
 const PostScheduleForm = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
