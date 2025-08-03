@@ -4,7 +4,6 @@ import MyPage from "../pages/myPage";
 import NotFoundPage from "../pages/404";
 import Main from "../pages/homePage";
 import AuthRouter from "./authRouter";
-import CrewPage from "../pages/crewPage";
 import SearchPage from "../pages/searchPage";
 import Detail from "../pages/detail";
 import Schedule from "../pages/detail/schedule";
@@ -39,15 +38,7 @@ const router = createBrowserRouter([
         index: true,
         element: <Main />,
       },
-      {
-        path: "crewPage",
-        children: [
-          {
-            index: true,
-            element: <CrewPage />,
-          },
-        ],
-      },
+
       {
         path: "searchPage",
         children: [
@@ -150,8 +141,8 @@ const router = createBrowserRouter([
             element: <BulletinDetail />,
           },
           {
-            path: "bulletin/post", 
-            element: <PostBulletinForm />, 
+            path: "bulletin/post",
+            element: <PostBulletinForm />,
           },
         ],
       },
