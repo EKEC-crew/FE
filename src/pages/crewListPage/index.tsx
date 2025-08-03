@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CrewCardList from "../../components/crewList/CrewCardList";
 import CrewFilterBar from "../../components/crewList/CrewFilterBar";
 import CrewSortBar from "../../components/crewList/CrewSortBar";
@@ -6,14 +6,18 @@ import Pagination from "../../components/crewList/Pagination";
 import type { CrewFilter } from "../../components/crewList/CrewFilterBar";
 
 const CrewListPage = () => {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, []);
+
   const [filters, setFilters] = useState<CrewFilter>({
     category: [],
     activity: [],
     style: [],
     regionSido: "",
     regionGu: "",
-    age: "",
-    gender: "",
+    age: null,
+    gender: null,
   });
 
   return (

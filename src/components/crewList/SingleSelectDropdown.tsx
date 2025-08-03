@@ -2,26 +2,27 @@ import { useEffect, useRef, useState } from "react";
 import downIcon24 from "../../assets/icons/ic_Down_24.svg";
 import downIcon28 from "../../assets/icons/ic_Down_28.svg";
 
-interface SingleOption {
+interface SingleOption<T = string> {
   label: string;
+  value: T;
   icon?: string | React.ReactNode;
 }
 
-interface SingleSelectDropdownProps {
+interface SingleSelectDropdownProps<T = string> {
   label: string;
-  options: SingleOption[];
-  selected: string | null;
-  onSelect: (selected: string) => void;
+  options: SingleOption<T>[];
+  selected: T | null;
+  onSelect: (selected: T) => void;
   variant?: "filter" | "sort"; // 버튼 스타일 구분
 }
 
-const SingleSelectDropdown = ({
+const SingleSelectDropdown = <T,>({
   label,
   options,
   selected,
   onSelect,
   variant = "filter",
-}: SingleSelectDropdownProps) => {
+}: SingleSelectDropdownProps<T>) => {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -35,14 +36,17 @@ const SingleSelectDropdown = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleSelect = (option: string) => {
+  const handleSelect = (option: T) => {
     onSelect?.(option);
     setOpen(false);
   };
 
   const isFilter = variant === "filter";
-  const isSelected = selected !== null && selected !== "";
-  const buttonLabel = isSelected ? selected : label;
+  const isSelected = selected !== null;
+
+  const selectedOption = options.find((opt) => opt.value === selected);
+  const selectedLabel = selectedOption?.label;
+  const buttonLabel = selectedLabel || label;
 
   return (
     <div className="relative inline-block" ref={ref}>
@@ -67,11 +71,11 @@ const SingleSelectDropdown = ({
         <div className="absolute mt-2 pt-4 bg-white shadow-md rounded-md z-10 w-max min-w-full">
           <ul className="flex flex-col gap-2 max-h-[250px] overflow-y-auto">
             {options.map((opt) => {
-              const isOptSelected = selected === opt.label;
+              const isOptSelected = selected === opt.value;
               return (
                 <li
                   key={opt.label}
-                  onClick={() => handleSelect(opt.label)}
+                  onClick={() => handleSelect(opt.value)}
                   className="cursor-pointer w-full"
                 >
                   <div

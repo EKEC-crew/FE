@@ -2,8 +2,8 @@ import manIcon from "../../assets/icons/ic_man_28.svg";
 import womanIcon from "../../assets/icons/ic_woman_28.svg";
 
 interface GenderSelectProps {
-  value: string | null;
-  onChange: (value: string) => void;
+  value: number | null;
+  onChange: (value: number) => void;
   disabled?: boolean;
 }
 
@@ -13,8 +13,8 @@ const GenderSelect = ({
   disabled = false,
 }: GenderSelectProps) => {
   const genderOptions = [
-    { label: "남성", value: "male", icon: manIcon },
-    { label: "여성", value: "female", icon: womanIcon },
+    { label: "남성", value: 1, icon: manIcon },
+    { label: "여성", value: 2, icon: womanIcon },
   ];
 
   return (

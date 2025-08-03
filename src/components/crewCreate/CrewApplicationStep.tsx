@@ -1,15 +1,23 @@
 import { useState } from "react";
 import QuestionItem from "./QuestionItem";
+import type { QuestionData, ServerQuestion } from "../../types/crewCreate/crew";
 
-export interface QuestionData {
-  id: number;
-  type: "checkbox" | "long";
-  question: string;
-  options: string[];
-  required: boolean;
-}
+const mapToServerQuestions = (questions: QuestionData[]): ServerQuestion[] => {
+  return questions.map((q) => ({
+    question: q.question,
+    type: q.type === "checkbox" ? 0 : 1, // 체크박스형 : 0 / 장문형 : 1
+    choices:
+      q.type === "checkbox" ? q.options.filter((opt) => opt.trim()) : undefined,
+    etc: q.hasEtc ? 1 : 0,
+    required: q.required ? 1 : 0,
+  }));
+};
 
-const CrewApplicationStep = () => {
+const CrewApplicationStep = ({
+  onSubmit,
+}: {
+  onSubmit: (questions: ServerQuestion[]) => void;
+}) => {
   const [questions, setQuestions] = useState<QuestionData[]>([
     {
       id: Date.now(),
@@ -91,9 +99,11 @@ const CrewApplicationStep = () => {
           />
         ))}
       </div>
-      {/* 버튼 */}
+      {/* 완료 버튼 */}
       <div className="w-full flex justify-center mt-8">
         <button
+          onClick={() => onSubmit(mapToServerQuestions(questions))}
+          disabled={!isValid}
           className={`w-full h-17 text-xl font-semibold rounded-lg cursor-pointer 
             ${
               isValid
