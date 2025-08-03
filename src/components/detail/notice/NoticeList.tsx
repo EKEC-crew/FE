@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NoticeItem from "../notice/NoticeItem";
 import Pagination from "../notice/button/pagination";
 import PostButton from "../notice/button/post";
@@ -8,18 +8,22 @@ import { generateNoticeData } from "../notice/constants";
 
 const NoticeList: React.FC = () => {
   const navigate = useNavigate();
-  
+
+  const { crewId } = useParams();
   const [activeTab] = useState<string>("notice");
   const [notices] = useState<Notice[]>(generateNoticeData());
 
-  const handleNoticeClick = useCallback((notice: Notice) => {
-    console.log("공지사항 클릭:", notice);
-    navigate(`/detail/notice/${notice.id}/detail`);
-  }, [navigate]);
+  const handleNoticeClick = useCallback(
+    (notice: Notice) => {
+      console.log("공지사항 클릭:", notice);
+      navigate(`/crew/${crewId}/notice/${notice.id}`);
+    },
+    [navigate]
+  );
 
   const handleWriteClick = useCallback(() => {
     console.log("글쓰기 버튼 클릭");
-    navigate("/detail/notice/post");
+    navigate(`/crew/${crewId}/notice/post`);
   }, [navigate]);
 
   const renderContent = () => {
@@ -66,7 +70,9 @@ const NoticeList: React.FC = () => {
     <div className="flex justify-center min-h-screen bg-gray-50 pt-8">
       <div className="w-full max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-sm">
         <span className="text-xl font-bold mb-2">공지</span>
-        <p className="text-gray-600 text-sm pt-2 py-4">전체 {notices.length}건</p>
+        <p className="text-gray-600 text-sm pt-2 py-4">
+          전체 {notices.length}건
+        </p>
         {renderContent()}
       </div>
     </div>

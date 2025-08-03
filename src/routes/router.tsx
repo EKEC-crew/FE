@@ -90,7 +90,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "detail",
+        path: "crew/:crewId",
         children: [
           {
             index: true,
@@ -137,7 +137,7 @@ const router = createBrowserRouter([
             element: <Bulletin />,
           },
           {
-            path: "bulletin/:id/detail",
+            path: "bulletin/:id",
             element: <BulletinDetail />,
           },
           {
