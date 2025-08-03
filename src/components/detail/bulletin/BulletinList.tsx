@@ -1,12 +1,12 @@
-import React, { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { BULLETIN_LIST } from './constants';
-import BulletinPostButton from './button/post';
-import Pagination from './button/pagination';
-import BulletinItem from './BulletinItem';
-import Header from '../header';
-import Tabs from '../tabs';
-import Notice from '../notice';
+import React, { useState, useCallback } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { BULLETIN_LIST } from "./constants";
+import BulletinPostButton from "./button/post";
+import Pagination from "./button/pagination";
+import BulletinItem from "./BulletinItem";
+import Header from "../header";
+import Tabs from "../tabs";
+import Notice from "../notice";
 
 interface Bulletin {
   id: number;
@@ -19,18 +19,22 @@ interface Bulletin {
 
 const BulletinList: React.FC = () => {
   const navigate = useNavigate();
-  
+  const { crewId } = useParams();
+
   const [activeTab] = useState<string>("bulletin");
   const [bulletins] = useState<Bulletin[]>(BULLETIN_LIST);
 
-  const handleBulletinClick = useCallback((bulletin: Bulletin) => {
-    console.log("게시글 클릭:", bulletin);
-    navigate(`/detail/bulletin/${bulletin.id}/detail`);
-  }, [navigate]);
+  const handleBulletinClick = useCallback(
+    (bulletin: Bulletin) => {
+      console.log("게시글 클릭:", bulletin);
+      navigate(`/crew/${crewId}/bulletin/${bulletin.id}`);
+    },
+    [navigate]
+  );
 
   const handleWriteClick = useCallback(() => {
     console.log("글쓰기 버튼 클릭");
-    navigate("/detail/bulletin/post");
+    navigate(`/crew/${crewId}/bulletin/post`);
   }, [navigate]);
 
   const renderContent = () => {
@@ -77,16 +81,18 @@ const BulletinList: React.FC = () => {
     <div className="bg-gray-100 min-h-screen">
       <div className="py-6 space-y-6 pt-12 mt-2">
         <div>
-          <Header/>
+          <Header />
           <Tabs />
         </div>
       </div>
       <div className="w-full max-w-4xl mx-auto px-1">
-      <Notice/>
-    </div>
+        <Notice />
+      </div>
       <div className="w-full max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-sm mt-8 mb-8">
         <span className="text-xl font-bold mb-2">게시판</span>
-        <p className="text-gray-600 text-sm pt-2 py-4">전체 {bulletins.length}건</p>
+        <p className="text-gray-600 text-sm pt-2 py-4">
+          전체 {bulletins.length}건
+        </p>
         {renderContent()}
       </div>
     </div>

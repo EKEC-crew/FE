@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 type PostButtonProps = {
   onClick?: () => void;
@@ -7,9 +7,10 @@ type PostButtonProps = {
 
 const PostButton: React.FC<PostButtonProps> = () => {
   const navigate = useNavigate();
+  const { crewId } = useParams();
 
   const handleClick = () => {
-    navigate("/bulletin/post");
+    navigate(`/crew/${crewId}/bulletin/post`);
   };
 
   return (

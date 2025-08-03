@@ -19,3 +19,10 @@ export interface HeaderProps {
   categoryName: string;
   totalCount: number;
 }
+export interface Bulletin {
+  id: number;
+  title: string;
+  date: string;
+  author: string;
+  hasAttachment: boolean;
+}
