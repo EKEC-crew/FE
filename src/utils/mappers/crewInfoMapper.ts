@@ -36,7 +36,7 @@ export const toServerCrewInfo = ({
     filters.regionSido && filters.regionGu
       ? `${filters.regionSido} ${filters.regionGu}`
       : "";
-  const regionId = regionIdMap[regionLabel] ?? 0;
+  const regionId = regionIdMap[regionLabel] ?? 1;
 
   console.log("[regionLabel]", `"${regionLabel}"`);
   console.log("[regionId]", regionId);

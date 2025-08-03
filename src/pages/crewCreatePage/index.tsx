@@ -34,7 +34,7 @@ const crewCreatePage = () => {
     //const token = localStorage.getItem("accessToken");
 
     try {
-      const res = await API.post("/api/crew/create", formData, {
+      const res = await API.post("/crew/create", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           //Authorization: `Bearer ${token}`,
