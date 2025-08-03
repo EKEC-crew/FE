@@ -16,6 +16,7 @@ interface CrewInfoMapperParams {
   selectedGender: number | null;
   isHeadcountUnlimited: boolean;
   isGenderUnlimited: boolean;
+  admin: number;
 }
 
 export const toServerCrewInfo = ({
@@ -37,6 +38,9 @@ export const toServerCrewInfo = ({
       : "";
   const regionId = regionIdMap[regionLabel] ?? 0;
 
+  console.log("[regionLabel]", `"${regionLabel}"`);
+  console.log("[regionId]", regionId);
+
   return {
     name: crewName,
     recruitMessage: "선택해주셔서 감사합니다!",
@@ -48,5 +52,6 @@ export const toServerCrewInfo = ({
     region: regionId,
     activities,
     styles,
+    admin: 1,
   };
 };

@@ -11,8 +11,11 @@ import {
   ageGroupOptions,
 } from "../../components/crewList/optionsDummy.ts";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const crewFilterPage = () => {
+  const navigate = useNavigate();
+
   const [filters, setFilters] = useState({
     category: null as number | null,
     activity: [] as number[],
@@ -122,6 +125,11 @@ const crewFilterPage = () => {
         <div className="w-full flex justify-center mt-20  px-18">
           <button
             disabled={!isFilterSelected()}
+            onClick={() => {
+              if (isFilterSelected()) {
+                navigate("/crewListPage");
+              }
+            }}
             className={`w-full h-17 text-[1.675rem] font-semibold rounded-lg 
           ${
             isFilterSelected()

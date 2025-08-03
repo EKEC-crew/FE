@@ -41,8 +41,12 @@ const crewCreatePage = () => {
         },
       });
       console.log("성공:", res.data);
-    } catch (err) {
+    } catch (err: any) {
       console.error("실패:", err);
+      if (err.response) {
+        console.log("서버 응답 상태코드:", err.response.status);
+        console.log("서버 응답 메시지:", err.response.data);
+      }
     }
   };
 

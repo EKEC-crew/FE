@@ -9,6 +9,7 @@ export interface CrewInfo {
   region: number;
   activities: number[];
   styles: number[];
+  admin: number;
 }
 
 export interface ServerQuestion {

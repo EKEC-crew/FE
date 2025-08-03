@@ -36,6 +36,8 @@ const CrewInfoStep = ({
   const [isGenderUnlimited, setIsGenderUnlimited] = useState(false);
 
   const handleNextClick = () => {
+    const admin = 1;
+
     const crewInfo = toServerCrewInfo({
       crewName,
       crewDescription,
@@ -48,6 +50,7 @@ const CrewInfoStep = ({
       selectedGender,
       isHeadcountUnlimited,
       isGenderUnlimited,
+      admin,
     });
 
     onNext({
