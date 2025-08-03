@@ -2,7 +2,7 @@ import bennerLogo from "../../assets/logo/img_crew_banner.svg";
 import { useNavigate } from "react-router-dom";
 import CategoryBgImgs from "../CategoryBgImgs"; // CategoryBgImgs 가져오기
 
-interface Crew {
+export interface Crew {
   id: number;
   name: string;
   description: string;
@@ -31,6 +31,10 @@ export default function CrewCard({ crew }: CrewCardProps) {
       <img
         src={crew.imageUrl || bennerLogo}
         alt={crew.name}
+        onError={(e) => {
+          console.error(`❌ 이미지 로드 실패: ${crew.imageUrl}`);
+          e.currentTarget.src = bennerLogo;
+        }}
         className="w-[27.625rem] h-[14.0625rem] object-cover rounded-lg mb-[0.5rem]"
       />
 
