@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // 추가
+import { useNavigate, useParams } from "react-router-dom";
 import DefaultCrewProfile from "/src/assets/header/ic_DefaultCrewProfile.png";
 import ReviewStar from "/src/assets/header/ic_ReviewStar.png";
 import UserCircle from "/src/assets/header/ic_UserCircle.svg";
@@ -8,6 +8,7 @@ import crown from "/src/assets/header/ic_crown.png";
 function Header() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { crewId } = useParams();
 
   return (
     <div className="bg-white w-full shadow-lg">
@@ -32,7 +33,7 @@ function Header() {
 
               {/* 버튼으로 수정 -> 클릭 시 이동 */}
               <button
-                onClick={() => navigate("/detail/crewmemberlist")}
+                onClick={() => navigate(`/crew/${crewId}/crewmemberlist`)}
                 className="text-xs bg-indigo-500 text-white px-2 py-1 rounded-lg hover:bg-indigo-600 transition"
               >
                 크루 45/50
