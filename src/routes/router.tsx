@@ -141,15 +141,13 @@ const router = createBrowserRouter([
             element: <BulletinDetail />,
           },
           {
-<<<<<<< HEAD
             path: "bulletin/1/post",
             element: <PostBulletinForm />,
-          }
-=======
+          },
+          {
             path: "bulletin/post",
             element: <PostBulletinForm />,
           },
->>>>>>> 1b37d1948989278517f5db8e89805e4fd58c6d56
         ],
       },
     ],
