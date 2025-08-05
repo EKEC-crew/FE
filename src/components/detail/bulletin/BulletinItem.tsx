@@ -43,7 +43,7 @@ const BulletinItem: React.FC<BulletinItemProps> = ({
             <span className="text-blue-500 text-xs ml-1">📎</span>
           )}
           {bulletin.commentCount > 0 && (
-            <span className="text-blue-500 text-xs">
+            <span className="text-blue-500 text-xs px-2">
               [{bulletin.commentCount}]
             </span>
           )}
@@ -51,7 +51,7 @@ const BulletinItem: React.FC<BulletinItemProps> = ({
       </div>
 
       {/* 오른쪽 영역: 날짜와 작성자 */}
-      <div className="flex items-center text-gray-400 text-xs md:text-sm space-x-2 flex-shrink-0">
+      <div className="flex items-center text-gray-400 text-xs md:text-sm space-x-4 flex-shrink-0">
         <span>{bulletin.date}</span>
         <span>{bulletin.author}</span>
       </div>

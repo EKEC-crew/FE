@@ -1,7 +1,14 @@
 export interface BulletinApiResponse {
   resultType: "SUCCESS" | "ERROR";
   error: string | null;
-  data: BulletinApiData[];
+  data: {
+    posts: BulletinApiData[];
+    totalElements: number;
+    totalPages: number;
+    hasNext: boolean;
+    pageNum: number;
+    pageSize: number;
+  };
 }
 
 export interface BulletinDetailApiResponse {
@@ -17,6 +24,8 @@ export interface BulletinApiData {
   nickname: string;
   commentCount: number;
   likeCount: number;
+  imageCount: number;
+  isPopular: boolean;
   // detail 필드들
   content?: string;
   profileImage?: string;
@@ -39,4 +48,15 @@ export interface Bulletin {
   content?: string;
   profileImage?: string;
   images?: string[];
+}
+
+export interface BulletinListResponse {
+  bulletins: Bulletin[];
+  pagination: {
+    totalElements: number;
+    totalPages: number;
+    hasNext: boolean;
+    pageNum: number;
+    pageSize: number;
+  };
 }

@@ -4,6 +4,7 @@ import type {
   BulletinDetailApiResponse,
   BulletinApiData,
   Bulletin,
+  BulletinListResponse,
 } from "../../types/bulletin/types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -43,8 +44,8 @@ const transformBulletinData = (apiData: BulletinApiData): Bulletin => ({
   author: apiData.nickname,
   commentCount: apiData.commentCount,
   likeCount: apiData.likeCount || 0,
-  isPopular: (apiData.likeCount || 0) > 10,
-  hasAttachment: (apiData.images?.length ?? 0) > 0,
+  isPopular: apiData.isPopular,
+  hasAttachment: (apiData.imageCount || 0) > 0,
   content: apiData.content,
   profileImage: apiData.profileImage,
   images: apiData.images?.map((img) => getImageUrl(img.imageName)) || [],
@@ -55,7 +56,7 @@ const fetchBulletinList = async (
   crewId: number,
   page: number = 1,
   size: number = 10
-): Promise<Bulletin[]> => {
+): Promise<BulletinListResponse> => {
   const response = await fetch(
     `${API_BASE_URL}/crew/${crewId}/post/list?page=${page}&size=${size}`,
     {
@@ -76,7 +77,16 @@ const fetchBulletinList = async (
     throw new Error(result.error || "게시글을 불러오는데 실패했습니다.");
   }
 
-  return result.data.map(transformBulletinData);
+  return {
+    bulletins: result.data.posts.map(transformBulletinData),
+    pagination: {
+      totalElements: result.data.totalElements,
+      totalPages: result.data.totalPages,
+      hasNext: result.data.hasNext,
+      pageNum: result.data.pageNum,
+      pageSize: result.data.pageSize,
+    },
+  };
 };
 
 export const useBulletinList = (
