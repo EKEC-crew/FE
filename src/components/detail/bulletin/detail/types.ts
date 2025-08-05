@@ -1,4 +1,3 @@
-// types.ts 예시
 export interface Bulletin {
   id: number;
   title: string;
@@ -6,8 +5,12 @@ export interface Bulletin {
   time: string;
   hasLabel: boolean;
   labelText?: string;
-  author?: string; // 작성자 필드 추가
-  content?: string; // 내용 필드 (필요시)
+  author?: string; 
+  content?: string; 
+  type: string;
+  permission: string[]; 
+  fee: number; 
+
 }
 
 export interface NoticeItemProps {

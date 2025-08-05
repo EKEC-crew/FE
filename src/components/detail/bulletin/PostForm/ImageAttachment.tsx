@@ -1,9 +1,16 @@
-// src/components/detail/bulletin/PostForm/ImageAttachment.tsx
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-const ImageAttachment: React.FC = () => {
+interface ImageAttachmentProps {
+  onValueChange?: (files: File[]) => void;
+}
+
+const ImageAttachment: React.FC<ImageAttachmentProps> = ({ onValueChange }) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    onValueChange?.(selectedFiles);
+  }, [selectedFiles, onValueChange]);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);

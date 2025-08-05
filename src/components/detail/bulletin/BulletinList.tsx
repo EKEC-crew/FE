@@ -28,11 +28,6 @@ const BulletinList: React.FC = () => {
     navigate(`/detail/bulletin/${bulletin.id}/detail`);
   }, [navigate]);
 
-  const handleWriteClick = useCallback(() => {
-    console.log("글쓰기 버튼 클릭");
-    navigate("/detail/bulletin/post");
-  }, [navigate]);
-
   const renderContent = () => {
     switch (activeTab) {
       case "bulletin":
@@ -52,7 +47,7 @@ const BulletinList: React.FC = () => {
               <Pagination />
             </div>
             <div className="flex justify-center mt-1">
-              <BulletinPostButton onClick={handleWriteClick} />
+              <BulletinPostButton />
             </div>
           </>
         );

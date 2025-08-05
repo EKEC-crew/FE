@@ -1,3 +1,4 @@
+import { useState } from "react";
 import TypeSelector from "./TypeSelector";
 import DateSelector from "./DateSelector";
 import PermissionSelector from "./PermissionSelector";
@@ -10,6 +11,10 @@ import Notice from "../../notice";
 import Tabs from "../../tabs";
 
 const PostScheduleForm = () => {
+  // ✅ 상태 추가
+  const [type, setType] = useState("regular");
+  const [isRequired, setIsRequired] = useState(true);
+
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="mt-12 shadow-none">
@@ -27,7 +32,12 @@ const PostScheduleForm = () => {
             </div>
 
             <div className="space-y-6 px-2 lg:px-6">
-              <TypeSelector />
+              <TypeSelector
+                type={type}
+                setType={setType}
+                isRequired={isRequired}
+                setIsRequired={setIsRequired}
+              />
               <DateSelector />
               <PermissionSelector />
               <TitleInput />

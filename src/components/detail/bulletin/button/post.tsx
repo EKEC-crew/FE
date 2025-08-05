@@ -1,27 +1,20 @@
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
-type PostButtonProps = {
-  onClick?: () => void;
-};
-
-const PostButton: React.FC<PostButtonProps> = () => {
+const BulletinPostButton: React.FC = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate("/bulletin/post");
+    navigate("/detail/bulletin/1/post");
   };
 
   return (
-    <div className="flex justify-center mt-3 md:mt-1">
-      <button
-        onClick={handleClick}
-        className="bg-[#3A3ADB] hover:bg-blue-700 text-white text-sm py-1.5 px-7 rounded-lg"
-      >
-        글쓰기
-      </button>
-    </div>
+    <button
+      onClick={handleClick}
+      className="bg-[#3A3ADB] hover:bg-blue-700 text-white text-sm py-1.5 px-7 rounded-lg"
+    >
+      글쓰기
+    </button>
   );
 };
 
-export default PostButton;
+export default BulletinPostButton;
