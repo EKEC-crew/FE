@@ -6,8 +6,11 @@ const BulletinPostButton: React.FC = () => {
   const { crewId } = useParams();
 
   const handleClick = () => {
+    if (!crewId) {
+      alert("crewId가 없습니다!");
+      return;
+    }
 
-    navigate("/detail/bulletin/1/post");
     navigate(`/crew/${crewId}/bulletin/post`);
   };
 
@@ -20,4 +23,5 @@ const BulletinPostButton: React.FC = () => {
     </button>
   );
 };
+
 export default BulletinPostButton;
