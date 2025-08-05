@@ -31,10 +31,6 @@ const BulletinList: React.FC = () => {
     },
     [navigate]
   );
-  const handleWriteClick = useCallback(() => {
-    console.log("글쓰기 버튼 클릭");
-    navigate(`/crew/${crewId}/bulletin/post`);
-  }, [navigate]);
   const renderContent = () => {
     switch (activeTab) {
       case "bulletin":
