@@ -1,10 +1,14 @@
-import { useNavigate } from "react-router-dom";
+import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 const BulletinPostButton: React.FC = () => {
   const navigate = useNavigate();
+  const { crewId } = useParams();
 
   const handleClick = () => {
+
     navigate("/detail/bulletin/1/post");
+    navigate(`/crew/${crewId}/bulletin/post`);
   };
 
   return (
@@ -16,5 +20,4 @@ const BulletinPostButton: React.FC = () => {
     </button>
   );
 };
-
 export default BulletinPostButton;

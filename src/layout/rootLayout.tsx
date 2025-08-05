@@ -1,5 +1,3 @@
-// RootLayout.tsx
-
 import { useEffect, useState } from "react";
 import { Outlet, useSearchParams } from "react-router-dom";
 import LeftGnb from "../components/LeftGnb/LeftGnb";

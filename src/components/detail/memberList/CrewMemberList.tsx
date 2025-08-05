@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import MemberCard from "./MemberCard";
 import type { RoleType } from "../../../types/detail/crewMember";
 import Pagination from "../../crewList/Pagination";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 // members 더미 데이터
 const members: { id: number; name: string; role?: RoleType }[] = [
@@ -44,6 +44,8 @@ export default function CrewMemberList() {
   const [openToggleId, setOpenToggleId] = useState<number | null>(null);
   const [currentUserRole] = useState<RoleType>("크루장");
 
+  const { crewId } = useParams();
+
   // 페이지네이션 상태
   const pageSize = 24; // 3 x 8 = 24명씩 보여주기
   const [currentPage, setCurrentPage] = useState(1);
@@ -81,7 +83,7 @@ export default function CrewMemberList() {
         </div>
         {currentUserRole === "크루장" && (
           <button
-            onClick={() => navigate("/detail/applicants")} // 지원자 목록 페이지로 이동
+            onClick={() => navigate(`/crew/${crewId}/applicants`)} // 지원자 목록 페이지로 이동
             className="w-[11.0625rem] h-[3.4375rem] rounded-[0.75rem] text-[1.625rem] bg-[#3A3ADB] text-white"
           >
             지원확인

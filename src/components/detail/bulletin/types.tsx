@@ -1,0 +1,27 @@
+export interface Notice {
+  id: number;
+  title: string;
+  date: string;
+  time: string;
+  hasLabel: boolean;
+  labelText?: string;
+}
+
+export interface NoticeItemProps {
+  notice: Notice;
+  onNoticeClick?: (notice: Notice) => void;
+  index: number;
+}
+
+export interface HeaderProps {
+  categoryNumber: number;
+  categoryName: string;
+  totalCount: number;
+}
+export interface Bulletin {
+  id: number;
+  title: string;
+  date: string;
+  author: string;
+  hasAttachment: boolean;
+}

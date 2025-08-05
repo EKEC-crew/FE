@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import ConfirmDeleteModal from "./ConfirmDeleteModal";
-import type { QuestionData } from "./CrewApplicationStep";
+import type { QuestionData } from "../../types/crewCreate/crew";
 import uncheckedIcon from "../../assets/icons/ic_check_de.svg";
 import deleteIcon from "../../assets/icons/ic_trash_ arrow.svg";
 import addIcon from "../../assets/icons/ic_circleplus_ arrow.svg";
@@ -33,8 +33,15 @@ const QuestionItem = ({
   const [deleteModal, setDeleteModal] = useState(false);
 
   useEffect(() => {
-    onChange({ ...data, question, type, options, required: isRequired });
-  }, [question, type, options, isRequired]);
+    onChange({
+      ...data,
+      question,
+      type,
+      options,
+      required: isRequired,
+      hasEtc,
+    });
+  }, [question, type, options, isRequired, hasEtc]);
 
   const handleOptionChange = (i: number, value: string) => {
     const newOptions = [...options];

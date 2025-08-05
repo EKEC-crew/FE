@@ -145,7 +145,7 @@ const RegionSelectDropdown = ({
                   {r.city} {r.district}
                   <button
                     onClick={() => handleRemoveSelected(r.city, r.district)}
-                    className="text-[#5E6068]"
+                    className="text-[#5E6068] cursor-pointer"
                   >
                     <img src={closeIcon} alt="삭제" />
                   </button>
@@ -156,7 +156,7 @@ const RegionSelectDropdown = ({
             <div className="flex justify-end items-center gap-2 p-4">
               <button
                 onClick={reset}
-                className="w-24 h-8 flex items-center justify-center gap-1 bg-[#C5C6CB] rounded text-[#37383E] text-base"
+                className="w-24 h-8 flex items-center justify-center gap-1 bg-[#C5C6CB] rounded text-[#37383E] text-base cursor-pointer"
               >
                 <img src={resetIcon} alt="초기화" className="w-5 h-5" />
                 초기화
@@ -164,7 +164,7 @@ const RegionSelectDropdown = ({
 
               <button
                 onClick={apply}
-                className="w-24 h-8 bg-[#3A3ADB] rounded text-white text-base"
+                className="w-24 h-8 bg-[#3A3ADB] rounded text-white text-base cursor-pointer"
               >
                 적용하기
               </button>
