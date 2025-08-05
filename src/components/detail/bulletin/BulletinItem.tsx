@@ -1,14 +1,5 @@
 import React, { useCallback } from "react";
-
-interface Bulletin {
-  id: number;
-  title: string;
-  date: string;
-  author: string;
-  isPopular: boolean;
-  hasAttachment: boolean;
-}
-
+import type { Bulletin } from "../../../types/bulletin/types";
 interface BulletinItemProps {
   bulletin: Bulletin;
   onBulletinClick?: (bulletin: Bulletin) => void;
@@ -50,6 +41,11 @@ const BulletinItem: React.FC<BulletinItemProps> = ({
 
           {bulletin.hasAttachment && (
             <span className="text-blue-500 text-xs ml-1">📎</span>
+          )}
+          {bulletin.commentCount > 0 && (
+            <span className="text-blue-500 text-xs">
+              [{bulletin.commentCount}]
+            </span>
           )}
         </span>
       </div>

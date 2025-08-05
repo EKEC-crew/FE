@@ -9,7 +9,7 @@ import { generateNoticeData } from "../../../../components/detail/notice/constan
 import type { Notice } from "../../../../components/detail/notice/types";
 
 const NoticeDetail = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, crewId } = useParams();
   const navigate = useNavigate();
   const [notice, setNotice] = useState<Notice | null>(null);
   const [isCommentOpen, setIsCommentOpen] = useState(false);
@@ -22,13 +22,13 @@ const NoticeDetail = () => {
     if (id) {
       // 실제 프로젝트에서는 API 호출로 대체
       const notices = generateNoticeData();
-      const foundNotice = notices.find(n => n.id === parseInt(id));
-      
+      const foundNotice = notices.find((n) => n.id === parseInt(id));
+
       if (foundNotice) {
         setNotice(foundNotice);
       } else {
         // 공지사항을 찾을 수 없는 경우 목록으로 리다이렉트
-        navigate('/detail/notice');
+        navigate(`/crew/${crewId}/notice`);
       }
     }
   }, [id, navigate]);
