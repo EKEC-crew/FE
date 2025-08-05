@@ -5,6 +5,7 @@ import { useState } from "react";
 import BasicInfoForm from "./basicInfoForm";
 import PhoneNumberForm from "./phoneNumberForm";
 import FormHeader from "./formHeader";
+import { useCreateProfile } from "../../../hooks/auth/useCreateProfile";
 import {
   createProfileSchema,
   type CreateProfileFormValues,
@@ -12,22 +13,56 @@ import {
 
 const CreateProfileForm = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [phoneNumber, setPhoneNumber] = useState("");
 
-  const { control, watch, setValue } = useForm<CreateProfileFormValues>({
-    resolver: zodResolver(createProfileSchema),
-    mode: "onChange",
-    defaultValues: {
-      name: "",
-      nickname: "",
-      gender: undefined as any,
-      birthDate: "",
-    },
-  });
+  const createProfileMutation = useCreateProfile();
+
+  const { control, watch, setValue, handleSubmit } =
+    useForm<CreateProfileFormValues>({
+      resolver: zodResolver(createProfileSchema),
+      mode: "onChange",
+      defaultValues: {
+        name: "",
+        nickname: "",
+        gender: undefined as any,
+        birthDate: "",
+      },
+    });
 
   const watchedValues = watch();
 
   const handleNext = () => {
     setCurrentStep((prev) => prev + 1);
+  };
+
+  // 프로필 생성 완료 처리
+  const handleProfileComplete = async () => {
+    const convertGender = (genderValue: any): 0 | 1 | 2 => {
+      if (genderValue === "male") return 0;
+      if (genderValue === "female") return 1;
+      return 2; // "not-defined" 또는 기타
+    };
+    // 폼 데이터를 API 형식에 맞게 변환
+    const profileData = {
+      profileImage: "", // 기본값 또는 선택된 이미지
+      defaultImage: true, // 프로필 이미지가 없으면 true
+      name: watchedValues.name,
+      gender: convertGender(watchedValues.gender), // 함수로 변환
+      phone: phoneNumber,
+      birthday: parseBirthDate(watchedValues.birthDate),
+    };
+
+    try {
+      await createProfileMutation.mutateAsync(profileData);
+    } catch (error) {
+      console.error("프로필 생성 실패:", error);
+    }
+  };
+
+  // 생년월일 문자열을 객체로 변환
+  const parseBirthDate = (birthDateString: string) => {
+    const [year, month, day] = birthDateString.split("-").map(Number);
+    return { year, month, day };
   };
 
   const renderCurrentStep = () => {
@@ -42,7 +77,14 @@ const CreateProfileForm = () => {
           />
         );
       case 2:
-        return <PhoneNumberForm />;
+        return (
+          <PhoneNumberForm
+            phoneNumber={phoneNumber}
+            setPhoneNumber={setPhoneNumber}
+            onComplete={handleProfileComplete}
+            isLoading={createProfileMutation.isPending}
+          />
+        );
       default:
         return null;
     }
