@@ -19,14 +19,11 @@ export const authApi = axios.create({
   withCredentials: true,
 });
 
-// 요청 인터셉터 (필요시 토큰 추가 등)
+// 요청 인터셉터
 authApi.interceptors.request.use(
   (config) => {
-    // 토큰이 필요한 경우 여기서 추가
-    // const token = localStorage.getItem('token');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    console.log("→ 요청 URL:", config.url);
+    console.log("→ Request Headers:", config.headers);
     return config;
   },
   (error) => {
@@ -71,9 +68,25 @@ export const refreshApi = async (): Promise<ResponseRefresh> => {
 export const createProfileApi = async (
   data: RequestCreateProfile
 ): Promise<ResponseCreateProfile> => {
+  const form = new FormData();
+  form.append("profileImage", data.profileImage);
+  form.append("defaultImage", String(data.defaultImage));
+  form.append("name", data.name);
+  form.append("nickname", data.nickname);
+  form.append("gender", String(data.gender));
+  form.append("phone", data.phone);
+  // 생년월일만 JSON 문자열로
+  form.append("birthday", JSON.stringify(data.birthday));
+
   const response = await authApi.post<ResponseCreateProfile>(
     "/auth/profile",
-    data
+    form,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      // 400~499도 응답으로 받고 싶으면 validateStatus 추가
+    }
   );
   return response.data;
 };

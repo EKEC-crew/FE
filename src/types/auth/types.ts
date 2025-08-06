@@ -74,6 +74,7 @@ export interface RequestCreateProfile {
   profileImage: string;
   defaultImage: boolean;
   name: string;
+  nickname: string;
   gender: 0 | 1 | 2; // 남자 0, 여자 1, 밝히고싶지않음 2
   phone: string;
   birthday: {

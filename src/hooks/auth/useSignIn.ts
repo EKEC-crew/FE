@@ -12,10 +12,12 @@ export const useSignIn = () => {
       console.log("로그인 성공:", response);
 
       if (response.resultType === "SUCCESS") {
-        // TODO: 나중에 프로필 생성 완료 여부에 따라 분기 처리
-        navigate("/");
+        if (response.data?.isCompleted) {
+          navigate("/");
+        } else {
+          navigate("/createProfile");
+        }
       } else {
-        // 서버에서 FAIL 응답을 보낸 경우
         console.error("로그인 실패:", response.error);
         throw new Error(response.error?.reason || "로그인에 실패했습니다.");
       }
