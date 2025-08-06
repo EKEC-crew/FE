@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
-import { useBulletinList } from "../../../hooks/useBulletin/useBulletins";
+import { useBulletinList } from "../../../hooks/bulletin/useBulletins";
 import BulletinPostButton from "./button/post";
 import Pagination from "./button/pagination";
 import BulletinItem from "./BulletinItem";
