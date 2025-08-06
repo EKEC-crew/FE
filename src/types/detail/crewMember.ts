@@ -1,15 +1,23 @@
-// 역할 타입 (API랑 매핑 가능)
-export type RoleType = "크루장" | "운영진" | "일반멤버";
+export type CrewRole = 0 | 1 | 2;
 
-// MemberCard에서 사용할 props 타입
+export interface CrewMember {
+  memberId: number;
+  nickname: string;
+  role: 0 | 1 | 2;
+}
+
+export type RoleText = "크루원" | "운영진" | "크루장";
+
 export interface MemberCardProps {
-  id: number;
-  name: string;
-  role?: RoleType;
+  id: number; // 멤버 ID (memberId)
+
+  name: string; // 닉네임
+  role: RoleText; // 역할 (크루원/운영진/크루장)
+  currentUserRole: RoleText; // 로그인한 유저의 역할
   isSelected: boolean;
   onClick: (id: number) => void;
+  onToggleClick: (id: number) => void;
+  openToggleId: number | null;
   canManage?: boolean;
-  currentUserRole: RoleType;
-  onToggleClick: (id: number) => void; // 추가
-  openToggleId: number | null; // 추가 (현재 열려 있는 토글 id)
+  onPromoteOrDemote?: () => void; // ✅ 승격/제외 핸들러
 }

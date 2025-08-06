@@ -13,21 +13,21 @@ export default function MemberCard({
   currentUserRole,
   onToggleClick,
   openToggleId,
+  onPromoteOrDemote, // ✅ 추가
 }: MemberCardProps) {
-  const displayName = name.length > 5 ? name.slice(0, 5) + "..." : name;
+  const displayName = name?.length > 5 ? name.slice(0, 5) + "..." : name;
 
   // 로그인 계정 권한 체크
   const isLeader = currentUserRole === "크루장";
   const isManager = currentUserRole === "운영진";
 
-  // 현재 카드 토글 열림 여부
   const isOpen = openToggleId === id;
 
-  // 액션 핸들러
   const handleKick = () => console.log(`${id} 방출하기`);
-  const handleRoleChange = () =>
-    console.log(`${id} ${role === "운영진" ? "운영진 제외" : "운영진 승격"}`);
   const handleWarn = () => console.log(`${id} 경고하기`);
+  const handleRoleChange = () => {
+    if (onPromoteOrDemote) onPromoteOrDemote();
+  };
 
   return (
     <div
@@ -35,7 +35,6 @@ export default function MemberCard({
         ${isSelected ? "border-blue-500" : "border-transparent"}
         bg-gray-50 hover:bg-gray-100`}
     >
-      {/* 멤버 정보 */}
       <button
         onClick={() => onClick(id)}
         className="flex items-center gap-[0.75rem] flex-1 text-left"
@@ -68,7 +67,6 @@ export default function MemberCard({
         </div>
       </button>
 
-      {/* 토글 버튼 */}
       {canManage && (
         <div className="relative toggle-container">
           <button
@@ -86,7 +84,7 @@ export default function MemberCard({
               onClose={() => onToggleClick(id)}
               onKick={handleKick}
               onWarn={handleWarn}
-              onRoleChange={handleRoleChange}
+              onRoleChange={handleRoleChange} // ✅ 실제 함수 전달
             />
           )}
         </div>
