@@ -17,18 +17,18 @@ const PhoneNumberForm = ({
   isLoading,
 }: PhoneNumberFormProps) => {
   const [verificationCode, setVerificationCode] = useState("");
-  const [isVerified, setIsVerified] = useState(false);
+  // const [isVerified, setIsVerified] = useState(false);
 
   const handlePhoneVerification = () => {
     // TODO: 전화번호 인증 로직
     console.log("전화번호 인증:", phoneNumber);
   };
 
-  const handleCodeVerification = () => {
-    // TODO: 인증번호 확인 로직
-    console.log("인증번호 확인:", verificationCode);
-    setIsVerified(true);
-  };
+  // const handleCodeVerification = () => {
+  //   // TODO: 인증번호 확인 로직
+  //   console.log("인증번호 확인:", verificationCode);
+  //   setIsVerified(true);
+  // };
 
   const handleResend = () => {
     // TODO: 인증번호 재전송 로직
