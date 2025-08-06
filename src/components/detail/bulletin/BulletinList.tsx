@@ -1,75 +1,66 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { BULLETIN_LIST } from "./constants";
+import { useBulletinList } from "../../../hooks/useBulletin/useBulletins";
 import BulletinPostButton from "./button/post";
 import Pagination from "./button/pagination";
 import BulletinItem from "./BulletinItem";
 import Header from "../header";
 import Tabs from "../tabs";
 import Notice from "../notice";
-
-interface Bulletin {
-  id: number;
-  title: string;
-  date: string;
-  author: string;
-  isPopular: boolean;
-  hasAttachment: boolean;
-}
+import type { Bulletin } from "../../../types/bulletin/types";
 
 const BulletinList: React.FC = () => {
   const navigate = useNavigate();
   const { crewId } = useParams();
 
-  const [activeTab] = useState<string>("bulletin");
-  const [bulletins] = useState<Bulletin[]>(BULLETIN_LIST);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
+
+  const {
+    data: bulletinListResponse,
+    isLoading: loading,
+    error,
+  } = useBulletinList(
+    crewId ? parseInt(crewId, 10) : 0,
+    currentPage,
+    itemsPerPage
+  );
+
+  const bulletins = bulletinListResponse?.bulletins ?? [];
 
   const handleBulletinClick = useCallback(
     (bulletin: Bulletin) => {
       console.log("게시글 클릭:", bulletin);
       navigate(`/crew/${crewId}/bulletin/${bulletin.id}`);
     },
-    [navigate]
+    [navigate, crewId]
   );
-  const renderContent = () => {
-    switch (activeTab) {
-      case "bulletin":
-        return (
-          <>
-            <div className="space-y-2">
-              {bulletins.map((bulletin, index) => (
-                <BulletinItem
-                  key={bulletin.id}
-                  bulletin={bulletin}
-                  onBulletinClick={handleBulletinClick}
-                  index={index}
-                />
-              ))}
-            </div>
-            <div className="flex justify-center items-center space-x-2 my-8">
-              <Pagination />
-            </div>
-            <div className="flex justify-center mt-1">
-              <BulletinPostButton />
-            </div>
-          </>
-        );
-      case "review":
-        return (
-          <div className="text-center py-12">
-            <p className="text-gray-500">후기가 없습니다.</p>
-          </div>
-        );
-      case "schedule":
-        return (
-          <div className="text-center py-12">
-            <p className="text-gray-500">예정된 일정이 없습니다.</p>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
+
+  const handlePageChange = useCallback((page: number) => {
+    console.log("페이지 변경:", page);
+    setCurrentPage(page);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">로딩 중...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-500 mb-4">{error.message}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const hasNextPage = bulletins.length === itemsPerPage;
+  const estimatedTotalPages = hasNextPage ? currentPage + 1 : currentPage;
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -79,15 +70,51 @@ const BulletinList: React.FC = () => {
           <Tabs />
         </div>
       </div>
+
       <div className="w-full max-w-4xl mx-auto px-1">
         <Notice />
       </div>
+
       <div className="w-full max-w-4xl mx-auto p-6 bg-white rounded-xl shadow-sm mt-8 mb-8">
-        <span className="text-xl font-bold mb-2">게시판</span>
-        <p className="text-gray-600 text-sm pt-2 py-4">
-          전체 {bulletins.length}건
-        </p>
-        {renderContent()}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-xl font-bold">게시판</h1>
+            <p className="text-gray-600 text-sm pt-2">
+              전체 {bulletins.length}건
+            </p>
+          </div>
+        </div>
+
+        {bulletins.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-500">등록된 게시글이 없습니다.</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {bulletins.map((bulletin, index) => (
+              <BulletinItem
+                key={bulletin.id}
+                bulletin={bulletin}
+                onBulletinClick={handleBulletinClick}
+                index={index}
+              />
+            ))}
+          </div>
+        )}
+
+        {bulletins.length > 0 && (
+          <div className="flex justify-center items-center space-x-2 my-8">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={estimatedTotalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        )}
+
+        <div className="flex justify-center mt-6">
+          <BulletinPostButton />
+        </div>
       </div>
     </div>
   );

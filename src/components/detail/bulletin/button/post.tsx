@@ -5,7 +5,7 @@ const BulletinPostButton: React.FC = () => {
   const navigate = useNavigate();
   const { crewId } = useParams();
 
-  const handleWriteClick = () => {
+  const handleClick = () => {
     if (!crewId) {
       alert("crewId가 없습니다!");
       return;
@@ -16,7 +16,7 @@ const BulletinPostButton: React.FC = () => {
 
   return (
     <button
-      onClick={handleWriteClick}
+      onClick={handleClick}
       className="bg-[#3A3ADB] hover:bg-blue-700 text-white text-sm py-1.5 px-7 rounded-lg"
     >
       글쓰기

@@ -9,12 +9,13 @@ import Header from "../../header";
 import Notice from "../../notice";
 import Tabs from "../../tabs";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { createPost } from "../constants";
 import type { RequestCreatePostDto } from "../types";
 
 const PostBulletinForm = () => {
   const navigate = useNavigate();
+  const { crewId } = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -41,10 +42,10 @@ const PostBulletinForm = () => {
     setIsSubmitting(true);
 
     try {
-      const currentCrewId = "1"; // crewId를 1로 고정
+      const currentCrewId = "1";
       console.log("PostBulletinForm - 사용할 crewId:", currentCrewId);
 
-      const userId = 1; // userId도 1로 고정
+      const userId = 1;
 
       const postData: RequestCreatePostDto = {
         title: title,
@@ -69,8 +70,7 @@ const PostBulletinForm = () => {
 
       if (response.resultType === "SUCCESS") {
         alert("게시글이 성공적으로 등록되었습니다.");
-        // 게시글 목록으로 돌아가기
-        navigate("/detail/bulletin");
+        navigate(`/crew/${crewId}/bulletin`);
       } else {
         alert(
           `게시글 등록에 실패했습니다: ${response.error?.reason || "알 수 없는 오류"}`

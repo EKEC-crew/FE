@@ -1,45 +1,73 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NoticeItem from "../notice/NoticeItem";
 import Pagination from "../notice/button/pagination";
 import PostButton from "../notice/button/post";
-import type { Notice } from "../notice/types";
-import { generateNoticeData } from "../notice/constants";
+import type { Notice } from "../../../types/notice/types";
+import { fetchNoticeList } from "./constants";
 
 const NoticeList: React.FC = () => {
   const navigate = useNavigate();
-
   const { crewId } = useParams();
-  const [activeTab] = useState<string>("notice");
-  const [notices] = useState<Notice[]>(generateNoticeData());
 
+  const [activeTab] = useState<string>("notice");
+  const [notices, setNotices] = useState<Notice[]>([]);
+
+  // ✅ 공지사항 불러오기
+  useEffect(() => {
+    const loadNotices = async () => {
+      if (!crewId) return;
+
+      try {
+        const response = await fetchNoticeList(crewId);
+        console.log("📦 공지사항 응답:", response);
+
+        if (response.resultType === "SUCCESS" && Array.isArray(response.data)) {
+          setNotices(response.data);
+        } else {
+          console.warn("❗ 공지사항 응답이 배열이 아님:", response);
+          setNotices([]);
+        }
+      } catch (err) {
+        console.error("공지사항 로딩 오류:", err);
+        setNotices([]);
+      }
+    };
+
+    loadNotices();
+  }, [crewId]);
+
+  // ✅ 상세 이동
   const handleNoticeClick = useCallback(
     (notice: Notice) => {
-      console.log("공지사항 클릭:", notice);
+      if (!crewId) return;
       navigate(`/crew/${crewId}/notice/${notice.id}`);
     },
-    [navigate]
+    [navigate, crewId]
   );
 
+  // ✅ 글쓰기 이동
   const handleWriteClick = useCallback(() => {
-    console.log("글쓰기 버튼 클릭");
+    if (!crewId) return;
     navigate(`/crew/${crewId}/notice/post`);
-  }, [navigate]);
+  }, [navigate, crewId]);
 
+  // ✅ 렌더링 분기
   const renderContent = () => {
     switch (activeTab) {
       case "notice":
         return (
           <>
             <div className="space-y-2">
-              {notices.map((notice, index) => (
-                <NoticeItem
-                  key={notice.id}
-                  notice={notice}
-                  onNoticeClick={handleNoticeClick}
-                  index={index}
-                />
-              ))}
+              {Array.isArray(notices) &&
+                notices.map((notice, index) => (
+                  <NoticeItem
+                    key={notice.id}
+                    notice={notice}
+                    onNoticeClick={handleNoticeClick}
+                    index={index}
+                  />
+                ))}
             </div>
             <div className="flex justify-center items-center space-x-2 my-8">
               <Pagination />

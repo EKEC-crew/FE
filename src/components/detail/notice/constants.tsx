@@ -28,3 +28,26 @@ export const generateNoticeData = () => {
     labelText: index < 3 ? CONSTANTS.LABELS.REQUIRED : undefined
   }));
 };
+
+export const fetchNoticeList = async (crewId: string) => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/crew/${crewId}/notice/`;
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("fetchNoticeList 에러:", error);
+    throw error;
+  }
+};

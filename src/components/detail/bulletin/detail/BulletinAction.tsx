@@ -1,6 +1,6 @@
-import iconHeart from "../../../assets/schedule/ic_Heart.svg";
-import iconShare from "../../../assets/schedule/ic_Share.svg";
-import iconDown from "../../../assets/schedule/ic_Down.svg";
+import iconHeart from "../../../../assets/schedule/ic_Heart.svg";
+import iconShare from "../../../../assets/schedule/ic_Share.svg";
+import iconDown from "../../../../assets/schedule/ic_Down.svg";
 type Props = {
   isCommentOpen: boolean;
   toggleComment: () => void;

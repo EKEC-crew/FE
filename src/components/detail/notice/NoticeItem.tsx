@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import type { NoticeItemProps } from './types';
+import type { NoticeItemProps } from "../../../types/notice/types";
 
 const NoticeItem: React.FC<NoticeItemProps> = ({ notice, onNoticeClick, index }) => {
   const handleClick = useCallback(() => {
