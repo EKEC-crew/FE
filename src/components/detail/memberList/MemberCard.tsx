@@ -1,33 +1,47 @@
 import type { MemberCardProps } from "../../../types/detail/crewMember";
 import logo from "../../../assets/logo/ic_logo graphic_45.svg";
 import dot from "../../../assets/icons/ic_Dot_36.svg";
-import ToggleMenu from "./ToggleMenu";
+import ToggleMenuWrapper from "./ToggleMenuWrapper";
+import { useKickCrewMember } from "../../../hooks/CrewMemberList/useKickCrewMember";
 
 export default function MemberCard({
   id,
+  crewId,
   name,
+  memberId,
   role,
   isSelected,
   onClick,
-  canManage = false,
-  currentUserRole,
   onToggleClick,
   openToggleId,
+  canManage = false,
+  currentUserRole,
+  onPromoteOrDemote,
 }: MemberCardProps) {
-  const displayName = name.length > 5 ? name.slice(0, 5) + "..." : name;
+  // 닉네임 자르기 (5글자 초과 시 ... 표시)
+  const displayName = name?.length > 5 ? name.slice(0, 5) + "..." : name;
 
-  // 로그인 계정 권한 체크
+  // 현재 로그인한 유저 권한
   const isLeader = currentUserRole === "크루장";
   const isManager = currentUserRole === "운영진";
 
-  // 현재 카드 토글 열림 여부
+  // 현재 카드의 토글 열림 여부
   const isOpen = openToggleId === id;
 
-  // 액션 핸들러
-  const handleKick = () => console.log(`${id} 방출하기`);
-  const handleRoleChange = () =>
-    console.log(`${id} ${role === "운영진" ? "운영진 제외" : "운영진 승격"}`);
+  // 액션 핸들러 (실제 API 호출은 추후 연결)
+
+  const { mutate: kick } = useKickCrewMember(crewId);
+  const handleKick = () => {
+    kick(memberId);
+  };
+
   const handleWarn = () => console.log(`${id} 경고하기`);
+  const handleRoleChange = () => {
+    console.log(`${id} ${role === "운영진" ? "운영진 제외" : "운영진 승격"}`);
+    if (onPromoteOrDemote) {
+      onPromoteOrDemote(id, role === "운영진" ? 1 : 0); //  실제 값 전달
+    }
+  };
 
   return (
     <div
@@ -35,7 +49,7 @@ export default function MemberCard({
         ${isSelected ? "border-blue-500" : "border-transparent"}
         bg-gray-50 hover:bg-gray-100`}
     >
-      {/* 멤버 정보 */}
+      {/* 멤버 정보 (좌측) */}
       <button
         onClick={() => onClick(id)}
         className="flex items-center gap-[0.75rem] flex-1 text-left"
@@ -68,7 +82,7 @@ export default function MemberCard({
         </div>
       </button>
 
-      {/* 토글 버튼 */}
+      {/* 토글 버튼 (우측) */}
       {canManage && (
         <div className="relative toggle-container">
           <button
@@ -79,11 +93,12 @@ export default function MemberCard({
           </button>
 
           {isOpen && (
-            <ToggleMenu
+            <ToggleMenuWrapper
+              isOpen={isOpen}
+              onClose={() => onToggleClick(id)}
               role={role}
               isLeader={isLeader}
               isManager={isManager}
-              onClose={() => onToggleClick(id)}
               onKick={handleKick}
               onWarn={handleWarn}
               onRoleChange={handleRoleChange}
