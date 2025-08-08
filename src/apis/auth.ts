@@ -5,6 +5,7 @@ import type {
   ResponseCreateProfile,
   ResponseRefresh,
   ResponseSign,
+  ResponseSignOut,
 } from "../types/auth/types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -53,8 +54,14 @@ export const signUpApi = async (data: RequestSign): Promise<ResponseSign> => {
 };
 
 // 로그인 API 함수
-export const loginApi = async (data: RequestSign): Promise<ResponseSign> => {
+export const signInApi = async (data: RequestSign): Promise<ResponseSign> => {
   const response = await authApi.post<ResponseSign>("/auth/login", data);
+  return response.data;
+};
+
+// 로그아웃 API 함수
+export const signOutApi = async (): Promise<ResponseSignOut> => {
+  const response = await authApi.post<ResponseSignOut>("/auth/logout");
   return response.data;
 };
 
