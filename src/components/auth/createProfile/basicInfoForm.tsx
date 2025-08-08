@@ -1,13 +1,12 @@
 import { Controller } from "react-hook-form";
 import { useCallback, useState } from "react";
 
-import addProfileImage from "../../../assets/icons/createProfile/addProfileImage.svg";
-
 import BirthDropDown from "./birthDropDown";
 import Input from "../input";
 import GenderSelect from "./genderSelect";
 import AuthBtn from "../authBtn";
 import { createProfileSchema } from "../../../schemas/auth/createProfileSchema";
+import ProfileImageUpload from "./profileImageUpload";
 
 interface BasicInfoFormProps {
   control: any;
@@ -47,9 +46,20 @@ const BasicInfoForm = ({
   return (
     <div className="flex flex-col items-center justify-center w-[520px] h-full px-2">
       {/* 프로필 이미지 */}
-      <div className="flex justify-center mb-4">
-        <img src={addProfileImage} alt="프로필 이미지 추가" />
-      </div>
+      <Controller
+        name="profileImage"
+        control={control}
+        render={({ field }) => (
+          <ProfileImageUpload
+            value={field.value as File | null}
+            onChange={(file) => {
+              field.onChange(file);
+              // 파일 선택 여부에 따라 defaultImage 업데이트
+              setValue("defaultImage", !file);
+            }}
+          />
+        )}
+      />
 
       {/* 이름 */}
       <div className="mb-2 w-full">

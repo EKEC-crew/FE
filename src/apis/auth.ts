@@ -69,7 +69,10 @@ export const createProfileApi = async (
   data: RequestCreateProfile
 ): Promise<ResponseCreateProfile> => {
   const form = new FormData();
-  form.append("profileImage", data.profileImage);
+  // 파일이 있을 때만 전송
+  if (data.profileImage) {
+    form.append("profileImage", data.profileImage);
+  }
   form.append("defaultImage", String(data.defaultImage));
   form.append("name", data.name);
   form.append("nickname", data.nickname);
