@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import SingleSelectDropdown from "./SingleSelectDropdown";
 
 const headcountOptions = [
@@ -30,7 +29,6 @@ interface CrewSortBarProps {
   headcount: number | null;
   setHeadcount: (val: number | null) => void;
   totalCount: number;
-  resetSignal: boolean;
 }
 
 const CrewSortBar = ({
@@ -39,21 +37,7 @@ const CrewSortBar = ({
   headcount,
   setHeadcount,
   totalCount,
-  resetSignal,
 }: CrewSortBarProps) => {
-  const [selectedHeadcount, setSelectedHeadcount] = useState<number | null>(
-    headcount
-  );
-  const [selectedSort, setSelectedSort] = useState<number>(sort);
-
-  // resetSignal이 바뀔 때 드롭다운 초기화
-  useEffect(() => {
-    setSelectedHeadcount(null);
-    setSelectedSort(2);
-    setHeadcount(null);
-    setSort(2);
-  }, [resetSignal]);
-
   return (
     <div className="flex items-center justify-between mb-3">
       {/* 크루 개수 */}
@@ -63,9 +47,8 @@ const CrewSortBar = ({
         <SingleSelectDropdown
           label="인원수"
           options={headcountOptions}
-          selected={selectedHeadcount}
+          selected={headcount}
           onSelect={(val) => {
-            setSelectedHeadcount(val);
             setHeadcount(val);
           }}
           variant="sort"
@@ -73,11 +56,8 @@ const CrewSortBar = ({
         <SingleSelectDropdown
           label="리뷰순"
           options={sortOptions}
-          selected={selectedSort}
-          onSelect={(val) => {
-            setSelectedSort(val);
-            setSort(val);
-          }}
+          selected={sort}
+          onSelect={setSort}
           variant="sort"
         />
       </div>

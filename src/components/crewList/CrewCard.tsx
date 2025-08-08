@@ -27,7 +27,7 @@ const CrewCard = ({
 
         {/* 카테고리 태그 */}
         <div className="absolute top-3 left-3">
-          <span className="inline-block bg-[linear-gradient(135deg,#3A3ADB_0%,#3A3ADB_30%,#63BCEC_70%,#72EDF2_100%)] items-center text-white text-xs sm:text-sm md:text-md lg:text-lg font-medium px-3 h-7 leading-[26px] rounded-full whitespace-nowrap">
+          <span className="inline-block bg-[linear-gradient(135deg,#3A3ADB_0%,#3A3ADB_30%,#63BCEC_70%,#72EDF2_100%)] text-white text-xs sm:text-sm md:text-md lg:text-lg font-medium px-3 h-7 rounded-full whitespace-nowrap">
             {crewCategory}
           </span>
         </div>
@@ -48,7 +48,7 @@ const CrewCard = ({
         {/* 인원, 별점 */}
         <div className="flex items-center gap-4 mt-2">
           <span className="flex items-center text-sm sm:text-base md:text-xl font-normal bg-[#3A3ADB] text-white h-10 px-3 rounded-full">
-            크루 {capacity}
+            크루 /{capacity === 0 ? "00" : capacity}
           </span>
           <span className="text-sm sm:text-base md:text-xl font-normal text-[#1A1B1E] flex items-center gap-2">
             <img src={starIcon} alt="별점" />

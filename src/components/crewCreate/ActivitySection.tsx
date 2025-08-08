@@ -1,4 +1,4 @@
-import { activityOptions } from "../crewList/optionsDummy";
+import { activityOptions } from "../../constants/crewFilterOptions";
 import OptionGrid from "./OptionGrid";
 
 interface ActivitySectionProps {

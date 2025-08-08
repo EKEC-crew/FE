@@ -10,7 +10,7 @@ import {
   categoryOptions,
   regionOptions,
   styleOptions,
-} from "./optionsDummy";
+} from "../../constants/crewFilterOptions";
 import { useState } from "react";
 
 export type CrewFilter = {
@@ -40,7 +40,6 @@ const CrewFilterBar = ({
   filters,
   setFilters,
   fetchCrews,
-  onReset,
 }: CrewFilterBarProps) => {
   const [resetSignal, setResetSignal] = useState(false);
   return (

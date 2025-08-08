@@ -9,55 +9,19 @@ import {
   styleOptions,
   regionOptions,
   ageGroupOptions,
-} from "../../components/crewList/optionsDummy.ts";
-import { useState } from "react";
+} from "../../constants/crewFilterOptions.ts";
 import { useNavigate } from "react-router-dom";
+import { useCrewFilters } from "../../hooks/crewFilter/useCrewFilters.ts";
+import { buildFilterQuery } from "../../utils/crewFilter/buildFilterQuery.ts";
 
 const crewFilterPage = () => {
   const navigate = useNavigate();
 
-  const [filters, setFilters] = useState({
-    category: null as number | null,
-    activity: [] as number[],
-    style: [] as number[],
-    regionSido: "",
-    regionGu: "",
-    age: null as number | null,
-    gender: null as number | null,
-  });
-
-  const isFilterSelected = () => {
-    const { category, activity, style, regionSido, regionGu, age, gender } =
-      filters;
-    return (
-      category !== null ||
-      activity.length > 0 ||
-      style.length > 0 ||
-      regionSido !== "" ||
-      regionGu !== "" ||
-      age !== null ||
-      gender !== null
-    );
-  };
+  const { filters, setFilters, isFilterSelected } = useCrewFilters();
 
   const handleSearch = () => {
-    const query = new URLSearchParams();
-
-    if (filters.category !== null)
-      query.append("category", String(filters.category));
-    if (filters.activity.length > 0)
-      query.append("activity", filters.activity.join(","));
-    if (filters.style.length > 0)
-      query.append("style", filters.style.join(","));
-    if (filters.regionSido) query.append("regionSido", filters.regionSido);
-    if (filters.regionGu) query.append("regionGu", filters.regionGu);
-    if (filters.age !== null) query.append("age", String(filters.age));
-    if (filters.gender !== null) query.append("gender", String(filters.gender));
-
-    query.append("page", "1");
-    query.append("sort", "2"); // 기본값:인기순
-
-    navigate(`/crewListPage?${query.toString()}`);
+    const query = buildFilterQuery(filters);
+    navigate(`/crewListPage?${query}`);
   };
 
   return (
