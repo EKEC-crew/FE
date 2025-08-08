@@ -22,6 +22,7 @@ export const useSignIn = () => {
           if (me.resultType === "SUCCESS" && me.data) {
             setUser(me.data);
             setStatus("authenticated");
+            await useAuthStore.getState().loadAvatar();
           } else {
             setUser(null);
             setStatus("unauthenticated");

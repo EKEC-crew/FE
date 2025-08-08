@@ -6,12 +6,14 @@ export interface ResponseSign {
     data: {
       id: number;
       email: string;
-      isCompleted?: boolean;
     };
   };
   data?: {
     id: number;
     email: string;
+    name: string;
+    nickname: string;
+    profileImage: string | null;
     isCompleted: boolean;
   };
 }

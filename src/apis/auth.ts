@@ -56,6 +56,7 @@ export const signUpApi = async (data: RequestSign): Promise<ResponseSign> => {
 // 로그인 API 함수
 export const signInApi = async (data: RequestSign): Promise<ResponseSign> => {
   const response = await authApi.post<ResponseSign>("/auth/login", data);
+  console.log("[signInApi] response.data:", response.data);
   return response.data;
 };
 
@@ -68,6 +69,7 @@ export const signOutApi = async (): Promise<ResponseSignOut> => {
 // 토큰 갱신 API 함수
 export const refreshApi = async (): Promise<ResponseRefresh> => {
   const response = await authApi.post<ResponseRefresh>("/auth/refresh");
+  console.log("[refreshApi] response.data:", response.data);
   return response.data;
 };
 
@@ -90,13 +92,7 @@ export const createProfileApi = async (
 
   const response = await authApi.post<ResponseCreateProfile>(
     "/auth/profile",
-    form,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      // 400~499도 응답으로 받고 싶으면 validateStatus 추가
-    }
+    form
   );
   return response.data;
 };

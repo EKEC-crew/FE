@@ -11,7 +11,10 @@ export const createProfileSchema = z
       .string()
       .min(1, "생년월일을 선택해주세요.")
       .regex(/^\d{4}-\d{2}-\d{2}$/, "생년월일을 모두 선택해주세요."),
+    profileImage: z.instanceof(File).nullable(),
+    defaultImage: z.boolean(),
   })
+
   .refine(
     (data) => {
       if (data.nickname === null) return true;
