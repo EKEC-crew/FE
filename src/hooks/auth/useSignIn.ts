@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { loginApi, refreshApi } from "../../apis/auth";
+
+import { signInApi, refreshApi } from "../../apis/auth";
 import type { RequestSign, ResponseSign } from "../../types/auth/types";
 import { useAuthStore } from "../../store/useAuthStore";
 
@@ -11,7 +12,7 @@ export const useSignIn = () => {
   const setStatus = useAuthStore((s) => s.setStatus);
 
   return useMutation<ResponseSign, Error, RequestSign>({
-    mutationFn: loginApi,
+    mutationFn: signInApi,
     onSuccess: async (response) => {
       console.log("로그인 성공:", response);
 
