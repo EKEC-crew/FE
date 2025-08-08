@@ -83,3 +83,13 @@ export interface RequestCreateProfile {
     day: number;
   };
 }
+
+export interface ResponseSignOut {
+  resultType: "FAIL" | "SUCCESS";
+  error: {
+    errorCode: string;
+    reason: string;
+    data: null;
+  };
+  data: null;
+}
