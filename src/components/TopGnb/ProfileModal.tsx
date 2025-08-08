@@ -13,7 +13,7 @@ interface Props {
   onMyPage: () => void;
 }
 
-export default function ProfileModal({ onClose, onLogout, onMyPage }: Props) {
+export default function ProfileModal({ onClose, onMyPage }: Props) {
   const { mutate: signOut } = useSignOut();
 
   const modalRef = useRef<HTMLDivElement>(null);
