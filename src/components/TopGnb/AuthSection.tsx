@@ -1,10 +1,12 @@
+import { useAuthStore } from "../../store/useAuthStore";
 import GuestMenu from "./GuestMenu";
 import UserMenu from "./userMenu";
 
-//나중에 useAuth()로 받아올거임 지금은 더미!
-const isLoggedIn = true;
 const AuthSection = () => {
-  return isLoggedIn ? <UserMenu /> : <GuestMenu />;
+  const status = useAuthStore((s) => s.status);
+
+  if (status === "idle" || status === "loading") return null;
+  return status === "authenticated" ? <UserMenu /> : <GuestMenu />;
 };
 
 export default AuthSection;

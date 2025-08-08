@@ -71,7 +71,7 @@ export interface ResponseCreateProfile {
 }
 
 export interface RequestCreateProfile {
-  profileImage: string | null;
+  profileImage: File | null;
   defaultImage: boolean;
   name: string;
   nickname: string;
