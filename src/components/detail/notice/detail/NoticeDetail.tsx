@@ -5,11 +5,11 @@ import Tabs from "../../../../components/detail/tabs";
 import NoticeAbout from "./NoticeAbout";
 import NoticeAction from "./NoticeAction";
 import NoticeComments from "./NoticeComments";
-import { generateNoticeData } from "../constants";
+import { getNoticeDetail } from "../constants"; 
 import type { Notice } from "../../../../types/notice/types";
 
 const NoticeDetail = () => {
-  const { id } = useParams();
+  const { crewId, noticeId } = useParams();
   const [notice, setNotice] = useState<Notice | null>(null);
   const [isCommentOpen, setIsCommentOpen] = useState(false);
   const [comments] = useState([
@@ -18,14 +18,36 @@ const NoticeDetail = () => {
   ]);
 
   useEffect(() => {
-    if (!id) return;
-    const parsedId = parseInt(id, 10);
-    if (isNaN(parsedId)) return;
+    if (!crewId || !noticeId) return;
 
-    const notices = generateNoticeData();
-    const found = notices.find((n) => n.id === parsedId);
-    if (found) setNotice(found);
-  }, [id]);
+    const fetchNotice = async () => {
+      try {
+        const res = await getNoticeDetail(crewId, noticeId);
+        if (res.resultType === "SUCCESS") {
+          const n = res.data;
+
+          const [date, timeWithMs] = n.createdAt.split("T");
+          const time = timeWithMs?.slice(0, 5) || "";
+
+          const mappedNotice = {
+            id: n.id,
+            title: n.title,
+            content: n.content,
+            date,
+            time,
+            hasLabel: false,
+            labelText: "",
+          };
+
+          setNotice(mappedNotice);
+        }
+      } catch (error) {
+        console.error("공지 상세 조회 실패:", error);
+      }
+    };
+
+    fetchNotice();
+  }, [crewId, noticeId]);
 
   if (!notice) {
     return (
@@ -38,8 +60,10 @@ const NoticeDetail = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="py-6 space-y-6 pt-12">
+        <div className = "py-3">
         <Header />
         <Tabs />
+        </div>
         <div className="px-6 py-6 space-y-3 pt-0">
           <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
             <div className="flex items-center space-x-2">
@@ -60,6 +84,11 @@ const NoticeDetail = () => {
                 신청완료
               </button>
             </div>
+
+            <div
+              className="text-sm text-gray-700"
+              dangerouslySetInnerHTML={{ __html: notice.content }}
+            />
 
             <NoticeAbout />
             <NoticeAction

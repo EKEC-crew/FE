@@ -9,14 +9,14 @@ import {
   signUpSchema,
   type SignUpFormValues,
 } from "../../../schemas/auth/authSchema";
-import { useNavigate } from "react-router-dom";
 import AuthBtn from "../authBtn";
+import { useSignUp } from "../../../hooks/auth/useSignUp";
 
 const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
 
-  const navigate = useNavigate();
+  const signUpMutation = useSignUp();
 
   const {
     register,
@@ -45,11 +45,13 @@ const SignUpForm = () => {
 
   const onSubmit = async (data: SignUpFormValues) => {
     try {
-      console.log("회원가입 데이터:", data);
-      navigate("/createProfile");
-      //회원가입 로직 추가
+      await signUpMutation.mutateAsync({
+        email: data.email,
+        password: data.password,
+      });
     } catch (error) {
-      console.error("회원가입 에러:", error);
+      // 에러는 useSignUp 훅에서 처리됨
+      console.error("회원가입 실패:", error);
     }
   };
 
@@ -138,8 +140,12 @@ const SignUpForm = () => {
             )}
 
             {/* AuthBtn 사용 */}
-            <AuthBtn type="submit" disabled={!isValid} className="mb-4 mt-2">
-              회원가입하기
+            <AuthBtn
+              type="submit"
+              disabled={!isValid || signUpMutation.isPending}
+              className="mb-4 mt-2"
+            >
+              {signUpMutation.isPending ? "회원가입 중..." : "회원가입하기"}
             </AuthBtn>
           </form>
         </div>

@@ -2,11 +2,28 @@ import React, { useCallback } from 'react';
 import type { NoticeItemProps } from "../../../types/notice/types";
 
 const NoticeItem: React.FC<NoticeItemProps> = ({ notice, onNoticeClick, index }) => {
-  const handleClick = useCallback(() => {
-    onNoticeClick?.(notice);
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    console.log('NoticeItem 클릭됨:', notice);
+    console.log('onNoticeClick 함수 존재:', !!onNoticeClick);
+    
+    if (onNoticeClick) {
+      onNoticeClick(notice);
+    } else {
+      console.error('onNoticeClick 함수가 전달되지 않았습니다');
+    }
   }, [notice, onNoticeClick]);
 
-  console.log('Notice item index:', index);
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleClick(e as any);
+    }
+  }, [handleClick]);
+
+  console.log('Notice item render - index:', index, 'notice:', notice);
 
   return (
     <div 
@@ -14,7 +31,8 @@ const NoticeItem: React.FC<NoticeItemProps> = ({ notice, onNoticeClick, index })
       onClick={handleClick}
       role="button"
       tabIndex={0}
-      onKeyDown={(e) => e.key === 'Enter' && handleClick()}
+      onKeyDown={handleKeyDown}
+      style={{ userSelect: 'none' }}
     >
       {/* 왼쪽 영역: 필독 라벨 */}
       <div className="w-16 flex-shrink-0">

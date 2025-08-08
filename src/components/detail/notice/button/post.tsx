@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 type PostButtonProps = {
   onClick: () => void;
@@ -7,9 +7,11 @@ type PostButtonProps = {
 
 const PostButton: React.FC<PostButtonProps> = () => {
   const navigate = useNavigate();
+  const { crewId } = useParams();
 
   const handleClick = () => {
-    navigate("/detail/notice/post");
+    // 또는 props로 전달받기
+    navigate(`/crew/${crewId}/notice/post`);
   };
 
   return (

@@ -1,4 +1,5 @@
 export interface Notice {
+  content: string | TrustedHTML;
   id: number;
   title: string;
   date: string;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useBulletinDetail } from "../../../../hooks/useBulletin/useBulletins";
+import { useBulletinDetail } from "../../../../hooks/bulletin/useBulletins";
 import Header from "../../header";
 import Tabs from "../../tabs";
 import BulletinAbout from "./BulletinAbout";
