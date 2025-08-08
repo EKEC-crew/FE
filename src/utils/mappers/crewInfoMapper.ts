@@ -16,7 +16,6 @@ interface CrewInfoMapperParams {
   selectedGender: number | null;
   isHeadcountUnlimited: boolean;
   isGenderUnlimited: boolean;
-  admin: number;
 }
 
 export const toServerCrewInfo = ({
@@ -52,6 +51,5 @@ export const toServerCrewInfo = ({
     region: regionId,
     activities,
     styles,
-    admin: 1,
   };
 };

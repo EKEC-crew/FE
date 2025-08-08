@@ -40,6 +40,26 @@ const crewFilterPage = () => {
     );
   };
 
+  const handleSearch = () => {
+    const query = new URLSearchParams();
+
+    if (filters.category !== null)
+      query.append("category", String(filters.category));
+    if (filters.activity.length > 0)
+      query.append("activity", filters.activity.join(","));
+    if (filters.style.length > 0)
+      query.append("style", filters.style.join(","));
+    if (filters.regionSido) query.append("regionSido", filters.regionSido);
+    if (filters.regionGu) query.append("regionGu", filters.regionGu);
+    if (filters.age !== null) query.append("age", String(filters.age));
+    if (filters.gender !== null) query.append("gender", String(filters.gender));
+
+    query.append("page", "1");
+    query.append("sort", "2"); // 기본값:인기순
+
+    navigate(`/crewListPage?${query.toString()}`);
+  };
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-full max-w-[1620px] px-50 lg:px-[235px] pt-20 pb-40">
@@ -125,11 +145,7 @@ const crewFilterPage = () => {
         <div className="w-full flex justify-center mt-20  px-18">
           <button
             disabled={!isFilterSelected()}
-            onClick={() => {
-              if (isFilterSelected()) {
-                navigate("/crewListPage");
-              }
-            }}
+            onClick={handleSearch}
             className={`w-full h-17 text-[1.675rem] font-semibold rounded-lg 
           ${
             isFilterSelected()
