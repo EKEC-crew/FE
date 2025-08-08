@@ -1,14 +1,5 @@
 import React, { useCallback } from "react";
-
-interface Bulletin {
-  id: number;
-  title: string;
-  date: string;
-  author: string;
-  isPopular: boolean;
-  hasAttachment: boolean;
-}
-
+import type { Bulletin } from "../../../types/bulletin/types";
 interface BulletinItemProps {
   bulletin: Bulletin;
   onBulletinClick?: (bulletin: Bulletin) => void;
@@ -51,11 +42,16 @@ const BulletinItem: React.FC<BulletinItemProps> = ({
           {bulletin.hasAttachment && (
             <span className="text-blue-500 text-xs ml-1">📎</span>
           )}
+          {bulletin.commentCount > 0 && (
+            <span className="text-blue-500 text-xs px-2">
+              [{bulletin.commentCount}]
+            </span>
+          )}
         </span>
       </div>
 
       {/* 오른쪽 영역: 날짜와 작성자 */}
-      <div className="flex items-center text-gray-400 text-xs md:text-sm space-x-2 flex-shrink-0">
+      <div className="flex items-center text-gray-400 text-xs md:text-sm space-x-4 flex-shrink-0">
         <span>{bulletin.date}</span>
         <span>{bulletin.author}</span>
       </div>

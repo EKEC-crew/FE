@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import EkecLogo from "../../../assets/icons/ic_logo_graphic_45.svg";
 import checkBoxIcon from "../../../assets/icons/ic_check_de.svg";
@@ -14,10 +14,13 @@ import {
   signInSchema,
   type SignInFormValues,
 } from "../../../schemas/auth/authSchema";
+import { useSignIn } from "../../../hooks/auth/useSignIn";
 
 const EmailSignInForm: React.FC = () => {
   const [isAutoLogin, setIsAutoLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const signInMutation = useSignIn();
 
   const {
     register,
@@ -32,13 +35,12 @@ const EmailSignInForm: React.FC = () => {
     },
   });
 
-  const navigate = useNavigate();
-
   const onSubmit = async (data: SignInFormValues) => {
     try {
-      console.log("로그인 데이터:", data);
-      // 로그인 로직 실행
-      navigate("/");
+      await signInMutation.mutateAsync({
+        email: data.email,
+        password: data.password,
+      });
     } catch (error) {
       console.error("로그인 에러:", error);
     }

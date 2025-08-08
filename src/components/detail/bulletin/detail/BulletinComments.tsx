@@ -1,4 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
+import icMore from "../../../../assets/schedule/ic_More.svg";
 
 type Comment = {
   id: number;
@@ -47,7 +48,7 @@ const BulletinComments = ({ isOpen, comments }: Props) => {
                     댓글
                   </button>
                   <button>
-                    <img src="/schedule/iconMore.svg" alt="더보기" />
+                    <img src={icMore} alt="더보기" />
                   </button>
                 </div>
               </div>
