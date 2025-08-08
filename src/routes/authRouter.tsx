@@ -6,6 +6,8 @@ import GoogleSignIn from "../pages/auth/signInPage/googleSignIn";
 import KakaoSignIn from "../pages/auth/signInPage/kakaoSignIn";
 import NaverSignIn from "../pages/auth/signInPage/naverSignIn";
 import SignUpPage from "../pages/auth/signUpPage";
+import OAuthSuccess from "../pages/auth/oauthSuccess";
+import OAuthFail from "../pages/auth/oauthFail";
 
 const AuthRouter = [
   {
@@ -53,6 +55,14 @@ const AuthRouter = [
         element: <CreateProfilePage />,
       },
     ],
+  },
+  {
+    path: "/oauth/success",
+    element: <OAuthSuccess />,
+  },
+  {
+    path: "/oauth/fail",
+    element: <OAuthFail />,
   },
 ];
 

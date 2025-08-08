@@ -25,6 +25,7 @@ const CrewApplicationStep = ({
       question: "",
       options: ["", ""], // checkbox형일 경우 항목 2개 기본값
       required: true,
+      hasEtc: false,
     },
   ]);
 

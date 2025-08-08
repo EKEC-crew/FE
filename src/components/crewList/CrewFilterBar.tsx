@@ -5,12 +5,13 @@ import resetIcon from "../../assets/icons/ic_reset_28.svg";
 import manIcon from "../../assets/icons/ic_man_28.svg";
 import womanIcon from "../../assets/icons/ic_woman_28.svg";
 import {
-  activityLabels,
+  activityOptions,
   ageGroupOptions,
-  categoryLabels,
+  categoryOptions,
   regionOptions,
-  styleLabels,
-} from "./optionsDummy";
+  styleOptions,
+} from "../../constants/crewFilterOptions";
+import { useState } from "react";
 
 export type CrewFilter = {
   category: number[];
@@ -25,6 +26,8 @@ export type CrewFilter = {
 interface CrewFilterBarProps {
   filters: CrewFilter;
   setFilters: React.Dispatch<React.SetStateAction<CrewFilter>>;
+  fetchCrews: () => void;
+  onReset: () => void;
 }
 
 const genderOptions = [
@@ -33,13 +36,18 @@ const genderOptions = [
   { label: "여성", value: 2, icon: <img src={womanIcon} alt="여성" /> },
 ];
 
-const CrewFilterBar = ({ filters, setFilters }: CrewFilterBarProps) => {
+const CrewFilterBar = ({
+  filters,
+  setFilters,
+  fetchCrews,
+}: CrewFilterBarProps) => {
+  const [resetSignal, setResetSignal] = useState(false);
   return (
     <div className="flex gap-3 flex-wrap pb-8">
       {/* 새로고침 버튼 */}
       <button
-        className="h-12 w-12 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD]"
-        onClick={() =>
+        className="h-12 w-12 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD] cursor-pointer"
+        onClick={() => {
           setFilters({
             category: [],
             activity: [],
@@ -48,21 +56,41 @@ const CrewFilterBar = ({ filters, setFilters }: CrewFilterBarProps) => {
             regionGu: "",
             age: null,
             gender: null,
-          })
-        }
+          });
+          setResetSignal((prev) => !prev);
+          fetchCrews();
+        }}
       >
         <img src={resetIcon} alt="필터 초기화" />
       </button>
       <MultiSelectDropdown
         label="카테고리"
-        options={categoryLabels}
+        options={categoryOptions}
+        selected={filters.category}
+        onChange={(val) => setFilters((prev) => ({ ...prev, category: val }))}
         singleSelect
       />
-      <MultiSelectDropdown label="활동" options={activityLabels} />
-      <MultiSelectDropdown label="스타일" options={styleLabels} />
+      <MultiSelectDropdown
+        label="활동"
+        options={activityOptions}
+        selected={filters.activity}
+        onChange={(val) => setFilters((prev) => ({ ...prev, activity: val }))}
+        exclusivePairs={[
+          [1, 2],
+          [10, 11],
+        ]}
+      />
+      <MultiSelectDropdown
+        label="스타일"
+        options={styleOptions}
+        selected={filters.style}
+        onChange={(val) => setFilters((prev) => ({ ...prev, style: val }))}
+        exclusivePairs={[[20, 21]]}
+      />
       <RegionSelectDropdown
         label="지역"
         regions={regionOptions}
+        resetSignal={resetSignal}
         onChange={(sido, gu) =>
           setFilters((prev) => ({
             ...prev,

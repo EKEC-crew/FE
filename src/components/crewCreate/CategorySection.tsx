@@ -1,4 +1,4 @@
-import { categoryOptions } from "../crewList/optionsDummy";
+import { categoryOptions } from "../../constants/crewFilterOptions";
 import OptionGrid from "./OptionGrid";
 
 interface CategorySectionProps {

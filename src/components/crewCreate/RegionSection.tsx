@@ -1,4 +1,4 @@
-import { regionOptions } from "../crewList/optionsDummy";
+import { regionOptions } from "../../constants/crewFilterOptions";
 import RegionSelectDropdown from "../crewList/RegionSelectDropdown";
 
 interface RegionSectionProps {
