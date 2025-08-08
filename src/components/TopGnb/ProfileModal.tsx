@@ -9,7 +9,6 @@ import ProfileModalBtn from "./ProfileModalBtn";
 import { useSignOut } from "../../hooks/auth/useSignOut";
 interface Props {
   onClose: () => void;
-  onLogout: () => void;
   onMyPage: () => void;
 }
 
