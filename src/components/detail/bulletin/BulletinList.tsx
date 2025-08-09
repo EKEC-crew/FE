@@ -27,17 +27,17 @@ const BulletinList: React.FC = () => {
   );
 
   const bulletins = bulletinListResponse?.bulletins ?? [];
+  const pagination = bulletinListResponse?.pagination; // <-- 사용됨
+  const totalElements = pagination?.totalElements ?? 0;
 
   const handleBulletinClick = useCallback(
     (bulletin: Bulletin) => {
-      console.log("게시글 클릭:", bulletin);
       navigate(`/crew/${crewId}/bulletin/${bulletin.id}`);
     },
     [navigate, crewId]
   );
 
   const handlePageChange = useCallback((page: number) => {
-    console.log("페이지 변경:", page);
     setCurrentPage(page);
   }, []);
 
@@ -59,9 +59,6 @@ const BulletinList: React.FC = () => {
     );
   }
 
-  const hasNextPage = bulletins.length === itemsPerPage;
-  const estimatedTotalPages = hasNextPage ? currentPage + 1 : currentPage;
-
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="py-6 space-y-6 pt-12 mt-2">
@@ -79,9 +76,7 @@ const BulletinList: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-xl font-bold">게시판</h1>
-            <p className="text-gray-600 text-sm pt-2">
-              전체 {bulletins.length}건
-            </p>
+            <p className="text-gray-600 text-sm pt-2">전체 {totalElements}건</p>
           </div>
         </div>
 
@@ -106,7 +101,7 @@ const BulletinList: React.FC = () => {
           <div className="flex justify-center items-center space-x-2 my-8">
             <Pagination
               currentPage={currentPage}
-              totalPages={estimatedTotalPages}
+              totalPages={pagination!.totalPages}
               onPageChange={handlePageChange}
             />
           </div>
