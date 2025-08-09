@@ -1,6 +1,7 @@
-import iconHeart from "../../../assets/schedule/ic_Heart.svg";
-import iconShare from "../../../assets/schedule/ic_Share.svg";
-import iconDown from "../../../assets/schedule/ic_Down.svg";
+import iconHeart from "../../../../assets/schedule/ic_Heart.svg";
+import iconShare from "../../../../assets/schedule/ic_Share.svg";
+import iconDown from "../../../../assets/schedule/ic_Down.svg";
+
 type Props = {
   isCommentOpen: boolean;
   toggleComment: () => void;
@@ -23,7 +24,7 @@ const NoticeAction = ({ isCommentOpen, toggleComment }: Props) => {
           댓글
           <img
             src={iconDown}
-            alt="down"
+            alt="댓글 토글"
             className={`w-5 h-5 transform transition-transform duration-200 ${
               isCommentOpen ? "rotate-180" : ""
             }`}

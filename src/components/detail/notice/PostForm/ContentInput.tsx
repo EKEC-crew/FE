@@ -2,13 +2,18 @@ import { useRef, useState } from "react";
 import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 
-const ContentInput = () => {
+interface ContentInputProps {
+  onValueChange: (value: string) => void;
+}
+
+const ContentInput: React.FC<ContentInputProps> = ({ onValueChange }) => {
   const editorRef = useRef<Editor>(null);
   const [content, setContent] = useState("");
 
   const handleChange = () => {
     const html = editorRef.current?.getInstance().getHTML() || "";
     setContent(html);
+    onValueChange(html);
   };
 
   return (
@@ -19,7 +24,7 @@ const ContentInput = () => {
       <div className="mb-6">
         <Editor
           ref={editorRef}
-          initialValue=""
+          initialValue={content}
           height="400px"
           useCommandShortcut
           hideModeSwitch={true}

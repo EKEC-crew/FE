@@ -1,4 +1,10 @@
-const FeeSection = () => {
+interface FeeSectionProps{
+  fee: String;
+  setFee: (value:string) => void;
+
+}
+
+const FeeSection: React.FC<FeeSectionProps> = ({  }) => {
   return (
     <div className="mb-4">
       <label className="block font-bold mb-1 p-1">회비 등록</label>
