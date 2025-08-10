@@ -6,14 +6,22 @@ import userCo from "../../assets/icons/topGnb/ic_line_user_co.svg";
 import logOutBk from "../../assets/icons/topGnb/ic_line_logout_black.svg";
 import logOutCo from "../../assets/icons/topGnb/ic_line_logout_co.svg";
 import ProfileModalBtn from "./ProfileModalBtn";
+import { useSignOut } from "../../hooks/auth/useSignOut";
 interface Props {
   onClose: () => void;
-  onLogout: () => void;
   onMyPage: () => void;
 }
 
-export default function ProfileModal({ onClose, onLogout, onMyPage }: Props) {
+export default function ProfileModal({ onClose, onMyPage }: Props) {
+  const { mutate: signOut } = useSignOut();
+
   const modalRef = useRef<HTMLDivElement>(null);
+
+  const handleLogoutClick = () => {
+    signOut();
+    onClose();
+  };
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
@@ -40,7 +48,7 @@ export default function ProfileModal({ onClose, onLogout, onMyPage }: Props) {
         label="로그아웃"
         defaultIcon={logOutBk}
         hoverIcon={logOutCo}
-        onClick={onLogout}
+        onClick={handleLogoutClick}
         isBottom
       />
     </div>

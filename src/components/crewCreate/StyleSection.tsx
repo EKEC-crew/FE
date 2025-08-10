@@ -1,4 +1,4 @@
-import { styleOptions } from "../crewList/optionsDummy";
+import { styleOptions } from "../../constants/crewFilterOptions";
 import OptionGrid from "./OptionGrid";
 
 interface StyleSectionProps {

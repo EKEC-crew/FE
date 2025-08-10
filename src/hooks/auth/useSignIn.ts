@@ -1,17 +1,36 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { loginApi } from "../../apis/auth";
+
+import { signInApi, refreshApi } from "../../apis/auth";
 import type { RequestSign, ResponseSign } from "../../types/auth/types";
+import { useAuthStore } from "../../store/useAuthStore";
 
 export const useSignIn = () => {
   const navigate = useNavigate();
 
+  const setUser = useAuthStore((s) => s.setUser);
+  const setStatus = useAuthStore((s) => s.setStatus);
+
   return useMutation<ResponseSign, Error, RequestSign>({
-    mutationFn: loginApi,
-    onSuccess: (response) => {
+    mutationFn: signInApi,
+    onSuccess: async (response) => {
       console.log("로그인 성공:", response);
 
       if (response.resultType === "SUCCESS") {
+        try {
+          const me = await refreshApi();
+          if (me.resultType === "SUCCESS" && me.data) {
+            setUser(me.data);
+            setStatus("authenticated");
+            await useAuthStore.getState().loadAvatar();
+          } else {
+            setUser(null);
+            setStatus("unauthenticated");
+          }
+        } catch {
+          setUser(null);
+          setStatus("unauthenticated");
+        }
         if (response.data?.isCompleted) {
           navigate("/");
         } else {

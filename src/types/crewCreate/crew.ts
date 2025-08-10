@@ -9,7 +9,6 @@ export interface CrewInfo {
   region: number;
   activities: number[];
   styles: number[];
-  admin: number;
 }
 
 export interface ServerQuestion {
@@ -27,4 +26,23 @@ export interface QuestionData {
   options: string[];
   required: boolean;
   hasEtc?: boolean;
+}
+
+export interface Crew {
+  id: number;
+  name: string;
+  description: string;
+  introduction: string;
+  capacity: number;
+  noticeCount: number;
+  postCount: number;
+  bannerImage: string;
+  ageLimit: number;
+  genderLimit: number;
+  ownerName: string;
+  crewCategory: string;
+  crewActivity: string[];
+  crewStyle: string[];
+  regionSido: string;
+  regionGu: string;
 }

@@ -5,6 +5,7 @@ import type {
   ResponseCreateProfile,
   ResponseRefresh,
   ResponseSign,
+  ResponseSignOut,
 } from "../types/auth/types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -53,14 +54,22 @@ export const signUpApi = async (data: RequestSign): Promise<ResponseSign> => {
 };
 
 // 로그인 API 함수
-export const loginApi = async (data: RequestSign): Promise<ResponseSign> => {
+export const signInApi = async (data: RequestSign): Promise<ResponseSign> => {
   const response = await authApi.post<ResponseSign>("/auth/login", data);
+  console.log("[signInApi] response.data:", response.data);
+  return response.data;
+};
+
+// 로그아웃 API 함수
+export const signOutApi = async (): Promise<ResponseSignOut> => {
+  const response = await authApi.post<ResponseSignOut>("/auth/logout");
   return response.data;
 };
 
 // 토큰 갱신 API 함수
 export const refreshApi = async (): Promise<ResponseRefresh> => {
   const response = await authApi.post<ResponseRefresh>("/auth/refresh");
+  console.log("[refreshApi] response.data:", response.data);
   return response.data;
 };
 
@@ -69,7 +78,10 @@ export const createProfileApi = async (
   data: RequestCreateProfile
 ): Promise<ResponseCreateProfile> => {
   const form = new FormData();
-  form.append("profileImage", data.profileImage);
+  // 파일이 있을 때만 전송
+  if (data.profileImage) {
+    form.append("profileImage", data.profileImage);
+  }
   form.append("defaultImage", String(data.defaultImage));
   form.append("name", data.name);
   form.append("nickname", data.nickname);
@@ -80,13 +92,7 @@ export const createProfileApi = async (
 
   const response = await authApi.post<ResponseCreateProfile>(
     "/auth/profile",
-    form,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-      // 400~499도 응답으로 받고 싶으면 validateStatus 추가
-    }
+    form
   );
   return response.data;
 };

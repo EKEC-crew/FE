@@ -1,6 +1,6 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { loginApi, signUpApi } from "../../apis/auth";
+import { signInApi, signUpApi } from "../../apis/auth";
 import type { ResponseSign, RequestSign } from "../../types/auth/types";
 
 export const useSignUp = () => {
@@ -14,7 +14,7 @@ export const useSignUp = () => {
       if (response.resultType === "SUCCESS") {
         try {
           // 회원가입 직후 자동 로그인 (isCompleted 필드 제거)
-          const loginRes = await loginApi({
+          const loginRes = await signInApi({
             email: variables.email,
             password: variables.password,
           });

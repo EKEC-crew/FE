@@ -31,13 +31,13 @@ const crewCreatePage = () => {
       JSON.stringify({ questions: applicationForm })
     );
 
-    //const token = localStorage.getItem("accessToken");
+    const token = localStorage.getItem("accessToken");
 
     try {
       const res = await API.post("/crew/create", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          //Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       console.log("성공:", res.data);
