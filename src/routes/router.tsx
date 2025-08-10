@@ -27,6 +27,7 @@ import NoticeDetail from "../components/detail/notice/detail/NoticeDetail";
 import Bulletin from "../pages/detail/bulletin";
 import BulletinDetail from "../components/detail/bulletin/detail/BulletinDetail";
 import PostBulletinForm from "../components/detail/bulletin/PostForm/PostBulletinForm";
+import ApplyPage from "../pages/apply";
 
 const router = createBrowserRouter([
   {
@@ -143,6 +144,10 @@ const router = createBrowserRouter([
           {
             path: "bulletin/post",
             element: <PostBulletinForm />,
+          },
+          {
+            path: "apply",
+            element: <ApplyPage />,
           },
         ],
       },

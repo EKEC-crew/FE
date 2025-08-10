@@ -26,7 +26,7 @@ const RootLayout = () => {
       <div className="flex transition-all duration-300">
         <LeftGnb />
         <TopGnb />
-        <main className="md:ml-[18.75rem] flex-1">
+        <main className="md:ml-[18.75rem] pt-16 flex-1">
           <Outlet />
         </main>
       </div>

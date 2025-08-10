@@ -18,8 +18,12 @@ interface OptionGridBaseProps {
 
 type SingleSelectProps = {
   type: "single";
-  selected: number | null;
+  selected: number;
   onChange: (selected: number) => void;
+  /** 단일 선택에서 재클릭 시 해제 허용 여부 (기본 false) */
+  allowEmpty?: boolean;
+  /** 해제 시 내려줄 값 (기본 0) */
+  emptyValue?: number;
 } & OptionGridBaseProps;
 
 type MultiSelectProps = {
@@ -36,14 +40,15 @@ const OptionGrid = (props: OptionGridProps) => {
     type,
     exclusivePairs = [],
     maxSelectCount,
+    minSelectCount = 0, // 기본은 최소 제한 없음
     selected,
     onChange,
-  } = props;
+  } = props as any;
 
   const isSingle = type === "single";
 
   const exclusionMap = new Map<number, number[]>();
-  exclusivePairs.forEach(([a, b]) => {
+  exclusivePairs.forEach(([a, b]: ExclusivePair) => {
     if (!exclusionMap.has(a)) exclusionMap.set(a, []);
     if (!exclusionMap.has(b)) exclusionMap.set(b, []);
     exclusionMap.get(a)!.push(b);
@@ -52,18 +57,29 @@ const OptionGrid = (props: OptionGridProps) => {
 
   const handleClick = (value: number) => {
     if (isSingle) {
+      const { allowEmpty = false, emptyValue = 0 } = props as SingleSelectProps;
+
+      // allowEmpty=true면 같은 값 재클릭 시 emptyValue로 초기화
+      if (allowEmpty && selected === value) {
+        onChange(emptyValue);
+        return;
+      }
       onChange(value);
       return;
     }
 
-    const isSelected = selected.includes(value);
-    let updated = [...selected];
+    // multiple
+    const isSelected = (selected as number[]).includes(value);
+    let updated = [...(selected as number[])];
 
     if (isSelected) {
+      // minSelectCount보다 작아지면 해제 막기
+      if (updated.length <= minSelectCount) return;
       updated = updated.filter((item) => item !== value);
     } else {
-      if (maxSelectCount && selected.length >= maxSelectCount) return;
+      if (maxSelectCount && updated.length >= maxSelectCount) return;
 
+      // 배타 관계 처리
       const exclusives = exclusionMap.get(value) || [];
       updated = updated.filter((item) => !exclusives.includes(item));
 
@@ -74,26 +90,36 @@ const OptionGrid = (props: OptionGridProps) => {
   };
 
   const isSelected = (value: number) =>
-    isSingle ? selected === value : selected.includes(value);
+    isSingle ? selected === value : (selected as number[]).includes(value);
 
   const isExcluded = (value: number) => {
     if (isSingle) return false;
     const exclusives = exclusionMap.get(value) || [];
-    return exclusives.some((ex) => selected.includes(ex));
+    return exclusives.some((ex) => (selected as number[]).includes(ex));
   };
 
   const isDisabled = (value: number) => {
     if (isSingle) return false;
-    return (
-      !selected.includes(value) &&
-      ((maxSelectCount && selected.length >= maxSelectCount) ||
-        isExcluded(value))
-    );
+
+    const list = selected as number[];
+    const currentlySelected = list.includes(value);
+
+    // 새 선택 불가 조건: maxSelectCount 초과 or 배타 관계
+    if (!currentlySelected) {
+      if (
+        (maxSelectCount && list.length >= maxSelectCount) ||
+        isExcluded(value)
+      ) {
+        return true;
+      }
+      return false;
+    }
+    return false;
   };
 
   return (
     <div className="flex flex-wrap gap-3">
-      {options.map(({ label, value }) => {
+      {options.map(({ label, value }: OptionItem) => {
         const selectedItem = isSelected(value);
         const excluded = isExcluded(value);
         const disabled = isDisabled(value);
