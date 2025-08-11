@@ -2,9 +2,24 @@ import { useParams } from "react-router-dom";
 import { useScheduleList } from "../../../hooks/schedule/useScheduleList";
 import ScheduleItem from "./ScheduleItem";
 
-const ScheduleList = () => {
+interface ScheduleListProps {
+  currentPage?: number;
+  onPaginationChange?: (pagination: any) => void;
+}
+
+const ScheduleList = ({ currentPage = 1, onPaginationChange }: ScheduleListProps) => {
   const { crewId } = useParams<{ crewId: string }>();
-  const { data, isLoading, error } = useScheduleList(crewId || "", 1, 10);
+  const itemsPerPage = 10;
+
+  const { data, isLoading, error } = useScheduleList(crewId || "", currentPage, itemsPerPage);
+
+  const schedules = data?.data?.plans || [];
+  const pagination = data?.data?.pagination;
+
+  // pagination 정보를 부모에게 전달
+  if (pagination && onPaginationChange) {
+    onPaginationChange(pagination);
+  }
 
   console.log("[ScheduleList Debug]", {
     crewId,
@@ -29,8 +44,6 @@ const ScheduleList = () => {
     );
   }
 
-  const schedules = data.data?.plans || [];
-
   if (schedules.length === 0) {
     return (
       <div className="mt-6 flex justify-center">
@@ -41,24 +54,27 @@ const ScheduleList = () => {
 
   return (
     <div className="mt-6">
-      {schedules.map((schedule) => (
-        <ScheduleItem
-          key={schedule.id}
-          id={schedule.id}
-          type={schedule.type === 0 ? "정기" : "번개"}
-          title={schedule.title}
-          date={new Date(schedule.day)
-            .toLocaleDateString("ko-KR", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            })
-            .replace(/\./g, ".")
-            .slice(0, -1)}
-          status={schedule.isRequired ? "신청하기" : "참고용"}
-          isNew={false}
-        />
-      ))}
+      {/* 일정 목록 */}
+      <div>
+        {schedules.map((schedule) => (
+          <ScheduleItem
+            key={schedule.id}
+            id={schedule.id}
+            type={schedule.type === 0 ? "정기" : "번개"}
+            title={schedule.title}
+            date={new Date(schedule.day)
+              .toLocaleDateString("ko-KR", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+              })
+              .replace(/\./g, ".")
+              .slice(0, -1)}
+            status={schedule.isRequired ? "신청하기" : "참고용"}
+            isNew={false}
+          />
+        ))}
+      </div>
     </div>
   );
 };
