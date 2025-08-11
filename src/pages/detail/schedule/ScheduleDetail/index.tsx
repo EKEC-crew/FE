@@ -75,10 +75,7 @@ const ScheduleDetail = () => {
   }
 
   // writer 필드가 이메일인지, 닉네임인지, 이름인지에 따라 비교
-  const isAuthor =
-    user?.email === schedule.writer ||
-    user?.nickname === schedule.writer ||
-    user?.name === schedule.writer;
+  const isAuthor = user?.id === schedule.userId;
 
   console.log("작성자 여부:", isAuthor);
   return (

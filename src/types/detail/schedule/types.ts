@@ -64,6 +64,7 @@ export interface ScheduleItem {
   isRequired: boolean;
   createdAt: string;
   updatedAt: string | null;
+  userId: number;
 }
 
 export interface PaginationInfo {
