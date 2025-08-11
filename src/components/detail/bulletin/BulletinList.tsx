@@ -1,6 +1,5 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 import { useBulletinList } from "../../../hooks/bulletin/useBulletins";
 import BulletinPostButton from "./button/post";
 import Pagination from "./button/pagination";
@@ -18,7 +17,7 @@ const BulletinList: React.FC = () => {
   const itemsPerPage = 10;
 
   const {
-    data: bulletinData,
+    data: bulletinListResponse,
     isLoading: loading,
     error,
   } = useBulletinList(
@@ -27,24 +26,18 @@ const BulletinList: React.FC = () => {
     itemsPerPage
   );
 
-  const bulletins = bulletinData?.bulletins || [];
-  const pagination = bulletinData?.pagination;
+  const bulletins = bulletinListResponse?.bulletins ?? [];
+  const pagination = bulletinListResponse?.pagination; // <-- 사용됨
+  const totalElements = pagination?.totalElements ?? 0;
 
   const handleBulletinClick = useCallback(
     (bulletin: Bulletin) => {
-      console.log("게시글 클릭:", bulletin);
       navigate(`/crew/${crewId}/bulletin/${bulletin.id}`);
     },
     [navigate, crewId]
   );
 
-  const handleWriteClick = useCallback(() => {
-    console.log("글쓰기 버튼 클릭");
-    navigate(`/crew/${crewId}/post`);
-  }, [navigate, crewId]);
-
   const handlePageChange = useCallback((page: number) => {
-    console.log("페이지 변경:", page);
     setCurrentPage(page);
   }, []);
 
@@ -83,9 +76,7 @@ const BulletinList: React.FC = () => {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-xl font-bold">게시판</h1>
-            <p className="text-gray-600 text-sm pt-2">
-              전체 {pagination?.totalElements || 0}건
-            </p>
+            <p className="text-gray-600 text-sm pt-2">전체 {totalElements}건</p>
           </div>
         </div>
 
@@ -106,18 +97,18 @@ const BulletinList: React.FC = () => {
           </div>
         )}
 
-        {bulletins.length > 0 && pagination && (
+        {bulletins.length > 0 && (
           <div className="flex justify-center items-center space-x-2 my-8">
             <Pagination
               currentPage={currentPage}
-              totalPages={pagination.totalPages}
+              totalPages={pagination!.totalPages}
               onPageChange={handlePageChange}
             />
           </div>
         )}
 
         <div className="flex justify-center mt-6">
-          <BulletinPostButton onClick={handleWriteClick} />
+          <BulletinPostButton />
         </div>
       </div>
     </div>
