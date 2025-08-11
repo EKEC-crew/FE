@@ -1,9 +1,22 @@
 interface SubmitButtonProps {
   onSubmit: () => void;
   isLoading?: boolean;
+  isEditMode?: boolean;
 }
 
-const SubmitButton = ({ onSubmit, isLoading = false }: SubmitButtonProps) => {
+const SubmitButton = ({
+  onSubmit,
+  isLoading = false,
+  isEditMode = false,
+}: SubmitButtonProps) => {
+  const buttonText = isLoading
+    ? isEditMode
+      ? "수정 중..."
+      : "등록 중..."
+    : isEditMode
+      ? "수정 완료하기"
+      : "등록 완료하기";
+
   return (
     <button
       onClick={onSubmit}
@@ -18,9 +31,7 @@ const SubmitButton = ({ onSubmit, isLoading = false }: SubmitButtonProps) => {
         backgroundSize: "100% auto",
       }}
     >
-      <span className="text-lg font-semibold">
-        {isLoading ? "등록 중..." : "등록 완료하기"}
-      </span>
+      <span className="text-lg font-semibold">{buttonText}</span>
     </button>
   );
 };

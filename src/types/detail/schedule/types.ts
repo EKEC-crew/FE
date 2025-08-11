@@ -101,3 +101,28 @@ export interface ResponseScheduleDetail {
   };
   data: ScheduleItem;
 }
+
+// 일정 수정 요청 타입
+export type RequestUpdateSchedule = RequestCreateSchedule;
+
+// 일정 수정 응답 타입
+export interface ResponseUpdateSchedule {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data: any;
+  };
+  success: ScheduleItem | null;
+}
+
+// 일정 삭제 응답 타입
+export interface ResponseDeleteSchedule {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data: any;
+  };
+  data: null;
+}

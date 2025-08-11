@@ -42,7 +42,7 @@ privateAPI.interceptors.response.use(
         return privateAPI(originalRequest);
       } catch (refreshError) {
         // 리프레시 실패 = 로그인 필요
-        window.location.href = "/login";
+        window.location.href = "/signIn";
         return Promise.reject(refreshError);
       }
     }

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import TypeSelector from "./TypeSelector";
 import DateSelector from "./DateSelector";
@@ -11,11 +11,23 @@ import Header from "../../header";
 import Notice from "../../notice";
 import Tabs from "../../tabs";
 import { useCreateSchedule } from "../../../../hooks/schedule/useCreateSchedule";
+import { useUpdateSchedule } from "../../../../hooks/schedule/useUpdateSchedule";
+import { useScheduleDetail } from "../../../../hooks/schedule/useScheduleDetail";
 import type { ScheduleType } from "../../../../types/detail/schedule/types";
 
 const PostScheduleForm = () => {
-  const { crewId } = useParams<{ crewId: string }>();
+  const { crewId, id } = useParams<{ crewId: string; id?: string }>();
+  const isEditMode = !!id; // id가 있으면 수정 모드
+
   const createScheduleMutation = useCreateSchedule();
+  const updateScheduleMutation = useUpdateSchedule();
+
+  // 수정 모드일 때 기존 데이터 가져오기
+  const { data: scheduleData, isLoading } = useScheduleDetail(
+    crewId || "",
+    id || "",
+    { enabled: isEditMode }
+  );
 
   // 폼 상태 관리
   const [type, setType] = useState("regular");
@@ -29,6 +41,32 @@ const PostScheduleForm = () => {
   const [hasFee, setHasFee] = useState(false);
   const [fee, setFee] = useState(0);
   const [feePurpose, setFeePurpose] = useState("");
+
+  // 수정 모드일 때 기존 데이터로 폼 초기화
+  useEffect(() => {
+    if (isEditMode && scheduleData?.data) {
+      const schedule = scheduleData.data;
+      setType(schedule.type === 0 ? "regular" : "lightning");
+      setIsRequired(schedule.isRequired);
+      setTitle(schedule.title);
+      setContent(schedule.content);
+      setSelectedDate(new Date(schedule.day));
+      setHasFee(schedule.hasFee);
+      if (schedule.hasFee) {
+        setFee(schedule.fee);
+        setFeePurpose(schedule.feePurpose || "");
+      }
+    }
+  }, [isEditMode, scheduleData]);
+
+  // 로딩 상태 처리
+  if (isEditMode && isLoading) {
+    return (
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+        <div className="text-gray-500">일정 정보를 불러오는 중...</div>
+      </div>
+    );
+  }
 
   // 폼 제출 처리
   const handleSubmit = () => {
@@ -87,10 +125,20 @@ const PostScheduleForm = () => {
 
     console.log("전송할 데이터:", requestData);
 
-    createScheduleMutation.mutate({
-      crewId,
-      scheduleData: requestData,
-    });
+    if (isEditMode && id) {
+      // 수정 모드
+      updateScheduleMutation.mutate({
+        crewId,
+        planId: id,
+        scheduleData: requestData,
+      });
+    } else {
+      // 생성 모드
+      createScheduleMutation.mutate({
+        crewId,
+        scheduleData: requestData,
+      });
+    }
   };
 
   return (
@@ -116,7 +164,10 @@ const PostScheduleForm = () => {
                 isRequired={isRequired}
                 setIsRequired={setIsRequired}
               />
-              <DateSelector onDateChange={setSelectedDate} />
+              <DateSelector
+                onDateChange={setSelectedDate}
+                selectedDate={selectedDate}
+              />
               <PermissionSelector
                 allowComments={allowComments}
                 allowPrivateComments={allowPrivateComments}
@@ -137,7 +188,12 @@ const PostScheduleForm = () => {
               />
               <SubmitButton
                 onSubmit={handleSubmit}
-                isLoading={createScheduleMutation.isPending}
+                isLoading={
+                  isEditMode
+                    ? updateScheduleMutation.isPending
+                    : createScheduleMutation.isPending
+                }
+                isEditMode={isEditMode}
               />
             </div>
           </div>

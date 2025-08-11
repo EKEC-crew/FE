@@ -1,14 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DropDown from "../../../auth/createProfile/dropDown";
 
 interface DateSelectorProps {
   onDateChange?: (date: Date | null) => void;
+  selectedDate?: Date | null;
 }
 
-const DateSelector = ({ onDateChange }: DateSelectorProps) => {
+const DateSelector = ({ onDateChange, selectedDate }: DateSelectorProps) => {
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
   const [day, setDay] = useState("");
+
+  // selectedDate가 변경될 때 내부 state 동기화
+  useEffect(() => {
+    if (selectedDate) {
+      const date = new Date(selectedDate);
+      setYear(String(date.getFullYear()));
+      setMonth(String(date.getMonth() + 1));
+      setDay(String(date.getDate()));
+    } else {
+      setYear("");
+      setMonth("");
+      setDay("");
+    }
+  }, [selectedDate]);
 
   // 현재 년도부터 미래 10년까지의 옵션 생성
   const currentYear = new Date().getFullYear();

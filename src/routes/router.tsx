@@ -108,6 +108,10 @@ const router = createBrowserRouter([
             element: <PostScheduleForm />,
           },
           {
+            path: "schedule/:id/edit",
+            element: <PostScheduleForm />,
+          },
+          {
             path: "notice",
             children: [
               {

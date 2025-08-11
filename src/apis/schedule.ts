@@ -4,6 +4,9 @@ import type {
   ResponseCreateSchedule,
   ResponseScheduleList,
   ResponseScheduleDetail,
+  RequestUpdateSchedule,
+  ResponseUpdateSchedule,
+  ResponseDeleteSchedule,
 } from "../types/detail/schedule/types";
 
 // 일정 등록 API 함수
@@ -47,5 +50,35 @@ export const getScheduleDetailApi = async (
     `/crew/${crewId}/plan/${planId}`
   );
   console.log("[getScheduleDetailApi] response.data:", response.data);
+  return response.data;
+};
+
+// 일정 수정 API 함수
+export const updateScheduleApi = async (
+  crewId: string,
+  planId: string,
+  data: RequestUpdateSchedule
+): Promise<ResponseUpdateSchedule> => {
+  console.log(`[updateScheduleApi] Requesting: /crew/${crewId}/plan/${planId}`);
+  const response = await privateAPI.put<ResponseUpdateSchedule>(
+    `/crew/${crewId}/plan/${planId}`,
+    data
+  );
+  console.log("[updateScheduleApi] response.data:", response.data);
+  return response.data;
+};
+
+// 일정 삭제 API 함수
+export const deleteScheduleApi = async (
+  crewId: string,
+  planId: string
+): Promise<ResponseDeleteSchedule> => {
+  console.log(
+    `[deleteScheduleApi] Requesting: DELETE /crew/${crewId}/plan/${planId}`
+  );
+  const response = await privateAPI.delete<ResponseDeleteSchedule>(
+    `/crew/${crewId}/plan/${planId}`
+  );
+  console.log("[deleteScheduleApi] response.data:", response.data);
   return response.data;
 };
