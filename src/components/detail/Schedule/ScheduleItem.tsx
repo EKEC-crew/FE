@@ -1,6 +1,7 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface Props {
+  id?: number;
   type: "정기" | "번개";
   label?: string;
   title: string;
@@ -9,12 +10,21 @@ interface Props {
   isNew?: boolean;
 }
 
-const ScheduleItem = ({ type, label, title, date, status, isNew }: Props) => {
+const ScheduleItem = ({
+  id,
+  type,
+  label,
+  title,
+  date,
+  status,
+  isNew,
+}: Props) => {
   const navigate = useNavigate();
 
+  const { crewId } = useParams();
+
   const handleClick = () => {
-    // id가 있다면 `/detail/schedule/${id}` 등으로 변경 가능
-    navigate(`/detail/schedule/1`);
+    navigate(`/crew/${crewId}/schedule/${id}`);
   };
 
   return (

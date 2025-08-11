@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Header from "../../../components/detail/header";
 import Notice from "../../../components/detail/notice";
 import Tabs from "../../../components/detail/tabs";
@@ -8,6 +8,7 @@ import Pagination from "../../../components/detail/Schedule/button/pagination";
 import Post from "../../../components/detail/Schedule/button/post";
 
 function Schedule() {
+  const { crewId } = useParams();
   const navigate = useNavigate();
   return (
     <div className="bg-gray-100 min-h-screen shadow-none">
@@ -27,7 +28,7 @@ function Schedule() {
             <Pagination />
           </div>
           <div className="mt-4">
-            <Post onClick={() => navigate("/detail/schedule/post")} />
+            <Post onClick={() => navigate(`/crew/${crewId}/schedule/post`)} />
           </div>
         </div>
       </div>

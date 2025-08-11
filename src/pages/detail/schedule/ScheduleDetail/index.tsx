@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { useScheduleDetail } from "../../../../hooks/schedule/useScheduleDetail";
 import Header from "../../../../components/detail/header";
 import Tabs from "../../../../components/detail/tabs";
 import ScheduleNotice from "../../../../components/detail/Schedule/ScheduleNotice";
@@ -6,11 +8,41 @@ import ScheduleAction from "../../../../components/detail/Schedule/ScheduleActio
 import ScheduleComments from "../../../../components/detail/Schedule/ScheduleComments";
 
 const ScheduleDetail = () => {
+  const { crewId, id } = useParams<{ crewId: string; id: string }>();
+  const { data, isLoading, error } = useScheduleDetail(crewId || "", id || "");
+
   const [isCommentOpen, setIsCommentOpen] = useState(false);
   const [comments] = useState([
     { id: 2, text: "확인 완료! 열심히 활동하겠습니다.", date: "2025.06.18" },
     { id: 3, text: "확인 완료! 열심히 활동하겠습니다.", date: "2025.06.18" },
   ]);
+
+  if (isLoading) {
+    return (
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+        <div className="text-gray-500">일정을 불러오는 중...</div>
+      </div>
+    );
+  }
+
+  if (error || !data || data.resultType === "FAIL") {
+    return (
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+        <div className="text-red-500">
+          {data?.error?.reason || "일정을 불러오는데 실패했습니다."}
+        </div>
+      </div>
+    );
+  }
+
+  const schedule = data.data;
+  if (!schedule) {
+    return (
+      <div className="bg-gray-100 min-h-screen flex items-center justify-center">
+        <div className="text-gray-500">일정 정보가 없습니다.</div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -26,27 +58,58 @@ const ScheduleDetail = () => {
           <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
             {/* 제목 + 태그 */}
             <div className="flex items-center space-x-2">
-              <span className="bg-[#3A3ADB] text-white text-xs px-2 py-0.5 rounded-full">
-                정기
+              <span
+                className={`text-white text-xs px-2 py-0.5 rounded-full ${
+                  schedule.type === 0 ? "bg-[#3A3ADB]" : "bg-[#72EDF2]"
+                }`}
+              >
+                {schedule.type === 0 ? "정기" : "번개"}
               </span>
-              <h2 className="text-xl font-bold">
-                잠실 2030 여성 야구 직관 동호회
-              </h2>
+              <h2 className="text-xl font-bold">{schedule.title}</h2>
             </div>
 
             {/* 작성자 정보 + 버튼 */}
             <div className="flex justify-between items-center">
               <div className="flex py-1 items-center gap-2">
-                <p className="text-sm text-gray-600">000님</p>
-                <p className="text-sm text-gray-500">2025.06.18</p>
+                <p className="text-sm text-gray-600">{schedule.writer}님</p>
+                <p className="text-sm text-gray-500">
+                  {new Date(schedule.day)
+                    .toLocaleDateString("ko-KR", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                    })
+                    .replace(/\./g, ".")
+                    .slice(0, -1)}
+                </p>
               </div>
-              <button className="bg-[#3A3ADB] text-white font-semibold px-5 py-1.5 rounded-xl text-sm">
-                신청완료
+              <button
+                className={`font-semibold px-5 py-1.5 rounded-xl text-sm ${
+                  schedule.isRequired
+                    ? "bg-[#3A3ADB] text-white"
+                    : "bg-gray-200 text-gray-600"
+                }`}
+              >
+                {schedule.isRequired ? "신청하기" : "참고용"}
               </button>
             </div>
 
             {/* 공지 영역 */}
-            <ScheduleNotice />
+            <ScheduleNotice content={schedule.content} />
+
+            {/* 회비 정보 */}
+            {schedule.hasFee && (
+              <div className="bg-blue-50 p-4 rounded-lg">
+                <p className="text-sm font-semibold text-blue-800">
+                  💰 회비: {schedule.fee.toLocaleString()}원
+                </p>
+                {schedule.feePurpose && (
+                  <p className="text-xs text-blue-600 mt-1">
+                    사용 목적: {schedule.feePurpose}
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* 버튼 영역 */}
             <ScheduleAction

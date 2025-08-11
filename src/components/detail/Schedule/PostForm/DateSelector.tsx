@@ -1,35 +1,78 @@
 import { useState } from "react";
+import DropDown from "../../../auth/createProfile/dropDown";
 
-const DateSelector = () => {
+interface DateSelectorProps {
+  onDateChange?: (date: Date | null) => void;
+}
+
+const DateSelector = ({ onDateChange }: DateSelectorProps) => {
   const [year, setYear] = useState("");
   const [month, setMonth] = useState("");
   const [day, setDay] = useState("");
 
+  // 현재 년도부터 미래 10년까지의 옵션 생성
+  const currentYear = new Date().getFullYear();
+  const yearOptions = Array.from({ length: 10 }, (_, i) => ({
+    value: String(currentYear + i),
+    label: `${currentYear + i}년`,
+  }));
 
-  const getClassName = (value: string) => {
-    return `w-[120px] px-4 py-2 pr-8 text-center text-sm rounded-2xl border appearance-none ${
-      value ? "bg-[#E5E5FF] border-[#3A3ADB]" : "bg-white border-gray-300"
-    } focus:outline-none focus:ring-2 focus:ring-[#3A3ADB]`;
+  // 월 옵션 생성 (1-12)
+  const monthOptions = Array.from({ length: 12 }, (_, i) => ({
+    value: String(i + 1),
+    label: `${String(i + 1).padStart(2, "0")}월`,
+  }));
+
+  // 일 옵션 생성 (1-31)
+  const dayOptions = Array.from({ length: 31 }, (_, i) => ({
+    value: String(i + 1),
+    label: `${String(i + 1).padStart(2, "0")}일`,
+  }));
+
+  // 선택된 값의 표시 텍스트 생성 (년/월/일 유지)
+  const getDisplayText = (value: string, type: "year" | "month" | "day") => {
+    if (!value) return "";
+
+    switch (type) {
+      case "year":
+        return `${value}년`;
+      case "month":
+        return `${String(value).padStart(2, "0")}월`;
+      case "day":
+        return `${String(value).padStart(2, "0")}일`;
+      default:
+        return value;
+    }
   };
 
-  const SelectWrapper = ({
-    value,
-    onChange,
-    children,
-  }: {
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-    children: React.ReactNode;
-  }) => (
-    <div className="relative">
-      <select value={value} onChange={onChange} className={getClassName(value)}>
-        {children}
-      </select>
-      <div className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs">
-        ▼
-      </div>
-    </div>
-  );
+  // 날짜가 변경될 때마다 부모 컴포넌트에 알림
+  const updateDate = (newYear: string, newMonth: string, newDay: string) => {
+    if (newYear && newMonth && newDay && onDateChange) {
+      const date = new Date(
+        parseInt(newYear),
+        parseInt(newMonth) - 1,
+        parseInt(newDay)
+      );
+      onDateChange(date);
+    } else if (onDateChange) {
+      onDateChange(null);
+    }
+  };
+
+  const handleYearChange = (value: string) => {
+    setYear(value);
+    updateDate(value, month, day);
+  };
+
+  const handleMonthChange = (value: string) => {
+    setMonth(value);
+    updateDate(year, value, day);
+  };
+
+  const handleDayChange = (value: string) => {
+    setDay(value);
+    updateDate(year, month, value);
+  };
 
   return (
     <div className="mb-4">
@@ -38,34 +81,40 @@ const DateSelector = () => {
       </label>
       <div className="flex gap-3">
         {/* 연도 선택 */}
-        <SelectWrapper value={year} onChange={(e) => setYear(e.target.value)}>
-          <option value="">0000년</option>
-          {[2025, 2026, 2027, 2028, 2029, 2030].map((y) => (
-            <option key={y} value={y}>
-              {y}년
-            </option>
-          ))}
-        </SelectWrapper>
+        <div style={{ width: "180px", height: "50px" }}>
+          <DropDown
+            width="180px"
+            placeholder="0000년"
+            options={yearOptions}
+            value={year}
+            onChange={handleYearChange}
+            getDisplayValue={(value) => getDisplayText(value, "year")}
+          />
+        </div>
 
         {/* 월 선택 */}
-        <SelectWrapper value={month} onChange={(e) => setMonth(e.target.value)}>
-          <option value="">00월</option>
-          {Array.from({ length: 12 }, (_, i) => (
-            <option key={i + 1} value={i + 1}>
-              {String(i + 1).padStart(2, "0")}월
-            </option>
-          ))}
-        </SelectWrapper>
+        <div style={{ width: "130px", height: "50px" }}>
+          <DropDown
+            width="130px"
+            placeholder="00월"
+            options={monthOptions}
+            value={month}
+            onChange={handleMonthChange}
+            getDisplayValue={(value) => getDisplayText(value, "month")}
+          />
+        </div>
 
         {/* 일 선택 */}
-        <SelectWrapper value={day} onChange={(e) => setDay(e.target.value)}>
-          <option value="">00일</option>
-          {Array.from({ length: 31 }, (_, i) => (
-            <option key={i + 1} value={i + 1}>
-              {String(i + 1).padStart(2, "0")}일
-            </option>
-          ))}
-        </SelectWrapper>
+        <div style={{ width: "130px", height: "50px" }}>
+          <DropDown
+            width="130px"
+            placeholder="00일"
+            options={dayOptions}
+            value={day}
+            onChange={handleDayChange}
+            getDisplayValue={(value) => getDisplayText(value, "day")}
+          />
+        </div>
       </div>
     </div>
   );
