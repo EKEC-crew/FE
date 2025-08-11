@@ -5,7 +5,7 @@ import Notice from "../../../components/detail/notice";
 import Tabs from "../../../components/detail/tabs";
 import CrewCalendar from "../../../components/detail/Schedule/calendar";
 import ScheduleList from "../../../components/detail/Schedule/ScheduleList";
-import Pagination from "../../../components/detail/bulletin/button/pagination"; // BulletinList의 Pagination 사용
+import Pagination from "../../../components/detail/bulletin/button/pagination";
 import Post from "../../../components/detail/Schedule/button/post";
 
 function Schedule() {
@@ -30,7 +30,7 @@ function Schedule() {
         <div className="shadow-md overflow-hidden bg-white rounded-lg p-6 flex flex-col items-center">
           <CrewCalendar />
           <div className="mt-6 w-full">
-            <ScheduleList 
+            <ScheduleList
               currentPage={currentPage}
               onPaginationChange={setPaginationInfo}
             />

@@ -7,11 +7,18 @@ interface ScheduleListProps {
   onPaginationChange?: (pagination: any) => void;
 }
 
-const ScheduleList = ({ currentPage = 1, onPaginationChange }: ScheduleListProps) => {
+const ScheduleList = ({
+  currentPage = 1,
+  onPaginationChange,
+}: ScheduleListProps) => {
   const { crewId } = useParams<{ crewId: string }>();
   const itemsPerPage = 10;
 
-  const { data, isLoading, error } = useScheduleList(crewId || "", currentPage, itemsPerPage);
+  const { data, isLoading, error } = useScheduleList(
+    crewId || "",
+    currentPage,
+    itemsPerPage
+  );
 
   const schedules = data?.data?.plans || [];
   const pagination = data?.data?.pagination;
