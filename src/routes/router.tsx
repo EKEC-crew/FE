@@ -12,7 +12,7 @@ import ScheduleDetail from "../pages/detail/schedule/ScheduleDetail";
 import ReviewPage from "../pages/detail/review/index";
 import CrewListPage from "../pages/crewListPage";
 import CrewFilterPage from "../pages/crewFilterPage";
-import PostScheduleForm from "./../components/detail/Schedule/PostForm/PostScheduleForm";
+import PostScheduleForm from "../components/detail/Schedule/PostForm/PostScheduleForm";
 import CrewCreatePage from "../pages/crewCreatePage";
 import SchedulePage from "../pages/myPage/SchedulePage";
 import EditProfilePage from "../pages/myPage/EditProfilePage";
@@ -89,68 +89,71 @@ const router = createBrowserRouter([
         ],
       },
       {
-  path: "crew/:crewId",
-  children: [
-    {
-      index: true,
-      element: <Detail />,
-    },
-    {
-      path: "schedule",
-      element: <Schedule />,
-    },
-    {
-      path: "schedule/:id",
-      element: <ScheduleDetail />,
-    },
-    {
-      path: "schedule/post",
-      element: <PostScheduleForm />,
-    },
-    {
-      path: "notice", 
-      children: [
-        {
-          index: true,
-          element: <NoticeList />,
-        },
-        {
-          path: "post",
-          element: <PostNoticeForm />,
-        },
-        {
-          path: ":noticeId",
-          element: <NoticeDetail />,
-        },
-      ],
-    },
-    {
-      path: "review",
-      element: <ReviewPage />,
-    },
-    {
-      path: "crewmemberlist",
-      element: <CrewMemberListPage />,
-    },
-    {
-      path: "applicants",
-      element: <ApplicantsListPage />,
-    },
-    {
-      path: "bulletin",
-      element: <Bulletin />,
-    },
-    {
-      path: "bulletin/:id",
-      element: <BulletinDetail />,
-    },
-    {
-      path: "bulletin/post",
-      element: <PostBulletinForm />,
-    },
-  ],
-}
-
+        path: "crew/:crewId",
+        children: [
+          {
+            index: true,
+            element: <Detail />,
+          },
+          {
+            path: "schedule",
+            element: <Schedule />,
+          },
+          {
+            path: "schedule/:id",
+            element: <ScheduleDetail />,
+          },
+          {
+            path: "schedule/post",
+            element: <PostScheduleForm />,
+          },
+          {
+            path: "schedule/:id/edit",
+            element: <PostScheduleForm />,
+          },
+          {
+            path: "notice",
+            children: [
+              {
+                index: true,
+                element: <NoticeList />,
+              },
+              {
+                path: "post",
+                element: <PostNoticeForm />,
+              },
+              {
+                path: ":noticeId",
+                element: <NoticeDetail />,
+              },
+            ],
+          },
+          {
+            path: "review",
+            element: <ReviewPage />,
+          },
+          {
+            path: "crewmemberlist",
+            element: <CrewMemberListPage />,
+          },
+          {
+            path: "applicants",
+            element: <ApplicantsListPage />,
+          },
+          {
+            path: "bulletin",
+            element: <Bulletin />,
+          },
+          {
+            path: "bulletin/:id",
+            element: <BulletinDetail />,
+          },
+          {
+            path: "bulletin/post",
+            element: <PostBulletinForm />,
+          },
+        ],
+      },
     ],
   },
   ...AuthRouter,
