@@ -6,7 +6,7 @@ import Naver from "../../../assets/signIn/signInNaverLogo.svg";
 import Ekec from "../../../assets/signIn/signInEkecLogo.svg";
 
 import SocialSignInButton from "./socialSignInButton";
-import AuthBtn from "../authBtn"; // 기존 AuthBtn 컴포넌트 import
+import AuthBtn from "../authBtn";
 
 const SignInForm = () => {
   const navigate = useNavigate();
@@ -42,21 +42,21 @@ const SignInForm = () => {
         </div>
 
         <SocialSignInButton
-          to="/signIn/kakao"
+          provider="kakao"
           imgSrc={Kakao}
           alt="카카오 로고"
           text="카카오 계정으로 계속하기"
           bgColor="#FEE500"
         />
         <SocialSignInButton
-          to="/signIn/naver"
+          provider="naver"
           imgSrc={Naver}
           alt="네이버 로고"
           text="네이버 계정으로 계속하기"
           bgColor="#03C75A"
         />
         <SocialSignInButton
-          to="/signIn/google"
+          provider="google"
           imgSrc={Google}
           alt="구글 로고"
           text="Google 계정으로 계속하기"
