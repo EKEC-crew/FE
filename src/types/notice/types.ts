@@ -6,6 +6,8 @@ export interface Notice {
   time: string;
   hasLabel: boolean;
   labelText?: string;
+  likeCount?: number;
+  liked?: boolean;
 }
 
 export interface NoticeItemProps {

@@ -8,6 +8,7 @@ import SearchPage from "../pages/searchPage";
 import Detail from "../pages/detail";
 import Schedule from "../pages/detail/schedule";
 import NoticeList from "../pages/detail/tabs/noticeList";
+import PostNoticeForm from "../components/detail/notice/PostForm/PostNoticeForm";
 import ScheduleDetail from "../pages/detail/schedule/ScheduleDetail";
 import ReviewPage from "../pages/detail/review/index";
 import CrewListPage from "../pages/crewListPage";
@@ -21,11 +22,11 @@ import CreatedCrewPage from "../pages/myPage/CreatedCrewPage";
 import AlarmPage from "../pages/myPage/AlarmPage";
 import CrewMemberListPage from "../pages/detail/crewMemberList";
 import ApplicantsListPage from "../pages/detail/applicants";
-import PostNoticeForm from "../components/detail/notice/PostForm/PostNoticeForm";
 import NoticeDetail from "../components/detail/notice/detail/NoticeDetail";
 import Bulletin from "../pages/detail/bulletin";
 import BulletinDetail from "../components/detail/bulletin/detail/BulletinDetail";
 import PostBulletinForm from "../components/detail/bulletin/PostForm/PostBulletinForm";
+import EditNoticeForm from "../components/detail/notice/detail/edit/EditNoticeForm";
 
 const router = createBrowserRouter([
   {
@@ -125,6 +126,10 @@ const router = createBrowserRouter([
               {
                 path: ":noticeId",
                 element: <NoticeDetail />,
+              },
+              {
+                path: ":noticeId/edit",
+                element: <EditNoticeForm />,
               },
             ],
           },

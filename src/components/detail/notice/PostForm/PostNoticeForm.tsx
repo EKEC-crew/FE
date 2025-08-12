@@ -7,12 +7,14 @@ import SubmitButton from "./SubmitButton";
 import Header from "../../header";
 import Notice from "../../notice";
 import Tabs from "../../tabs";
+import NoticeAbout from "../detail/NoticeAbout";
 import ImageAttachment from "./ImageAttachment";
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
+import { createNotice } from "../constants";
 
-const PostScheduleForm = () => {
+const PostNoticeForm = () => {  
   const navigate = useNavigate();
   const { crewId } = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -32,9 +34,19 @@ const PostScheduleForm = () => {
       return;
     }
 
+    if (!crewId) {
+      alert("크루 ID가 없습니다.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      const res = await createNotice(crewId, title.trim(), content.trim());
+      if (res?.resultType !== "SUCCESS") {
+        throw new Error(res?.message || "공지사항 등록에 실패했습니다.");
+      }
+
       await queryClient.invalidateQueries({ queryKey: ["notices"] });
       await queryClient.invalidateQueries({ queryKey: ["notices", crewId] });
       await queryClient.invalidateQueries({
@@ -44,7 +56,7 @@ const PostScheduleForm = () => {
           ),
       });
 
-      alert("등록 성공!");
+      alert("공지사항이 성공적으로 등록되었습니다!");
       navigate(`/crew/${crewId}/notice`);
     } catch (err) {
       console.error("등록 실패:", err);
@@ -54,9 +66,7 @@ const PostScheduleForm = () => {
     }
   };
 
-  function setImages(_files: File[]): void {
-    throw new Error("Function not implemented.");
-  }
+  function setImages(_files: File[]): void {}
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -85,6 +95,7 @@ const PostScheduleForm = () => {
               />
               <TitleInput onValueChange={setTitle} />
               <ContentInput onValueChange={setContent} />
+              <NoticeAbout contentHtml={content} />
               <FeeSection {...{ fee, setFee }} />
               <ImageAttachment onValueChange={setImages} />
               <SubmitButton onClick={handleSubmit} disabled={isSubmitting} />
@@ -96,4 +107,4 @@ const PostScheduleForm = () => {
   );
 };
 
-export default PostScheduleForm;
+export default PostNoticeForm;  
