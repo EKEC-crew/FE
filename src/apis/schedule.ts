@@ -7,6 +7,8 @@ import type {
   RequestUpdateSchedule,
   ResponseUpdateSchedule,
   ResponseDeleteSchedule,
+  ResponseScheduleLike,
+  ResponseScheduleUnlike,
 } from "../types/detail/schedule/types";
 
 // 일정 등록 API 함수
@@ -49,7 +51,20 @@ export const getScheduleDetailApi = async (
   const response = await privateAPI.get<ResponseScheduleDetail>(
     `/crew/${crewId}/plan/${planId}`
   );
+  console.log("[getScheduleDetailApi] Full response:", response);
   console.log("[getScheduleDetailApi] response.data:", response.data);
+  console.log(
+    "[getScheduleDetailApi] Full data object:",
+    JSON.stringify(response.data?.data, null, 2)
+  );
+  console.log(
+    "[getScheduleDetailApi] isLiked field:",
+    response.data?.data?.isLiked
+  );
+  console.log(
+    "[getScheduleDetailApi] likeCount field:",
+    response.data?.data?.likeCount
+  );
   return response.data;
 };
 
@@ -80,5 +95,35 @@ export const deleteScheduleApi = async (
     `/crew/${crewId}/plan/${planId}`
   );
   console.log("[deleteScheduleApi] response.data:", response.data);
+  return response.data;
+};
+
+// 일정 좋아요 추가 API 함수
+export const likeScheduleApi = async (
+  crewId: string,
+  planId: string
+): Promise<ResponseScheduleLike> => {
+  console.log(
+    `[likeScheduleApi] Requesting: POST /crew/${crewId}/plan/${planId}/like`
+  );
+  const response = await privateAPI.post<ResponseScheduleLike>(
+    `/crew/${crewId}/plan/${planId}/like`
+  );
+  console.log("[likeScheduleApi] response.data:", response.data);
+  return response.data;
+};
+
+// 일정 좋아요 취소 API 함수
+export const unlikeScheduleApi = async (
+  crewId: string,
+  planId: string
+): Promise<ResponseScheduleUnlike> => {
+  console.log(
+    `[unlikeScheduleApi] Requesting: DELETE /crew/${crewId}/plan/${planId}/like`
+  );
+  const response = await privateAPI.delete<ResponseScheduleUnlike>(
+    `/crew/${crewId}/plan/${planId}/like`
+  );
+  console.log("[unlikeScheduleApi] response.data:", response.data);
   return response.data;
 };

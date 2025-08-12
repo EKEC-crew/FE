@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
+import iconHeart from "../../../assets/schedule/ic_Heart.svg";
 
 interface Props {
   id?: number;
@@ -8,6 +9,7 @@ interface Props {
   date: string;
   status: string;
   isNew?: boolean;
+  likeCount?: number;
 }
 
 const ScheduleItem = ({
@@ -18,6 +20,7 @@ const ScheduleItem = ({
   date,
   status,
   isNew,
+  likeCount = 0,
 }: Props) => {
   const navigate = useNavigate();
 
@@ -50,6 +53,13 @@ const ScheduleItem = ({
       </div>
       <div className="flex items-center gap-5">
         <span className="text-[#93949D] text-sm">{date}</span>
+
+        {/* 좋아요 수 표시 */}
+        <div className="flex items-center gap-1">
+          <img src={iconHeart} alt="좋아요" className="w-4 h-4 grayscale" />
+          <span className="text-[#93949D] text-sm">{likeCount}</span>
+        </div>
+
         <button
           className={`text-xs font-semibold px-2 py-1 rounded ${
             status === "신청하기"
