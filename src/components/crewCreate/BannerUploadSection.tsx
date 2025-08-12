@@ -3,7 +3,7 @@ import defaultBanner from "../../assets/logo/img_crew_banner.svg";
 
 interface BannerUploadSectionProps {
   bannerImage: File | null;
-  setBannerImage: (file: File) => void;
+  setBannerImage: (file: File | null) => void;
 }
 
 const BannerUploadSection = ({
@@ -11,7 +11,7 @@ const BannerUploadSection = ({
   setBannerImage,
 }: BannerUploadSectionProps) => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0] ?? null;
     if (file) setBannerImage(file);
   };
 

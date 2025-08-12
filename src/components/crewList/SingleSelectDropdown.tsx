@@ -6,6 +6,7 @@ interface SingleOption<T = string> {
   label: string;
   value: T;
   icon?: string | React.ReactNode;
+  disabled?: boolean;
 }
 
 interface SingleSelectDropdownProps<T = string> {
@@ -75,8 +76,15 @@ const SingleSelectDropdown = <T,>({
               return (
                 <li
                   key={opt.label}
-                  onClick={() => handleSelect(opt.value)}
                   className="cursor-pointer w-full"
+                  onClick={(e) => {
+                    if (opt.disabled) {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      return;
+                    }
+                    handleSelect(opt.value);
+                  }}
                 >
                   <div
                     className={`w-full px-4 py-2 text-lg text-left whitespace-nowrap

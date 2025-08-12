@@ -1,8 +1,7 @@
 import { useState } from "react";
 import BannerUploadSection from "./BannerUploadSection";
 import HeadcountSection from "./HeadcountSection";
-import type { CrewInfo } from "../../types/crewCreate/crew";
-import { toServerCrewInfo } from "../../utils/mappers/crewInfoMapper";
+import type { CrewInfoDraft } from "../../types/crewCreate/crew";
 import QualificationSection from "./QualificationSection";
 import StyleSection from "./StyleSection";
 import ActivitySection from "./ActivitySection";
@@ -14,7 +13,7 @@ import RegionSection from "./RegionSection";
 const CrewInfoStep = ({
   onNext,
 }: {
-  onNext: (data: { crewInfo: CrewInfo; bannerImage: File | null }) => void;
+  onNext: (data: { draft: CrewInfoDraft; bannerImage: File | null }) => void;
 }) => {
   const [crewName, setCrewName] = useState("");
   const [crewDescription, setCrewDescription] = useState("");
@@ -36,7 +35,7 @@ const CrewInfoStep = ({
   const [isGenderUnlimited, setIsGenderUnlimited] = useState(false);
 
   const handleNextClick = () => {
-    const crewInfo = toServerCrewInfo({
+    const draft: CrewInfoDraft = {
       crewName,
       crewDescription,
       headcount,
@@ -48,10 +47,10 @@ const CrewInfoStep = ({
       selectedGender,
       isHeadcountUnlimited,
       isGenderUnlimited,
-    });
+    };
 
     onNext({
-      crewInfo,
+      draft,
       bannerImage: bannerImage,
     });
   };

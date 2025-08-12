@@ -1,53 +1,110 @@
 import logo from "../../assets/icons/ic_logo graphic_74.svg";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import CrewInfoStep from "../../components/crewCreate/CrewInfoStep";
-import type { CrewInfo } from "../../types/crewCreate/crew";
 import CrewApplicationStep from "../../components/crewCreate/CrewApplicationStep";
-import type { ServerQuestion } from "../../types/crewCreate/crew";
+import CreateSuccessModal from "../../components/crewCreate/CreateSuccessModal";
+import type {
+  CrewInfoDraft,
+  CrewInfoRequest,
+  ServerQuestion,
+} from "../../types/crewCreate/crew";
 import { API } from "../../apis/axios";
+import { toServerCrewInfo } from "../../utils/mappers/crewInfoMapper";
 
 const crewCreatePage = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
   const [step, setStep] = useState(1);
-  const [crewInfo, setCrewInfo] = useState<CrewInfo | null>(null);
+  const [draft, setDraft] = useState<CrewInfoDraft | null>(null);
   const [bannerImage, setBannerImage] = useState<File | null>(null);
 
-  const handleSubmitWith = async (applicationForm: ServerQuestion[]) => {
-    console.log("handleSubmit 실행됨");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [createdCrewId, setCreatedCrewId] = useState<number | null>(null);
 
-    if (!crewInfo || applicationForm.length === 0) {
-      console.log("필수 정보 누락");
-      return;
-    }
+  const handleInfoNext = (payload: {
+    draft: CrewInfoDraft;
+    bannerImage: File | null;
+  }) => {
+    setDraft(payload.draft);
+    setBannerImage(payload.bannerImage);
+    setStep(2);
+    console.log("[handleInfoNext] banner:", payload.bannerImage);
+  };
 
-    const formData = new FormData();
+  const createCrewMutation = useMutation({
+    mutationFn: async (vars: {
+      draft: CrewInfoDraft;
+      bannerImage: File | null;
+      questions: ServerQuestion[];
+      recruitMessage: string;
+    }) => {
+      const { draft, bannerImage, questions, recruitMessage } = vars;
 
-    if (bannerImage) {
-      formData.append("bannerImage", bannerImage);
-    }
+      const crewInfo: CrewInfoRequest = toServerCrewInfo({
+        ...draft,
+        recruitMessage,
+      });
 
-    formData.append("crewInfo", JSON.stringify(crewInfo));
-    formData.append(
-      "applicationForm",
-      JSON.stringify({ questions: applicationForm })
-    );
+      console.log("[bannerImage]", bannerImage, {
+        isFile: bannerImage instanceof File,
+        name: bannerImage?.name,
+        size: bannerImage?.size,
+        type: bannerImage?.type,
+      });
 
-    const token = localStorage.getItem("accessToken");
+      const fd = new FormData();
+      if (bannerImage) {
+        fd.append("bannerImage", bannerImage, bannerImage.name);
+      }
+      fd.append("crewInfo", JSON.stringify(crewInfo));
+      fd.append("applicationForm", JSON.stringify({ questions }));
 
-    try {
-      const res = await API.post("/crew/create", formData, {
+      const token = localStorage.getItem("accessToken");
+      const res = await API.post("/crew/create", fd, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log("성공:", res.data);
-    } catch (err: any) {
-      console.error("실패:", err);
-      if (err.response) {
-        console.log("서버 응답 상태코드:", err.response.status);
-        console.log("서버 응답 메시지:", err.response.data);
+      return res.data;
+    },
+    retry: 0, // 중복 생성 방지
+    onSuccess: (data) => {
+      const id: number | undefined = data?.data?.crewId ?? data?.crewId;
+      if (typeof id === "number") {
+        setCreatedCrewId(id);
+        setShowSuccess(true);
+        // 목록 화면 캐시를 쓰고 있다면 무효화
+        queryClient.invalidateQueries({ queryKey: ["crewList"] });
+      } else {
+        console.warn("생성 성공했지만 crewId를 찾지 못했습니다.", data);
       }
-    }
+    },
+    onError: (err) => {
+      console.error("크루 생성 실패:", err);
+    },
+  });
+
+  const handleSubmitWith = (
+    applicationForm: ServerQuestion[],
+    recruitMessage: string
+  ) => {
+    if (!draft) return;
+    createCrewMutation.mutate({
+      draft,
+      bannerImage,
+      questions: applicationForm,
+      recruitMessage,
+    });
+  };
+
+  const goToDetail = () => {
+    if (!createdCrewId) return;
+    setShowSuccess(false);
+    navigate(`/crew/${createdCrewId}`);
   };
 
   return (
@@ -62,22 +119,14 @@ const crewCreatePage = () => {
             내 손에서 탄생하는 활발한 커뮤니티
           </h2>
         </div>
-        {step === 1 && (
-          <CrewInfoStep
-            onNext={(info) => {
-              setCrewInfo(info.crewInfo);
-              setBannerImage(info.bannerImage);
-              setStep(2);
-            }}
-          />
-        )}
+        {step === 1 && <CrewInfoStep onNext={handleInfoNext} />}
         {step === 2 && (
           <CrewApplicationStep
-            onSubmit={(questions) => {
-              handleSubmitWith(questions);
-            }}
+            loading={createCrewMutation.isPending}
+            onSubmit={handleSubmitWith}
           />
         )}
+        <CreateSuccessModal open={showSuccess} onConfirm={goToDetail} />
       </div>
     </div>
   );

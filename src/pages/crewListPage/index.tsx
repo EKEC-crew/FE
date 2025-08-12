@@ -3,6 +3,7 @@ import CrewCardList from "../../components/crewList/CrewCardList";
 import CrewFilterBar from "../../components/crewList/CrewFilterBar";
 import CrewSortBar from "../../components/crewList/CrewSortBar";
 import Pagination from "../../components/crewList/Pagination";
+import cautionIcon from "../../assets/icons/img_graphic_320.svg";
 import type { CrewFilter } from "../../components/crewList/CrewFilterBar";
 import { useNavigate } from "react-router-dom";
 import type { Crew } from "../../types/crewCreate/crew";
@@ -23,7 +24,7 @@ const CrewListPage = () => {
   });
 
   const [page, setPage] = useState(1);
-  const [sort, setSort] = useState(1);
+  const [sort, setSort] = useState(2);
   const [headcount, setHeadcount] = useState<number | null>(null);
 
   const [crews, setCrews] = useState<Crew[]>([]);
@@ -58,14 +59,15 @@ const CrewListPage = () => {
     if (filters.gender !== null && filters.gender !== undefined)
       queryParams.append("gender", filters.gender.toString());
 
-    if (headcount !== null && headcount !== undefined)
-      queryParams.append("headcount", headcount.toString());
+    if (headcount != null && headcount > 0)
+      queryParams.append("capacity", String(headcount));
 
     queryParams.append("page", page.toString());
     queryParams.append("sort", sort.toString());
 
     return queryParams;
   };
+  const PAGE_SIZE = 10;
 
   // 크루 데이터 불러오기
   const fetchCrews = async () => {
@@ -78,10 +80,15 @@ const CrewListPage = () => {
 
       console.log("응답 전체 구조 확인", response.data);
 
-      const { crews, totalPages } = response.data.data;
+      const { crews, count } = response.data.data;
       setCrews(crews);
+      setTotalCount(count);
+      const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
       setTotalPages(totalPages);
-      setTotalCount(crews.length);
+
+      if (page > totalPages) {
+        setPage(totalPages);
+      }
     } catch (err) {
       console.error("크루 불러오기 실패", err);
     }
@@ -97,8 +104,28 @@ const CrewListPage = () => {
     fetchCrews();
   }, [filters, page, sort, headcount]);
 
+  const [resetSignal, setResetSignal] = useState<boolean>(false);
+
   const handleReset = () => {
-    navigate("/crewListPage?page=1&sort=1");
+    setFilters({
+      category: [],
+      activity: [],
+      style: [],
+      regionSido: "",
+      regionGu: "",
+      age: null,
+      gender: null,
+    });
+    setHeadcount(null);
+    setSort(2); // 인기순
+    setPage(1);
+    setResetSignal((prev) => !prev); // 내부 초기화
+
+    // setTimeout(() => {
+    //   fetchCrews();
+    // }, 0);
+
+    navigate("/crewListPage?page=1&sort=2", { replace: true });
   };
 
   return (
@@ -113,8 +140,8 @@ const CrewListPage = () => {
         <CrewFilterBar
           filters={filters}
           setFilters={setFilters}
-          fetchCrews={fetchCrews}
           onReset={handleReset}
+          resetSignal={resetSignal}
         />
 
         {/* 크루 개수 + 정렬 옵션 */}
@@ -127,16 +154,27 @@ const CrewListPage = () => {
         />
 
         {/* 카드 리스트 */}
-        <CrewCardList crews={crews} />
+        {crews.length === 0 ? (
+          <div className="text-center mt-40">
+            <img src={cautionIcon} alt="successIcon" className="mx-auto" />
+            <h3 className="text-xl md:text-2xl font-bold">
+              일치하는 크루가 없어요!
+            </h3>
+          </div>
+        ) : (
+          <CrewCardList crews={crews} />
+        )}
 
         {/* 페이지네이션 */}
-        <div className="mt-12 flex justify-center">
-          <Pagination
-            currentPage={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
-        </div>
+        {crews.length > 0 && (
+          <div className="mt-12 flex justify-center">
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
