@@ -5,7 +5,7 @@ export type ScheduleType = 0 | 1;
 export interface RequestCreateSchedule {
   title: string;
   content: string;
-  day: string; // ISO 8601 format
+  day: string;
   type: ScheduleType;
   isRequired: boolean;
   allowComments: boolean;
@@ -23,7 +23,7 @@ export interface ScheduleData {
   writer: string;
   title: string;
   content: string;
-  day: string; // ISO 8601 format
+  day: string;
   type: ScheduleType;
   isRequired: boolean;
   allowComments: boolean;
@@ -32,7 +32,7 @@ export interface ScheduleData {
   hasFee: boolean;
   fee: number;
   feePurpose: string;
-  createdAt: string; // ISO 8601 format
+  createdAt: string;
 }
 
 // 일정 등록 응답 타입
@@ -46,7 +46,7 @@ export interface ResponseCreateSchedule {
   data: ScheduleData | null;
 }
 
-// 실제 API 응답에 맞는 일정 아이템 타입
+// 일정 아이템 응답 타입
 export interface ScheduleItem {
   id: number;
   crew_name: string;
@@ -67,7 +67,7 @@ export interface ScheduleItem {
   createdAt: string;
   updatedAt: string | null;
   userId?: number;
-  isLiked?: boolean; // 클라이언트에서 사용하는 추가 필드
+  isLiked?: boolean;
 }
 
 export interface PaginationInfo {
@@ -84,7 +84,7 @@ export interface ScheduleListData {
   pagination: PaginationInfo;
 }
 
-// 일정 목록 조회 응답 타입 (실제 API 형식)
+// 일정 목록 조회 응답 타입
 export interface ResponseScheduleList {
   resultType: "SUCCESS" | "FAIL";
   error: null | {
@@ -95,7 +95,7 @@ export interface ResponseScheduleList {
   data: ScheduleListData;
 }
 
-// 일정 세부 조회 응답 타입 (실제 API 형식)
+// 일정 세부 조회 응답 타입
 export interface ResponseScheduleDetail {
   resultType: "SUCCESS" | "FAIL";
   error: null | {
@@ -130,3 +130,27 @@ export interface ResponseDeleteSchedule {
   };
   data: null;
 }
+
+// 일정 좋아요 관련 응답 데이터 타입
+export interface ScheduleLikeData {
+  message?: string;
+  planId: number;
+  likeCount?: number;
+  isLiked?: boolean;
+  crewId?: number;
+  userId?: number;
+}
+
+// 일정 좋아요 응답 타입
+export interface ResponseScheduleLike {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: ScheduleLikeData;
+  };
+  data: ScheduleLikeData | null;
+}
+
+// 일정 좋아요 취소 응답 타입
+export type ResponseScheduleUnlike = ResponseScheduleLike;

@@ -2,7 +2,6 @@ import iconHeart from "../../../assets/schedule/ic_Heart.svg";
 import iconLikedHeart from "../../../assets/icons/ic_liked_heart.svg";
 import iconComment from "../../../assets/icons/ic_comment.svg";
 import iconShare from "../../../assets/schedule/ic_Share.svg";
-import iconDown from "../../../assets/schedule/ic_Down.svg";
 
 type Props = {
   isCommentOpen: boolean;
@@ -18,7 +17,7 @@ type Props = {
 };
 
 const ScheduleAction = ({
-  isCommentOpen,
+  // isCommentOpen,
   toggleComment,
   isAuthor = false,
   onEdit,
