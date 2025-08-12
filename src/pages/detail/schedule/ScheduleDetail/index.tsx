@@ -153,6 +153,13 @@ const ScheduleDetail = () => {
               onEdit={handleEdit}
               onGoToList={handleGoToList}
               onDelete={handleDelete}
+              likeCount={schedule.likeCount || 0}
+              commentCount={schedule.commentCount || 0}
+              isLiked={schedule.isLiked || false}
+              onLikeToggle={() => {
+                // TODO: 좋아요 토글 함수 구현
+                console.log("좋아요 토글 - planId:", schedule.id);
+              }}
             />
 
             {/* 댓글 영역 */}

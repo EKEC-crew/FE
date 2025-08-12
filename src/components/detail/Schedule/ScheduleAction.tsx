@@ -1,4 +1,6 @@
 import iconHeart from "../../../assets/schedule/ic_Heart.svg";
+import iconLikedHeart from "../../../assets/icons/ic_liked_heart.svg";
+import iconComment from "../../../assets/icons/ic_comment.svg";
 import iconShare from "../../../assets/schedule/ic_Share.svg";
 import iconDown from "../../../assets/schedule/ic_Down.svg";
 
@@ -9,6 +11,10 @@ type Props = {
   onEdit?: () => void;
   onGoToList?: () => void;
   onDelete?: () => void;
+  likeCount?: number;
+  commentCount?: number;
+  isLiked?: boolean;
+  onLikeToggle?: () => void;
 };
 
 const ScheduleAction = ({
@@ -18,28 +24,35 @@ const ScheduleAction = ({
   onEdit,
   onGoToList,
   onDelete,
+  likeCount = 0,
+  commentCount = 0,
+  isLiked = false,
+  onLikeToggle,
 }: Props) => {
   return (
     <div className="flex justify-between items-center mt-4">
       <div className="flex items-center gap-2">
-        <button>
-          <img src={iconHeart} alt="좋아요" className="w-5 h-5" />
+        <button
+          onClick={onLikeToggle}
+          className="flex items-center gap-1 hover:opacity-70 transition-opacity"
+        >
+          <img
+            src={isLiked ? iconLikedHeart : iconHeart}
+            alt="좋아요"
+            className="w-5 h-5"
+          />
+          <span className="text-sm text-gray-600">{likeCount}</span>
+        </button>
+
+        <button
+          className="bg-white px-3 py-0.5 rounded-2xl text-sm flex items-center gap-1"
+          onClick={toggleComment}
+        >
+          <img src={iconComment} alt="댓글" className="w-5 h-5" />
+          <span className="text-gray-600 w-5 h-5">{commentCount}</span>
         </button>
         <button>
           <img src={iconShare} alt="공유" className="w-5 h-5" />
-        </button>
-        <button
-          className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm flex items-center gap-1"
-          onClick={toggleComment}
-        >
-          댓글
-          <img
-            src={iconDown}
-            alt="down"
-            className={`w-5 h-5 transform transition-transform duration-200 ${
-              isCommentOpen ? "rotate-180" : ""
-            }`}
-          />
         </button>
       </div>
 

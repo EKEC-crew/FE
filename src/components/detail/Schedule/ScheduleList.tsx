@@ -79,6 +79,7 @@ const ScheduleList = ({
               .slice(0, -1)}
             status={schedule.isRequired ? "신청하기" : "참고용"}
             isNew={false}
+            likeCount={schedule.likeCount || 0}
           />
         ))}
       </div>

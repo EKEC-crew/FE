@@ -51,20 +51,23 @@ export interface ScheduleItem {
   id: number;
   crew_name: string;
   writer: string;
-  day: string;
   title: string;
   content: string;
+  day: string;
   type: ScheduleType;
+  isRequired: boolean;
   allowComments: boolean;
   allowPrivateComments: boolean;
   allowExternalShare: boolean;
   hasFee: boolean;
   fee: number;
   feePurpose: string;
-  isRequired: boolean;
+  commentCount: number;
+  likeCount: number;
   createdAt: string;
   updatedAt: string | null;
-  userId: number;
+  userId?: number;
+  isLiked?: boolean; // 클라이언트에서 사용하는 추가 필드
 }
 
 export interface PaginationInfo {
