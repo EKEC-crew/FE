@@ -5,7 +5,7 @@ import iconDown from "../../../../assets/schedule/ic_Down.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { deleteNotice, likeNotice } from "../constants";
+import { deleteNotice, likeNotice, unlikeNotice } from "../constants";
 
 type Props = {
   isCommentOpen: boolean;
@@ -32,9 +32,11 @@ const NoticeAction = ({
   useEffect(() => setLiked(initialLiked), [initialLiked]);
   useEffect(() => setLikeCount(initialLikeCount), [initialLikeCount]);
 
+  // 공지 삭제
   const handleDelete = async () => {
     if (!crewId || !noticeId) return;
     if (!confirm("정말 이 공지글을 삭제하시겠습니까?")) return;
+
     try {
       const res = await deleteNotice(crewId, noticeId);
       if (res?.resultType !== "SUCCESS") {
@@ -48,52 +50,68 @@ const NoticeAction = ({
     }
   };
 
-const handleLike = async () => {
-  if (!crewId || !noticeId || pending) return;
+  // 좋아요 / 좋아요 취소 토글 (낙관적 업데이트)
+  const handleToggleLike = async () => {
+    if (!crewId || !noticeId || pending) return;
 
-  // 이미 좋아요면 그냥 종료 (버튼도 disabled라면 이 가드로 충분)
-  if (liked) return;
+    setPending(true);
+    const prev = { liked, likeCount };
 
-  setPending(true);
+    try {
+      if (!liked) {
+        // ✅ 좋아요 (낙관적 반영)
+        setLiked(true);
+        setLikeCount((c) => c + 1);
 
-  const prev = { liked, likeCount };
-  setLiked(true);
-  setLikeCount((c) => c + 1);
+        const res = await likeNotice(crewId, noticeId);
+        if (res?.resultType !== "SUCCESS") {
+          throw res?.error ?? new Error("좋아요 실패");
+        }
 
-  try {
-    const res = await likeNotice(crewId, noticeId);
+        // 서버 값으로 정합화(없으면 낙관값 유지)
+        const serverLiked = res.data?.isLiked ?? true;
+        const serverCount = res.data?.likeCount ?? prev.likeCount + 1;
+        setLiked(serverLiked);
+        setLikeCount(serverCount);
+      } else {
+        // ✅ 좋아요 취소 (낙관적 반영)
+        setLiked(false);
+        setLikeCount((c) => Math.max(0, c - 1));
 
-    if (res?.resultType !== "SUCCESS") {
-      throw res?.error ?? new Error("좋아요 실패");
-    }
+        const res = await unlikeNotice(crewId, noticeId);
+        if (res?.resultType !== "SUCCESS") {
+          throw res?.error ?? new Error("좋아요 취소 실패");
+        }
+        // 서버가 카운트를 내려주면 여기서 동기화
+        // const serverLiked = res.data?.isLiked ?? false;
+        // const serverCount = res.data?.likeCount ?? Math.max(0, prev.likeCount - 1);
+        // setLiked(serverLiked); setLikeCount(serverCount);
+      }
 
-    const serverLiked = res.data?.isLiked ?? true;
-    const serverCount = res.data?.likeCount ?? prev.likeCount + 1;
-    setLiked(serverLiked);
-    setLikeCount(serverCount);
-
-    // 목록/상세 캐시 무효화
-    await queryClient.invalidateQueries({ queryKey: ["notice", Number(crewId), Number(noticeId)] });
-    await queryClient.invalidateQueries({ queryKey: ["notices", crewId] });
-  } catch (e: any) {
-    // 롤백
-    setLiked(prev.liked);
-    setLikeCount(prev.likeCount);
-
-    // 이미 좋아요인 경우: 카운트 올리지 말고 서버 상태로 동기화
-    const code = e?.errorCode || e?.message;
-    if (code === "ALREADY_LIKED") {
-      setLiked(true);
+      // 목록/상세 캐시 무효화로 재검증
       await queryClient.invalidateQueries({ queryKey: ["notice", Number(crewId), Number(noticeId)] });
-      alert("이미 좋아요를 눌렀습니다.");
-      return;
-    }
-    alert(`좋아요 중 오류가 발생했습니다: ${e?.reason || e?.message || "알 수 없는 오류"}`);
-  } finally {
-    setPending(false);
-  }
-};
+      await queryClient.invalidateQueries({ queryKey: ["notices", crewId] });
+    } catch (e: any) {
+      // ❌ 롤백
+      setLiked(prev.liked);
+      setLikeCount(prev.likeCount);
 
+      const code = e?.errorCode || e?.message;
+      if (code === "ALREADY_LIKED") {
+        setLiked(true);
+        await queryClient.invalidateQueries({ queryKey: ["notice", Number(crewId), Number(noticeId)] });
+        alert("이미 좋아요를 눌렀습니다.");
+      } else if (code === "LIKE_NOT_FOUND") {
+        setLiked(false);
+        await queryClient.invalidateQueries({ queryKey: ["notice", Number(crewId), Number(noticeId)] });
+        alert("좋아요 기록이 없습니다.");
+      } else {
+        alert(`좋아요 처리 중 오류가 발생했습니다: ${e?.reason || e?.message || "알 수 없는 오류"}`);
+      }
+    } finally {
+      setPending(false);
+    }
+  };
 
   const handleGoToList = () => {
     navigate(`/crew/${crewId}/notice`);
@@ -102,16 +120,14 @@ const handleLike = async () => {
   return (
     <div className="flex justify-between items-center mt-4">
       <div className="flex items-center gap-2">
-        <button onClick={handleLike} disabled={pending || liked}>
+        <button onClick={handleToggleLike} disabled={pending}>
           <img
             src={liked ? iconHeartFilled : iconHeartOutline}
             alt="좋아요"
-            className={`w-5 h-5 ${pending ? 'opacity-50' : ''} ${liked ? 'opacity-100' : 'opacity-70 hover:opacity-100'}`}
+            className={`w-5 h-5 ${pending ? "opacity-50" : ""} ${liked ? "opacity-100" : "opacity-70 hover:opacity-100"}`}
           />
         </button>
-        {likeCount > 0 && (
-          <span className="text-sm text-gray-600">{likeCount}</span>
-        )}
+        {likeCount > 0 && <span className="text-sm text-gray-600">{likeCount}</span>}
         <button>
           <img src={iconShare} alt="공유" className="w-5 h-5" />
         </button>
@@ -123,9 +139,7 @@ const handleLike = async () => {
           <img
             src={iconDown}
             alt="댓글 토글"
-            className={`w-5 h-5 transform transition-transform duration-200 ${
-              isCommentOpen ? "rotate-180" : ""
-            }`}
+            className={`w-5 h-5 transform transition-transform duration-200 ${isCommentOpen ? "rotate-180" : ""}`}
           />
         </button>
       </div>
@@ -133,9 +147,7 @@ const handleLike = async () => {
       <div className="flex items-center gap-2">
         <button
           className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm"
-          onClick={() =>
-            navigate(`/crew/${crewId}/notice/${noticeId}/edit`)
-          }
+          onClick={() => navigate(`/crew/${crewId}/notice/${noticeId}/edit`)}
         >
           수정
         </button>
@@ -145,7 +157,7 @@ const handleLike = async () => {
         >
           삭제
         </button>
-        <button 
+        <button
           onClick={handleGoToList}
           className="bg-gray-200 px-3 py-0.5 rounded-2xl text-sm hover:bg-gray-300"
         >

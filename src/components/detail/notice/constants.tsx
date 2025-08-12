@@ -212,6 +212,49 @@ export const likeNotice = async (crewId: string, noticeId: string) => {
   }
 };
 
+export const unlikeNotice = async (crewId: string, noticeId: string) => {
+  const url = `${import.meta.env.VITE_API_BASE_URL}/crew/${crewId}/notice/${noticeId}/like`;
+  try {
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken") || ""}`,
+      },
+    });
+
+    let json: any = null;
+    try {
+      json = await response.json();
+    } catch {
+      json = null;
+    }
+
+    if (!response.ok) {
+      // 스펙: 404 → LIKE_NOT_FOUND
+      if (json?.error?.errorCode === "LIKE_NOT_FOUND") {
+        return json; // 호출부에서 분기 처리(동기화)
+      }
+      throw new Error(
+        `HTTP error! status: ${response.status}, message: ${
+          json ? JSON.stringify(json) : ""
+        }`
+      );
+    }
+
+    // 성공 스펙 예: { resultType: "SUCCESS", data: { message: "좋아요가 취소되었습니다." } }
+    return json;
+  } catch (error: any) {
+    const message = String(error?.message || "");
+    if (message.includes("LIKE_NOT_FOUND")) {
+      return {
+        resultType: "FAIL",
+        error: { errorCode: "LIKE_NOT_FOUND" },
+      } as any;
+    }
+    console.error("좋아요 취소 에러:", error);
+    throw error;
+  }
+};
 // ✅ 공지 댓글 목록 조회
 export const fetchNoticeComments = async (crewId: string, noticeId: string) => {
   const url = `${import.meta.env.VITE_API_BASE_URL}/crew/${crewId}/notice/${noticeId}/comment/`;
