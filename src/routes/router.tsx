@@ -97,6 +97,10 @@ const router = createBrowserRouter([
             element: <Detail />,
           },
           {
+            path: "edit-intro",
+            element: <Detail />,
+          },
+          {
             path: "schedule",
             element: <Schedule />,
           },
