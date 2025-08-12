@@ -1,8 +1,8 @@
 // src/components/apply/CustomQuestionsForm.tsx
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import QuestionItem from "./CustomQustionItem"; // ← 파일명/경로 확인!
+import QuestionItem from "./CustomQustionItem";
 
 import {
   QUESTION_TYPE,
@@ -13,72 +13,73 @@ import {
   type Step2FormValues,
 } from "../../schemas/apply/Step2";
 
-// 부모와의 타입 합의
+// 부모로 넘길 제출 타입
 type SubmitAnswer =
   | { recruitFormId: number; checkedChoices: string[]; answer?: never }
   | { recruitFormId: number; answer: string; checkedChoices?: never };
 
 type Props = {
-  questions: ApiQuestion[];
-  onChange: (answers: SubmitAnswer[]) => void;
-  /** (선택) 필수 검증 결과가 바뀔 때 알려줄 콜백 */
-  onValidateChange?: (ok: boolean, message?: string) => void;
+  questions: ApiQuestion[]; // 서버에서 받은 질문 목록
+  onChange: (answers: SubmitAnswer[]) => void; // 값이 바뀔 때마다 호출
+  onValidateChange?: (ok: boolean, message?: string) => void; // 유효성 결과 변경 시 호출
+  disabled?: boolean; // ✅ 읽기 전용 모드
+  value?: SubmitAnswer[]; // ✅ 외부에서 답변 주입 (조회용)
 };
-
-const ETC_LABEL = "기타";
 
 export default function CustomQuestionsForm({
   questions,
   onChange,
   onValidateChange,
 }: Props) {
-  // Zod 스키마 & 기본값 (질문 배열이 바뀔 때만 재생성)
-  const schema = useMemo(() => makeStep2Schema(questions), [questions]);
-  const defaults = useMemo(() => makeStep2Defaults(questions), [questions]);
+  /* -----------------------------
+   * 1. Zod 스키마 & 기본값 세팅
+   * ---------------------------*/
+  const schema = useMemo(() => makeStep2Schema(questions), [questions]); // 질문 배열 기반 검증 스키마
+  const defaults = useMemo(() => makeStep2Defaults(questions), [questions]); // 질문 배열 기반 기본값
 
-  // RHF 세팅
+  /* -----------------------------
+   * 2. RHF 폼 설정
+   * ---------------------------*/
   const {
-    watch,
-    setValue,
-    reset,
+    watch, // 폼 전체 값 구독
+    setValue, // 특정 값 업데이트
+    reset, // 폼 초기화
     formState: { errors, isValid },
   } = useForm<Step2FormValues>({
-    resolver: zodResolver(schema),
-    mode: "onChange",
-    defaultValues: defaults,
+    resolver: zodResolver(schema), // Zod와 연결
+    mode: "onChange", // 값 변경 시 즉시 검증
+    defaultValues: defaults, // 초기값
   });
 
-  // 질문 변경 시 폼 리셋 (한 번만)
+  // 질문이 바뀌면 폼 전체를 새 defaults로 리셋
   useEffect(() => {
     reset(defaults, { keepDirty: false, keepTouched: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [questions]);
 
-  // UX용: "기타" 입력창 열림 상태
-  const [etcOpen, setEtcOpen] = useState<Record<number, boolean>>({});
+  /* -----------------------------
+   * 3. 값 변경/유효성 변경 감지 후 부모로 전달
+   * ---------------------------*/
+  const values = watch(); // 현재 폼 전체 값
+  const lastPayloadRef = useRef<string>(""); // 마지막 전송값(중복 호출 방지)
+  const lastValidRef = useRef<boolean | null>(null); // 마지막 유효성 상태
+  const lastMsgRef = useRef<string | undefined>(undefined); // 마지막 에러 메시지
+
   useEffect(() => {
-    setEtcOpen({});
-  }, [questions]);
-
-  // RHF 전체 값
-  const values = watch();
-
-  // 🔒 무한 렌더링 방지: 마지막으로 보낸 값/상태를 기억
-  const lastPayloadRef = useRef<string>("");
-  const lastValidRef = useRef<boolean | null>(null);
-  const lastMsgRef = useRef<string | undefined>(undefined);
-
-  // 부모에 payload/유효성 전달 (변화가 있을 때만 호출)
-  useEffect(() => {
+    // RHF 값 → 서버 전송 형식으로 변환
     const payload = toStep2Payload(questions, values) as SubmitAnswer[];
     const payloadStr = JSON.stringify(payload);
 
+    // 값이 바뀌었으면 부모로 전달
     if (payloadStr !== lastPayloadRef.current) {
       lastPayloadRef.current = payloadStr;
-      onChange(payload); // ✅ payload 바뀔 때만 호출
+      onChange(payload);
     }
 
-    const firstMsg = getFirstErrorMessage(errors);
+    // 첫 번째 에러 메시지 추출
+    const firstMsg = getFirstErrorMessage(errors as any);
+
+    // 유효성 상태나 메시지가 바뀌면 부모로 전달
     if (isValid !== lastValidRef.current || firstMsg !== lastMsgRef.current) {
       lastValidRef.current = isValid;
       lastMsgRef.current = firstMsg;
@@ -86,115 +87,77 @@ export default function CustomQuestionsForm({
     }
   }, [values, errors, isValid, questions, onChange, onValidateChange]);
 
-  // 옵션 목록(+ 기타 라벨 추가)
-  const getOptions = (q: ApiQuestion): string[] => {
-    const base = ((q.choiceList as any)?.list ?? []) as string[];
-    return q.questionType === QUESTION_TYPE.CHECKBOX && q.isEtc === 1
-      ? [...base, ETC_LABEL]
-      : base;
-  };
+  /* -----------------------------
+   * 4. 질문별 옵션 추출
+   *    - 여기선 "기타" 안 붙이고 베이스만 반환
+   * ---------------------------*/
+  const getOptions = (q: ApiQuestion): string[] =>
+    ((q.choiceList as any)?.list ?? []) as string[];
 
-  // 체크박스 토글
-  const toggleCheckbox = (qid: number, label: string, nextChecked: boolean) => {
-    const key = String(qid);
-    const cur = values[key] as any;
-    const curVals: string[] = cur?.values ?? [];
-
-    if (label === ETC_LABEL) {
-      // 기타 토글 → etcOpen만 제어, 실제 텍스트는 별도 textarea에서 관리
-      setEtcOpen((prev) => {
-        const wasOpen = !!prev[qid];
-        const next = { ...prev, [qid]: nextChecked ? true : false };
-        // 닫힐 때 etc 텍스트 초기화
-        if (wasOpen && !nextChecked) {
-          setValue(
-            key,
-            {
-              ...(cur ?? { type: QUESTION_TYPE.CHECKBOX, values: [] }),
-              etc: "",
-            },
-            { shouldValidate: true, shouldDirty: true }
-          );
-        }
-        return next;
-      });
-      return;
-    }
-
-    const nextValues = nextChecked
-      ? Array.from(new Set([...(curVals ?? []), label]))
-      : (curVals ?? []).filter((v) => v !== label);
-
-    setValue(
-      key,
-      { ...(cur ?? { type: QUESTION_TYPE.CHECKBOX }), values: nextValues },
-      { shouldValidate: true, shouldDirty: true }
-    );
-  };
-
-  // 장문형 입력
-  const setText = (qid: number, text: string) => {
-    const key = String(qid);
-    setValue(
-      key,
-      { type: QUESTION_TYPE.LONG_TEXT, value: text },
-      { shouldValidate: true, shouldDirty: true }
-    );
-  };
-
-  // 기타 텍스트 입력
-  const setEtcText = (qid: number, text: string) => {
-    const key = String(qid);
-    const cur = values[key] as any;
-    setValue(
-      key,
-      { ...(cur ?? { type: QUESTION_TYPE.CHECKBOX, values: [] }), etc: text },
-      { shouldValidate: true, shouldDirty: true }
-    );
-  };
-
+  /* -----------------------------
+   * 5. 렌더링
+   * ---------------------------*/
   return (
     <div className="space-y-6">
+      {/* 질문 목록 렌더 */}
       {questions.map((q, index) => {
         const key = String(q.id);
-        const opts = getOptions(q);
-        const cur = values[key] as any;
+        const opts = getOptions(q); // 해당 질문의 선택지
+        const cur = values[key] as any; // 해당 질문의 현재 값
 
+        // CHECKBOX면 배열, LONG_TEXT면 문자열
         const selectedForItem =
           q.questionType === QUESTION_TYPE.CHECKBOX
             ? (cur?.values ?? [])
             : (cur?.value ?? "");
 
-        const showEtc =
-          q.questionType === QUESTION_TYPE.CHECKBOX &&
-          q.isEtc === 1 &&
-          (etcOpen[q.id] ?? false);
+        // 기타 입력 가능 여부
+        const showEtcState =
+          q.questionType === QUESTION_TYPE.CHECKBOX && q.isEtc === 1;
 
+        // 해당 질문의 에러 객체
         const err = (errors as any)[key];
 
         return (
           <div key={q.id} className="space-y-2">
+            {/* 개별 질문 컴포넌트 */}
             <QuestionItem
               order={index + 1}
               q={q}
               options={opts}
               selected={selectedForItem}
-              onToggleCheckbox={(label, next) =>
-                toggleCheckbox(q.id, label, next)
+              etcText={cur?.etc ?? ""} // RHF에서 관리되는 기타 입력값
+              onCheckboxChange={(next) => {
+                setValue(
+                  key,
+                  {
+                    ...(cur ?? { type: QUESTION_TYPE.CHECKBOX, values: [] }),
+                    values: next,
+                  },
+                  { shouldValidate: true, shouldDirty: true }
+                );
+              }}
+              onEtcTextChange={(text) => {
+                if (!showEtcState) return; // 기타 사용 안 하는 질문이면 무시
+                setValue(
+                  key,
+                  {
+                    ...(cur ?? { type: QUESTION_TYPE.CHECKBOX, values: [] }),
+                    etc: text,
+                  },
+                  { shouldValidate: true, shouldDirty: true }
+                );
+              }}
+              onTextInput={(text) =>
+                setValue(
+                  key,
+                  { type: QUESTION_TYPE.LONG_TEXT, value: text },
+                  { shouldValidate: true, shouldDirty: true }
+                )
               }
-              onTextInput={(text) => setText(q.id, text)}
             />
 
-            {showEtc && (
-              <textarea
-                className="w-full rounded-md border border-gray-300 p-2 text-sm"
-                placeholder="기타 내용을 입력해주세요"
-                value={cur?.etc ?? ""}
-                onChange={(e) => setEtcText(q.id, e.target.value)}
-              />
-            )}
-
-            {/* Zod/RHF 에러 메시지 */}
+            {/* 에러 메시지 표시 */}
             {err && (
               <div className="mt-1 text-sm text-red-600">
                 {err.values?.message || err.value?.message || err.message}
@@ -207,7 +170,9 @@ export default function CustomQuestionsForm({
   );
 }
 
-/** RHF 에러 객체에서 첫 번째 메시지 하나만 추출 */
+/* -----------------------------
+ * 6. 첫 번째 에러 메시지 추출 함수
+ * ---------------------------*/
 function getFirstErrorMessage(
   errors: Record<string, any> | undefined
 ): string | undefined {

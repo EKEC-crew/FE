@@ -123,3 +123,62 @@ export const toCommonAnswersFromApiStep1 = (s: ApiStep1): CommonAnswers => ({
   age: s.age,
   gender: s.gender,
 });
+
+// 서버에 보낼 answers 타입
+export type ApplyAnswer =
+  | { recruitFormId: number; checkedChoices: string[]; answer?: never }
+  | { recruitFormId: number; answer: string | null; checkedChoices?: never };
+
+// 서버에 보낼 최종 바디
+export interface ApplyRequestBody {
+  userId: number;
+  activityList: number[];
+  styleList: number[];
+  region: 0 | 1; // ✅ 플래그
+  age: 0 | 1; // ✅ 플래그
+  gender: 0 | 1; // ✅ 플래그
+  categoryId: 0 | 1; // ✅ 플래그
+  answers: ApplyAnswer[];
+}
+
+//지원자 목록 서버응답 타입
+
+// 서버 응답 원형(DTO)
+export type ApplicantsDTO = {
+  resultType: "SUCCESS" | "FAIL";
+  error: any;
+  success: {
+    applicants: {
+      totalCount: number;
+      applicants: Array<{
+        applyId: number;
+        nickname: string;
+        profileImage: string | null;
+        appliedAt: string; // ISO
+        status: 0 | 1 | 2;
+      }>;
+    };
+  };
+};
+
+export type ApplicantStatus = 0 | 1 | 2; // 0: 대기, 1: 승인, 2: 거절
+
+export interface Applicant {
+  applyid: number; // applyId
+  nickname: string; // nickname
+  appliedAt: string; // appliedAt
+  ProfileImage?: string | null; // profileImage
+  status: ApplicantStatus;
+}
+
+export interface ApplicantsResponse {
+  applicants: Applicant[];
+  totalCount: number;
+  nextPage?: number; // 더 없으면 undefined
+}
+
+// 한 번에 전체 받아오는 구조 이고는 무한 렌더링을 위해!!
+export interface ApplicantsAll {
+  totalCount: number;
+  all: Applicant[];
+}

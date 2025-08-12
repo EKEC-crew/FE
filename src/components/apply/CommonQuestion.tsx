@@ -169,7 +169,7 @@ export default function CommonQuestionFlagsOnly({
     <div className="bg-[#F7F7FB] w-[54.6875rem] flex flex-col gap-6 p-6 rounded-[10px]">
       {/* 카테고리 */}
       {categoryOpts.length === 0 ? null : (
-        <Field title="카테고리">
+        <div>
           <OptionGrid
             type="single"
             options={categoryOpts}
@@ -178,36 +178,35 @@ export default function CommonQuestionFlagsOnly({
             allowEmpty
             emptyValue={0}
           />
-        </Field>
+        </div>
       )}
 
       {/* 활동(다중) */}
       {activityOpts.length === 0 ? null : (
-        <Field title="활동">
+        <div>
           <OptionGrid
             type="multiple"
             options={activityOpts}
             selected={activities}
             onChange={setActivities}
           />
-        </Field>
+        </div>
       )}
 
       {/* 스타일(다중) */}
       {styleOpts.length === 0 ? null : (
-        <Field title="스타일">
+        <div>
           <OptionGrid
             type="multiple"
             options={styleOpts}
             selected={styles}
             onChange={setStyles}
           />
-        </Field>
+        </div>
       )}
-
-      {/* 지역 */}
-      {regionOpts.length === 0 ? null : (
-        <Field title="지역">
+      <div className="flex items-center gap-4">
+        {/* 지역 */}
+        {regionOpts.length === 0 ? null : (
           <OptionGrid
             type="single"
             options={regionOpts}
@@ -216,12 +215,10 @@ export default function CommonQuestionFlagsOnly({
             allowEmpty
             emptyValue={0}
           />
-        </Field>
-      )}
+        )}
 
-      {/* 나이 */}
-      {ageOpts.length === 0 ? null : (
-        <Field title="나이">
+        {/* 나이 */}
+        {ageOpts.length === 0 ? null : (
           <OptionGrid
             type="single"
             options={ageOpts}
@@ -230,12 +227,10 @@ export default function CommonQuestionFlagsOnly({
             allowEmpty
             emptyValue={0}
           />
-        </Field>
-      )}
+        )}
 
-      {/* 성별: 무관이면 섹션 자체를 숨김 */}
-      {genderFree || genderOpts.length === 0 ? null : (
-        <Field title="성별">
+        {/* 성별: 무관이면 섹션 자체를 숨김 */}
+        {genderFree || genderOpts.length === 0 ? null : (
           <OptionGrid
             type="single"
             options={genderOpts}
@@ -244,23 +239,8 @@ export default function CommonQuestionFlagsOnly({
             allowEmpty
             emptyValue={0}
           />
-        </Field>
-      )}
-    </div>
-  );
-}
-
-function Field({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="w-full">
-      <h3 className="text-sm font-semibold mb-2">{title}</h3>
-      {children}
+        )}
+      </div>
     </div>
   );
 }
