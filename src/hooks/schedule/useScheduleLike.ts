@@ -65,6 +65,7 @@ export function useLikeSchedule(crewId: string) {
     },
 
     onError: (error, planId, context) => {
+      console.log("좋아요 추가 실패", error);
       // 이전 상태로 롤백
       if (context?.previousData) {
         queryClient.setQueryData(
@@ -155,6 +156,7 @@ export function useUnlikeSchedule(crewId: string) {
     },
 
     onError: (error, planId, context) => {
+      console.log("좋아요 추가 실패", error);
       // 이전 상태로 롤백
       if (context?.previousData) {
         queryClient.setQueryData(
