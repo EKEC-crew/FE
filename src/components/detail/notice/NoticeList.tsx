@@ -131,19 +131,7 @@ const NoticeList: React.FC = () => {
               ) : (
                 !isLoading && (
                   <div className="text-center py-8">
-                    <p className="text-gray-500">공지사항이 없습니다.</p>
-                    <details className="mt-4 text-xs text-gray-400">
-                      <summary className="cursor-pointer hover:text-gray-600">
-                        디버깅 정보 (개발용)
-                      </summary>
-                      <div className="mt-2 p-2 bg-gray-100 rounded text-left">
-                        <p>crewId: {crewId}</p>
-                        <p>
-                          응답 데이터:{" "}
-                          {JSON.stringify(noticesResponse, null, 2)}
-                        </p>
-                      </div>
-                    </details>
+                    <p className="text-gray-500">등록된 공지가 없어요. 공지를 등록해 주세요.</p>
                   </div>
                 )
               )}

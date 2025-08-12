@@ -5,18 +5,13 @@ import Tabs from "../../../../components/detail/tabs";
 import NoticeAbout from "./NoticeAbout";
 import NoticeAction from "./NoticeAction";
 import NoticeComments from "./NoticeComments";
-import { getNoticeDetail } from "../constants"; 
+import { getNoticeDetail } from "../constants";
 import type { Notice } from "../../../../types/notice/types";
 
 const NoticeDetail = () => {
   const { crewId, noticeId } = useParams();
   const [notice, setNotice] = useState<Notice | null>(null);
   const [isCommentOpen, setIsCommentOpen] = useState(false);
-  const [comments] = useState([
-    { id: 2, text: "확인 완료! 열심히 활동하겠습니다.", date: "2025.06.18" },
-    { id: 3, text: "확인 완료! 열심히 활동하겠습니다.", date: "2025.06.18" },
-  ]);
-
   useEffect(() => {
     if (!crewId || !noticeId) return;
 
@@ -37,6 +32,8 @@ const NoticeDetail = () => {
             time,
             hasLabel: false,
             labelText: "",
+            likeCount: Number(n.likeCount ?? 0),
+            liked: Boolean(n.isLiked),
           };
 
           setNotice(mappedNotice);
@@ -60,9 +57,9 @@ const NoticeDetail = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="py-6 space-y-6 pt-12">
-        <div className = "py-3">
-        <Header />
-        <Tabs />
+        <div className="py-3">
+          <Header />
+          <Tabs />
         </div>
         <div className="px-6 py-6 space-y-3 pt-0">
           <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
@@ -84,18 +81,18 @@ const NoticeDetail = () => {
                 신청완료
               </button>
             </div>
-
-            <div
-              className="text-sm text-gray-700"
-              dangerouslySetInnerHTML={{ __html: notice.content }}
-            />
-
-            <NoticeAbout />
+            <NoticeAbout contentHtml={notice.content as string} />
             <NoticeAction
               isCommentOpen={isCommentOpen}
               toggleComment={() => setIsCommentOpen((prev) => !prev)}
+              initialLikeCount={notice.likeCount}
+              initialLiked={Boolean(notice.liked)}
             />
-            <NoticeComments isOpen={isCommentOpen} comments={comments} />
+            <NoticeComments
+              isOpen={isCommentOpen}
+              crewId={crewId ?? ""}
+              noticeId={noticeId ?? ""}
+            />
           </div>
         </div>
       </div>
