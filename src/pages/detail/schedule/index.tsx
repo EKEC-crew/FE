@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useScheduleList } from "../../../hooks/schedule/useScheduleList";
 import Header from "../../../components/detail/header";
 import Notice from "../../../components/detail/notice";
 import Tabs from "../../../components/detail/tabs";
@@ -13,6 +14,10 @@ function Schedule() {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [paginationInfo, setPaginationInfo] = useState<any>(null);
+
+  // 캘린더용 모든 일정 데이터 (페이지 제한 없이)
+  const { data: allScheduleData } = useScheduleList(crewId || "", 1, 100);
+  const allSchedules = allScheduleData?.data?.plans || [];
 
   const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
@@ -28,7 +33,7 @@ function Schedule() {
       <div className="w-full max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-12 xl:px-20 pt-6 space-y-6">
         <Notice />
         <div className="shadow-md overflow-hidden bg-white rounded-lg p-6 flex flex-col items-center">
-          <CrewCalendar />
+          <CrewCalendar schedules={allSchedules} />
           <div className="mt-6 w-full">
             <ScheduleList
               currentPage={currentPage}
