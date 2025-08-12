@@ -2,7 +2,7 @@ import checkedIcon from "../../assets/icons/ic_check_pressed.svg";
 import uncheckedIcon from "../../assets/icons/ic_check_de.svg";
 import SingleSelectDropdown from "../crewList/SingleSelectDropdown";
 import GenderSelect from "../crewFilter/GenderSelect";
-import { ageGroupOptions } from "../crewList/optionsDummy";
+import { ageGroupOptions } from "../../constants/crewFilterOptions";
 
 interface QualificationSectionProps {
   age: number | null;

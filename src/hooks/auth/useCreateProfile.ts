@@ -6,6 +6,7 @@ import type {
   ResponseCreateProfile,
   RequestCreateProfile,
 } from "../../types/auth/types";
+import { useAuthStore } from "../../store/useAuthStore";
 
 export const useCreateProfile = () => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ export const useCreateProfile = () => {
     RequestCreateProfile
   >({
     onMutate: (variables) => {
-      console.log("🟡 [onMutate] 전송할 profileData:", variables);
+      console.log("전송할 profileData:", variables);
     },
     mutationFn: async (profileData) => {
       // 프로필 생성 후
@@ -42,8 +43,9 @@ export const useCreateProfile = () => {
         refresh: refreshResponse,
       };
     },
-    onSuccess: ({ profile, refresh }) => {
+    onSuccess: async ({ profile, refresh }) => {
       console.log("프로필 생성 및 토큰 갱신 완료:", { profile, refresh });
+      await useAuthStore.getState().loadAvatar();
       navigate("/?showCompleteModal=true");
     },
     onError: (error) => {

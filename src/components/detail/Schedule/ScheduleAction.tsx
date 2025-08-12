@@ -5,9 +5,20 @@ import iconDown from "../../../assets/schedule/ic_Down.svg";
 type Props = {
   isCommentOpen: boolean;
   toggleComment: () => void;
+  isAuthor?: boolean;
+  onEdit?: () => void;
+  onGoToList?: () => void;
+  onDelete?: () => void;
 };
 
-const ScheduleAction = ({ isCommentOpen, toggleComment }: Props) => {
+const ScheduleAction = ({
+  isCommentOpen,
+  toggleComment,
+  isAuthor = false,
+  onEdit,
+  onGoToList,
+  onDelete,
+}: Props) => {
   return (
     <div className="flex justify-between items-center mt-4">
       <div className="flex items-center gap-2">
@@ -33,13 +44,27 @@ const ScheduleAction = ({ isCommentOpen, toggleComment }: Props) => {
       </div>
 
       <div className="flex items-center gap-2">
-        <button className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm">
-          수정
-        </button>
-        <button className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm">
-          삭제
-        </button>
-        <button className="bg-gray-200 px-3 py-0.5 rounded-2xl text-sm">
+        {/* 작성자만 수정/삭제 버튼 표시 */}
+        {isAuthor && (
+          <>
+            <button
+              className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm hover:bg-gray-50 cursor-pointer"
+              onClick={onEdit}
+            >
+              수정
+            </button>
+            <button
+              className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm hover:bg-gray-50 cursor-pointer"
+              onClick={onDelete}
+            >
+              삭제
+            </button>
+          </>
+        )}
+        <button
+          className="bg-gray-200 px-3 py-0.5 rounded-2xl text-sm hover:bg-gray-300 cursor-pointer"
+          onClick={onGoToList}
+        >
           목록
         </button>
       </div>

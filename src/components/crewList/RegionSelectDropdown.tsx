@@ -11,12 +11,14 @@ interface RegionSelectDropdownProps {
   label: string;
   regions: RegionMap;
   onChange: (city: string, gu: string) => void;
+  resetSignal?: boolean;
 }
 
 const RegionSelectDropdown = ({
   label,
   regions,
   onChange,
+  resetSignal,
 }: RegionSelectDropdownProps) => {
   const [open, setOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState<string>(""); // 선택된 시/도
@@ -25,6 +27,11 @@ const RegionSelectDropdown = ({
     { city: string; district: string }[]
   >([]);
   const ref = useRef<HTMLDivElement>(null); // 드롭다운 외부 클릭 감지용
+
+  useEffect(() => {
+    setSelectedCity("");
+    setSelectedRegions([]);
+  }, [resetSignal]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

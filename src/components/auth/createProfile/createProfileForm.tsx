@@ -25,6 +25,8 @@ const CreateProfileForm = () => {
       nickname: "",
       gender: undefined as any,
       birthDate: "",
+      profileImage: null,
+      defaultImage: true,
     },
   });
 
@@ -40,10 +42,12 @@ const CreateProfileForm = () => {
       if (genderValue === "female") return 1;
       return 2;
     };
+
+    const file = watchedValues.profileImage as File | null;
     // 폼 데이터를 API 형식에 맞게 변환
     const profileData = {
-      profileImage: "", // 기본값 or 선택된 이미지
-      defaultImage: true,
+      profileImage: file,
+      defaultImage: !file,
       name: watchedValues.name,
       nickname: watchedValues.nickname || watchedValues.name,
       gender: convertGender(watchedValues.gender),

@@ -9,35 +9,19 @@ import {
   styleOptions,
   regionOptions,
   ageGroupOptions,
-} from "../../components/crewList/optionsDummy.ts";
-import { useState } from "react";
+} from "../../constants/crewFilterOptions.ts";
 import { useNavigate } from "react-router-dom";
+import { useCrewFilters } from "../../hooks/crewFilter/useCrewFilters.ts";
+import { buildFilterQuery } from "../../utils/crewFilter/buildFilterQuery.ts";
 
 const crewFilterPage = () => {
   const navigate = useNavigate();
 
-  const [filters, setFilters] = useState({
-    category: null as number | null,
-    activity: [] as number[],
-    style: [] as number[],
-    regionSido: "",
-    regionGu: "",
-    age: null as number | null,
-    gender: null as number | null,
-  });
+  const { filters, setFilters, isFilterSelected } = useCrewFilters();
 
-  const isFilterSelected = () => {
-    const { category, activity, style, regionSido, regionGu, age, gender } =
-      filters;
-    return (
-      category !== null ||
-      activity.length > 0 ||
-      style.length > 0 ||
-      regionSido !== "" ||
-      regionGu !== "" ||
-      age !== null ||
-      gender !== null
-    );
+  const handleSearch = () => {
+    const query = buildFilterQuery(filters);
+    navigate(`/crewListPage?${query}`);
   };
 
   return (
@@ -125,11 +109,7 @@ const crewFilterPage = () => {
         <div className="w-full flex justify-center mt-20  px-18">
           <button
             disabled={!isFilterSelected()}
-            onClick={() => {
-              if (isFilterSelected()) {
-                navigate("/crewListPage");
-              }
-            }}
+            onClick={handleSearch}
             className={`w-full h-17 text-[1.675rem] font-semibold rounded-lg 
           ${
             isFilterSelected()

@@ -1,13 +1,23 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { signOutApi } from "../../apis/auth";
 import type { ResponseSignOut } from "../../types/auth/types";
+import { useAuthStore } from "../../store/useAuthStore";
 
 export const useSignOut = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const setUser = useAuthStore((s) => s.setUser);
+  const setStatus = useAuthStore((s) => s.setStatus);
 
   return useMutation<ResponseSignOut, Error>({
     mutationFn: signOutApi,
+    onMutate: () => {
+      setUser(null);
+      setStatus("unauthenticated");
+      queryClient.clear();
+    },
     onSuccess: (response) => {
       console.log("로그아웃 응답:", response);
 
