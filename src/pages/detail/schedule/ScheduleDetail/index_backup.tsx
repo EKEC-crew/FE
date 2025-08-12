@@ -43,6 +43,16 @@ const ScheduleDetail = () => {
     { id: 3, text: "확인 완료! 열심히 활동하겠습니다.", date: "2025.06.18" },
   ]);
 
+  // 에러 발생 시 로컬 상태 초기화
+  useEffect(() => {
+    if (likeScheduleMutation.isError && id) {
+      setLocalLikeState((prev) => ({ ...prev, [id]: false }));
+    }
+    if (unlikeScheduleMutation.isError && id) {
+      setLocalLikeState((prev) => ({ ...prev, [id]: true }));
+    }
+  }, [likeScheduleMutation.isError, unlikeScheduleMutation.isError, id]);
+
   // 목록으로 돌아가기
   const handleGoToList = () => {
     navigate(`/crew/${crewId}/schedule`);
@@ -66,6 +76,63 @@ const ScheduleDetail = () => {
         planId: id,
       });
     }
+  };
+
+  // 좋아요 토글
+  const handleLikeToggle = () => {
+    if (!crewId || !id) {
+      console.error("크루 ID 또는 일정 ID가 없습니다.");
+      return;
+    }
+
+    // 현재 좋아요 상태 확인 - 로컬 상태를 우선 확인, 없으면 서버 데이터 확인
+    const serverLikeStatus = data?.data?.isLiked ?? false;
+    const currentLikeStatus = localLikeState[id] ?? serverLikeStatus;
+
+    if (currentLikeStatus === true) {
+      // 이미 좋아요를 눌렀다면 좋아요 취소
+      setLocalLikeState((prev) => ({ ...prev, [id]: false }));
+      unlikeScheduleMutation.mutate(id);
+    } else {
+      // 좋아요를 누르지 않았다면 좋아요
+      setLocalLikeState((prev) => ({ ...prev, [id]: true }));
+      likeScheduleMutation.mutate(id);
+    }
+  };
+
+  // 신청하기 버튼 클릭
+  const handleApplyClick = () => {
+    if (schedule.isApplied) return;
+
+    setShowApplyButton(true); // 신청 버튼 표시
+  }; // 실제 신청 처리
+  const handleConfirmApply = () => {
+    if (!applyMutation.isPending) {
+      applyMutation.mutate();
+    }
+  };
+
+  // 모달 닫기
+  const handleCloseModal = () => {
+    setShowCompleteModal(false);
+  };
+
+  const getApplyButtonText = () => {
+    if (applyMutation.isPending) return "처리중...";
+    if (schedule.isApplied) return "신청완료";
+    return "신청하기";
+  };
+
+  const getAuthBtnText = () => {
+    if (applyMutation.isPending) return "신청 중...";
+    return schedule.hasFee ? "결제 및 신청하기" : "신청하기";
+  };
+
+  const getApplyButtonStyle = () => {
+    if (schedule.isApplied) {
+      return "bg-[#D9DADD] text-[#5E6068]";
+    }
+    return "bg-[#3A3ADB] text-white";
   };
 
   if (isLoading) {
@@ -97,6 +164,7 @@ const ScheduleDetail = () => {
 
   const isAuthor = user?.id === schedule.userId;
 
+  console.log("작성자 여부:", isAuthor);
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="py-6 space-y-6 pt-12">
@@ -109,16 +177,43 @@ const ScheduleDetail = () => {
         {/* 본문 콘텐츠 */}
         <div className="px-6 py-6 space-y-3 pt-0">
           <div className="bg-white p-6 rounded-lg shadow-md space-y-4">
-            {/* 일정 헤더 */}
-            <ScheduleHeader
-              type={schedule.type}
-              title={schedule.title}
-              writer={schedule.writer}
-              day={schedule.day}
-              isApplied={schedule.isApplied || false}
-              isPending={applyMutation.isPending}
-              onApplyClick={() => handleApplyClick(schedule.isApplied || false)}
-            />
+            {/* 제목 + 태그 */}
+            <div className="flex items-center space-x-2">
+              <span
+                className={`text-white text-xs px-2 py-0.5 rounded-full ${
+                  schedule.type === 0 ? "bg-[#3A3ADB]" : "bg-[#72EDF2]"
+                }`}
+              >
+                {schedule.type === 0 ? "정기" : "번개"}
+              </span>
+              <h2 className="text-xl font-bold">{schedule.title}</h2>
+            </div>
+
+            {/* 작성자 정보 + 버튼 */}
+            <div className="flex justify-between items-center">
+              <div className="flex py-1 items-center gap-2">
+                <p className="text-sm text-gray-600">{schedule.writer}님</p>
+                <p className="text-sm text-gray-500">
+                  {new Date(schedule.day)
+                    .toLocaleDateString("ko-KR", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                    })
+                    .replace(/\./g, ".")
+                    .slice(0, -1)}
+                </p>
+              </div>
+              <button
+                onClick={handleApplyClick}
+                disabled={schedule.isApplied || applyMutation.isPending}
+                className={`font-semibold px-5 py-1.5 rounded-xl text-sm ${getApplyButtonStyle()} ${
+                  !schedule.isApplied ? "cursor-pointer" : "cursor-default"
+                }`}
+              >
+                {getApplyButtonText()}
+              </button>
+            </div>
 
             {/* 공지 영역 */}
             <ScheduleNotice content={schedule.content} />
@@ -139,12 +234,16 @@ const ScheduleDetail = () => {
 
             {/* 신청 버튼 영역 */}
             {showApplyButton && (
-              <ScheduleApplyButton
-                onConfirm={handleConfirmApply}
-                onCancel={handleCancelApply}
-                isPending={applyMutation.isPending}
-                hasFee={schedule.hasFee}
-              />
+              <div className="space-y-3">
+                <AuthBtn
+                  onClick={handleConfirmApply}
+                  disabled={applyMutation.isPending}
+                  variant={applyMutation.isPending ? "disabled" : "default"}
+                  className="w-full"
+                >
+                  {getAuthBtnText()}
+                </AuthBtn>
+              </div>
             )}
 
             {/* 버튼 영역 */}
@@ -157,7 +256,11 @@ const ScheduleDetail = () => {
               onDelete={handleDelete}
               likeCount={data?.data?.likeCount || 0}
               commentCount={data?.data?.commentCount || 0}
-              isLiked={isLiked}
+              isLiked={
+                id
+                  ? (localLikeState[id] ?? data?.data?.isLiked ?? false)
+                  : false
+              }
               onLikeToggle={handleLikeToggle}
             />
 
@@ -168,11 +271,32 @@ const ScheduleDetail = () => {
       </div>
 
       {/* 신청 완료 모달 */}
-      <ScheduleApplyCompleteModal
-        isOpen={showCompleteModal}
-        onClose={handleCloseModal}
-        hasFee={schedule.hasFee}
-      />
+      {showCompleteModal && (
+        <Modal
+          onClose={handleCloseModal}
+          maxWidth="max-w-[400px]"
+          padding="p-8"
+        >
+          <div className="flex flex-col items-center text-center space-y-6">
+            <img src={icCompleteApply} alt="신청 완료" className="w-16 h-16" />
+
+            <div className="text-black text-2xl font-bold">
+              {schedule.hasFee ? "결제 신청 완료" : "신청 완료"}
+            </div>
+
+            <div className="text-gray-600 text-base">
+              마이페이지에서 다가오는 일정을 확인해주세요.
+            </div>
+
+            <button
+              onClick={handleCloseModal}
+              className="w-full py-3 px-4 bg-[#3A3ADB] text-white rounded-xl font-medium hover:bg-[#2d2db5] transition-colors text-lg"
+            >
+              확인
+            </button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

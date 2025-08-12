@@ -77,7 +77,7 @@ const ScheduleList = ({
               })
               .replace(/\./g, ".")
               .slice(0, -1)}
-            status={schedule.isRequired ? "신청하기" : "참고용"}
+            status={schedule.isApplied ? 1 : 0}
             isNew={false}
             likeCount={schedule.likeCount || 0}
           />
