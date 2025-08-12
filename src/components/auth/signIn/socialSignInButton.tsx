@@ -1,7 +1,5 @@
-import { Link } from "react-router-dom";
-
 interface SocialSignInButtonProps {
-  to: string;
+  provider: "google" | "kakao" | "naver";
   bgColor?: string;
   imgSrc: string;
   alt: string;
@@ -10,16 +8,24 @@ interface SocialSignInButtonProps {
 }
 
 const SocialSignInButton = ({
-  to,
+  provider,
   bgColor,
   imgSrc,
   alt,
   text,
   border,
 }: SocialSignInButtonProps) => {
+  const handleSocialLogin = () => {
+    const baseUrl = import.meta.env.VITE_API_BASE_URL;
+    const authUrl = `${baseUrl}/auth/oauth/${provider}`;
+
+    console.log(`${provider} 로그인 시작:`, authUrl);
+    window.location.href = authUrl;
+  };
+
   return (
-    <Link
-      to={to}
+    <button
+      onClick={handleSocialLogin}
       className={`w-full relative flex items-center justify-center box-border rounded-lg font-semibold hover:shadow-md active:shadow-inner active:transform active:translate-y-0.5 text-sm md:text-base lg:text-lg h-12 md:h-14 lg:h-16 min-w-[280px] ${border || ""}`}
       style={{
         backgroundColor: bgColor || undefined,
@@ -33,7 +39,7 @@ const SocialSignInButton = ({
       <div className="w-full text-center text-black font-semibold px-12">
         {text}
       </div>
-    </Link>
+    </button>
   );
 };
 

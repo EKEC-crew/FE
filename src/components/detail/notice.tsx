@@ -3,10 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const Notice: React.FC = () => {
   const navigate = useNavigate();
-  const { crewId, noticeId } = useParams();
+  const { crewId } = useParams();
 
   const handleClick = () => {
-    navigate(`/crew/${crewId}/notice/${noticeId}`);
+    navigate(`/crew/${crewId}/notice`);
   };
 
   return (

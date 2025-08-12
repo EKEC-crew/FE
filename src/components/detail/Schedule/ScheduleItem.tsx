@@ -1,20 +1,33 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import iconHeart from "../../../assets/schedule/ic_Heart.svg";
 
 interface Props {
+  id?: number;
   type: "정기" | "번개";
   label?: string;
   title: string;
   date: string;
   status: string;
   isNew?: boolean;
+  likeCount?: number;
 }
 
-const ScheduleItem = ({ type, label, title, date, status, isNew }: Props) => {
+const ScheduleItem = ({
+  id,
+  type,
+  label,
+  title,
+  date,
+  status,
+  isNew,
+  likeCount = 0,
+}: Props) => {
   const navigate = useNavigate();
 
+  const { crewId } = useParams();
+
   const handleClick = () => {
-    // id가 있다면 `/detail/schedule/${id}` 등으로 변경 가능
-    navigate(`/detail/schedule/1`);
+    navigate(`/crew/${crewId}/schedule/${id}`);
   };
 
   return (
@@ -40,6 +53,13 @@ const ScheduleItem = ({ type, label, title, date, status, isNew }: Props) => {
       </div>
       <div className="flex items-center gap-5">
         <span className="text-[#93949D] text-sm">{date}</span>
+
+        {/* 좋아요 수 표시 */}
+        <div className="flex items-center gap-1">
+          <img src={iconHeart} alt="좋아요" className="w-4 h-4 grayscale" />
+          <span className="text-[#93949D] text-sm">{likeCount}</span>
+        </div>
+
         <button
           className={`text-xs font-semibold px-2 py-1 rounded ${
             status === "신청하기"

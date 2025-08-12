@@ -1,12 +1,16 @@
 import iconHeart from "../../../../assets/schedule/ic_Heart.svg";
 import iconShare from "../../../../assets/schedule/ic_Share.svg";
 import iconDown from "../../../../assets/schedule/ic_Down.svg";
+ 
+
 type Props = {
   isCommentOpen: boolean;
   toggleComment: () => void;
 };
 
 const BulletinAction = ({ isCommentOpen, toggleComment }: Props) => {
+  
+
   return (
     <div className="flex justify-between items-center mt-4">
       <div className="flex items-center gap-2">
@@ -32,9 +36,7 @@ const BulletinAction = ({ isCommentOpen, toggleComment }: Props) => {
       </div>
 
       <div className="flex items-center gap-2">
-        <button className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm">
-          수정
-        </button>
+        <button className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm">수정</button>
         <button className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm">
           삭제
         </button>

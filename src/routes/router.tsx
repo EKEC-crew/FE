@@ -8,11 +8,12 @@ import SearchPage from "../pages/searchPage";
 import Detail from "../pages/detail";
 import Schedule from "../pages/detail/schedule";
 import NoticeList from "../pages/detail/tabs/noticeList";
+import PostNoticeForm from "../components/detail/notice/PostForm/PostNoticeForm";
 import ScheduleDetail from "../pages/detail/schedule/ScheduleDetail";
 import ReviewPage from "../pages/detail/review/index";
 import CrewListPage from "../pages/crewListPage";
 import CrewFilterPage from "../pages/crewFilterPage";
-import PostScheduleForm from "./../components/detail/Schedule/PostForm/PostScheduleForm";
+import PostScheduleForm from "../components/detail/Schedule/PostForm/PostScheduleForm";
 import CrewCreatePage from "../pages/crewCreatePage";
 import SchedulePage from "../pages/myPage/SchedulePage";
 import EditProfilePage from "../pages/myPage/EditProfilePage";
@@ -20,13 +21,12 @@ import AppliedCrewPage from "../pages/myPage/AppliedCrewPage";
 import CreatedCrewPage from "../pages/myPage/CreatedCrewPage";
 import AlarmPage from "../pages/myPage/AlarmPage";
 import CrewMemberListPage from "../pages/detail/crewMemberList";
-
 import ApplicantsListPage from "../pages/detail/applicants";
-import PostNoticeForm from "../components/detail/notice/PostForm/PostNoticeForm";
 import NoticeDetail from "../components/detail/notice/detail/NoticeDetail";
 import Bulletin from "../pages/detail/bulletin";
 import BulletinDetail from "../components/detail/bulletin/detail/BulletinDetail";
 import PostBulletinForm from "../components/detail/bulletin/PostForm/PostBulletinForm";
+import EditNoticeForm from "../components/detail/notice/detail/edit/EditNoticeForm";
 
 const router = createBrowserRouter([
   {
@@ -109,12 +109,29 @@ const router = createBrowserRouter([
             element: <PostScheduleForm />,
           },
           {
-            path: "notice/:id",
-            element: <NoticeList />,
+            path: "schedule/:id/edit",
+            element: <PostScheduleForm />,
           },
           {
-            path: "notice/:id/detail",
-            element: <NoticeDetail />,
+            path: "notice",
+            children: [
+              {
+                index: true,
+                element: <NoticeList />,
+              },
+              {
+                path: "post",
+                element: <PostNoticeForm />,
+              },
+              {
+                path: ":noticeId",
+                element: <NoticeDetail />,
+              },
+              {
+                path: ":noticeId/edit",
+                element: <EditNoticeForm />,
+              },
+            ],
           },
           {
             path: "review",
@@ -127,10 +144,6 @@ const router = createBrowserRouter([
           {
             path: "applicants",
             element: <ApplicantsListPage />,
-          },
-          {
-            path: "notice/post",
-            element: <PostNoticeForm />,
           },
           {
             path: "bulletin",
