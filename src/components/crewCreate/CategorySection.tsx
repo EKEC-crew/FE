@@ -15,7 +15,7 @@ const CategorySection = ({ category, onChange }: CategorySectionProps) => {
       <OptionGrid
         options={categoryOptions}
         type="single"
-        selected={category}
+        selected={category ?? 0}
         onChange={onChange}
       />
     </div>
