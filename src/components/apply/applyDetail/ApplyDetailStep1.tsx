@@ -55,7 +55,7 @@ const ensureOption = (opts: ApplyOption[], id?: number, prefix = "옵션") => {
 };
 
 /* ========= component ========= */
-export default function ApplyDetailReadonly({
+export default function ApplyDetailStep1({
   allowedCategories,
   allowedActivities,
   allowedStyles,
@@ -123,14 +123,17 @@ export default function ApplyDetailReadonly({
     }));
   }, [regionOptions, allowedRegions]);
 
-  // 연령대
-  const ageOpts = useMemo(
-    () => filterByAllowed(ageGroupOptions, allowedAges),
-    [ageGroupOptions, allowedAges]
-  );
-
-  // 성별 (allowedGenders === [] 이면 섹션 숨김)
+  // ★ 성별/나이: 제한 없음이면 섹션 숨김
   const genderFree = allowedGenders.length === 0;
+  const ageFree = allowedAges.length === 0; // ★ 추가
+
+  // 연령대
+  const ageOpts = useMemo(() => {
+    if (ageFree) return []; // ★ 제한 없음 → UI 숨김
+    return filterByAllowed(ageGroupOptions, allowedAges);
+  }, [ageGroupOptions, allowedAges, ageFree]);
+
+  // 성별
   const genderOpts = useMemo(() => {
     if (genderFree) return [];
     return filterByAllowed(applicantGenderOptions, allowedGenders);
@@ -181,6 +184,7 @@ export default function ApplyDetailReadonly({
               />
             </div>
           )}
+
           <div className="flex justify-start items-center gap-6">
             {regionOpts.length > 0 && (
               <OptionGrid

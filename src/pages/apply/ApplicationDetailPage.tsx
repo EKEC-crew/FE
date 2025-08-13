@@ -1,12 +1,12 @@
 import { useParams } from "react-router-dom";
 import Header from "../../components/apply/Header";
 import Info from "../../components/apply/Info";
-import ApplyDetailReadonly from "../../components/apply/applyDetail/ApplyDetail";
+import ApplyDetailReadonly from "../../components/apply/applyDetail/ApplyDetailStep1";
 import type { ApplyOption } from "../../types/apply/types";
 import { useApplicationDetail } from "../../hooks/apply/useAppicationDetail";
 import { mapSelectedValues } from "../../utils/apply/mapSelectedValues";
 import { mapStep2ToView } from "../../utils/apply/mapStep2";
-import ApplyStep2Readonly from "../../components/apply/applyDetail/ApplyStep2";
+import ApplyStep2Readonly from "../../components/apply/applyDetail/ApplyDetailStep2";
 
 const REGION_OPTIONS: ApplyOption[] = [
   { label: "전지역", value: 1 },

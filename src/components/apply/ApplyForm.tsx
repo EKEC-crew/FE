@@ -2,8 +2,8 @@
 import { useMemo, useState } from "react";
 import ApplyStepHeader from "./ApplyStepHeader";
 import ApplySubmitBar from "./ApplySubmitBar";
-import CommonQuestionFlagsOnly from "./CommonQuestion";
-import CustomQuestionsForm from "./CustomQuestionForm";
+import CommonQuestionFlagsOnly from "./ApplyStep1";
+import CustomQuestionsForm from "./ApplyStep1Form";
 import { useApplyInit } from "../../hooks/apply/useCustomQusetion";
 import type {
   ApiStep1,

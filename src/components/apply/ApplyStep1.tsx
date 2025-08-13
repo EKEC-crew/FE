@@ -5,7 +5,7 @@ import {
   activityOptions,
   styleOptions,
   ageGroupOptions,
-} from "../../components/crewList/optionsDummy";
+} from "../crewList/optionsDummy";
 import type { ApplyOption, CommonAnswers } from "../../types/apply/types";
 import { applicantGenderOptions } from "../../types/apply/types";
 
