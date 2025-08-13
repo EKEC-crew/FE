@@ -3,15 +3,22 @@ import uploadIc from "../../../../assets/icons/ic_upload.svg";
 
 interface ImageAttachmentProps {
   onValueChange?: (files: File[]) => void;
+  existingImages?: Array<{ id: number; url: string; imageName: string }>;
+  onExistingImageRemove?: (imageId: number) => void;
 }
 
-const ImageAttachment: React.FC<ImageAttachmentProps> = ({ onValueChange }) => {
+const ImageAttachment: React.FC<ImageAttachmentProps> = ({
+  onValueChange,
+  existingImages = [],
+  onExistingImageRemove,
+}) => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
+    console.log("📎 ImageAttachment - selectedFiles 변경:", selectedFiles);
     onValueChange?.(selectedFiles);
-  }, [selectedFiles, onValueChange]);
+  }, [selectedFiles]);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -40,25 +47,60 @@ const ImageAttachment: React.FC<ImageAttachmentProps> = ({ onValueChange }) => {
         </span>
       </div>
 
-      {/* 첨부 이미지 리스트 */}
-      {selectedFiles.length > 0 && (
-        <div className="flex flex-wrap gap-2">
-          {selectedFiles.map((file, index) => (
-            <div
-              key={index}
-              className="flex items-center border border-gray-300 rounded-md px-3 py-1 bg-white"
-            >
-              <span className="text-sm text-gray-700 mr-2 truncate max-w-[100px]">
-                {file.name}
-              </span>
-              <button
-                onClick={() => removeFile(index)}
-                className="text-gray-500 hover:text-red-500 text-lg leading-none"
+      {/* 기존 이미지 리스트 */}
+      {existingImages.length > 0 && (
+        <div className="space-y-2">
+          <div className="text-sm font-medium text-gray-700">기존 이미지</div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {existingImages.map((image) => (
+              <div
+                key={image.id}
+                className="relative group border border-gray-300 rounded-lg overflow-hidden"
               >
-                ✕
-              </button>
-            </div>
-          ))}
+                <img
+                  src={image.url}
+                  alt={image.imageName}
+                  className="w-full h-24 object-cover"
+                />
+                <button
+                  onClick={() => onExistingImageRemove?.(image.id)}
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  ✕
+                </button>
+                <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 truncate">
+                  {image.imageName}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 새로 첨부할 이미지 리스트 */}
+      {selectedFiles.length > 0 && (
+        <div className="space-y-2">
+          <div className="text-sm font-medium text-gray-700">
+            새로 추가할 이미지
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {selectedFiles.map((file, index) => (
+              <div
+                key={index}
+                className="flex items-center border border-gray-300 rounded-md px-3 py-1 bg-blue-50"
+              >
+                <span className="text-sm text-gray-700 mr-2 truncate max-w-[100px]">
+                  {file.name}
+                </span>
+                <button
+                  onClick={() => removeFile(index)}
+                  className="text-gray-500 hover:text-red-500 text-lg leading-none"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

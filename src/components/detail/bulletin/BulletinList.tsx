@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useBulletinList } from "../../../hooks/bulletin/useBulletins";
+import { useBulletins } from "../../../hooks/bulletin/useBulletins";
 import BulletinPostButton from "./button/post";
 import Pagination from "./button/pagination";
 import BulletinItem from "./BulletinItem";
@@ -20,7 +20,7 @@ const BulletinList: React.FC = () => {
     data: bulletinListResponse,
     isLoading: loading,
     error,
-  } = useBulletinList(
+  } = useBulletins(
     crewId ? parseInt(crewId, 10) : 0,
     currentPage,
     itemsPerPage
@@ -86,7 +86,7 @@ const BulletinList: React.FC = () => {
           </div>
         ) : (
           <div className="space-y-2">
-            {bulletins.map((bulletin, index) => (
+            {bulletins.map((bulletin: Bulletin, index: number) => (
               <BulletinItem
                 key={bulletin.id}
                 bulletin={bulletin}

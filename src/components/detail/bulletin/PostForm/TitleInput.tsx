@@ -2,14 +2,24 @@ import { useState, useEffect } from "react";
 
 interface TitleInputProps {
   onValueChange?: (value: string) => void;
+  value?: string;
 }
 
-const TitleInput: React.FC<TitleInputProps> = ({ onValueChange }) => {
-  const [title, setTitle] = useState("");
+const TitleInput: React.FC<TitleInputProps> = ({
+  onValueChange,
+  value = "",
+}) => {
+  const [title, setTitle] = useState(value);
 
   useEffect(() => {
-    onValueChange?.(title);
-  }, [title, onValueChange]);
+    setTitle(value);
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setTitle(newValue);
+    onValueChange?.(newValue);
+  };
 
   return (
     <>
@@ -21,7 +31,7 @@ const TitleInput: React.FC<TitleInputProps> = ({ onValueChange }) => {
         placeholder="제목을 입력해주세요"
         className="w-full border border-[#5e6068] p-2 rounded mb-4"
         value={title}
-        onChange={(e) => setTitle(e.target.value)}
+        onChange={handleChange}
       />
     </>
   );

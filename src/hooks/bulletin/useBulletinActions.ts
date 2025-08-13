@@ -1,18 +1,44 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { updateBulletinApi, deleteBulletinApi } from "../../apis/bulletins";
+import {
+  createBulletinApi,
+  updateBulletinApi,
+  deleteBulletinApi,
+} from "../../apis/bulletins";
 import { useNavigate } from "react-router-dom";
+import type {
+  RequestCreatePostDto,
+  RequestUpdatePostDto,
+} from "../../types/bulletin/types";
+
+// 게시글 생성 훅
+export const useCreateBulletin = (crewId: string) => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+
+  return useMutation({
+    mutationFn: (data: RequestCreatePostDto) => createBulletinApi(crewId, data),
+    onSuccess: () => {
+      // 게시글 목록 재조회
+      queryClient.invalidateQueries({
+        queryKey: ["bulletinList", crewId],
+      });
+      alert("게시글이 성공적으로 등록되었습니다.");
+      navigate(`/crew/${crewId}/bulletin`);
+    },
+    onError: (error) => {
+      console.error("게시글 생성 실패:", error);
+      alert("게시글 등록에 실패했습니다. 다시 시도해주세요.");
+    },
+  });
+};
 
 // 게시글 수정 훅
 export const useUpdateBulletin = (crewId: string, postId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: {
-      title: string;
-      content: string;
-      images?: File[];
-      existingImageIds?: number[];
-    }) => updateBulletinApi(crewId, postId, data),
+    mutationFn: (data: RequestUpdatePostDto) =>
+      updateBulletinApi(crewId, postId, data),
     onSuccess: () => {
       // 게시글 상세 정보 재조회
       queryClient.invalidateQueries({

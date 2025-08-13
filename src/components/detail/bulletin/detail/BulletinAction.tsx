@@ -4,7 +4,6 @@ import iconComment from "../../../../assets/icons/ic_comment.svg";
 import iconShare from "../../../../assets/schedule/ic_Share.svg";
 
 type Props = {
-  isCommentOpen: boolean;
   toggleComment: () => void;
   isAuthor?: boolean;
   onEdit?: () => void;
@@ -17,7 +16,6 @@ type Props = {
 };
 
 const BulletinAction = ({
-  isCommentOpen,
   toggleComment,
   isAuthor = false,
   onEdit,

@@ -2,32 +2,82 @@ import TypeSelector from "./TypeSelector";
 import PermissionSelector from "./PermissionSelector";
 import TitleInput from "./TitleInput";
 import ContentInput from "./ContentInput";
-import FeeSection from "./FeeSection";
 import SubmitButton from "./SubmitButton";
 import ImageAttachment from "./ImageAttachment";
 import Header from "../../header";
 import Notice from "../../notice";
 import Tabs from "../../tabs";
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { createPost } from "../constants";
-import type { RequestCreatePostDto } from "../types";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import type { RequestCreatePostDto } from "../../../../types/bulletin/types";
+import { useAuthStore } from "../../../../store/useAuthStore";
+import { useBulletinDetail } from "../../../../hooks/bulletin/useBulletins";
+import {
+  useCreateBulletin,
+  useUpdateBulletin,
+} from "../../../../hooks/bulletin/useBulletinActions";
 
 const PostBulletinForm = () => {
   const navigate = useNavigate();
-  const { crewId } = useParams();
+  const { crewId, id } = useParams();
+  const location = useLocation();
+  const user = useAuthStore((state) => state.user);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // 현재 모드 판단 (URL 경로 기반)
+  const isEditMode = location.pathname.includes("/edit");
+  const postId = id; // 수정 모드일 때 게시글 ID
+
+  // 기존 게시글 데이터 불러오기 (수정 모드일 때만)
+  const { data: bulletinData } = useBulletinDetail(
+    isEditMode ? Number(crewId) : 0,
+    isEditMode ? Number(postId) : 0
+  );
+
+  // 생성 및 수정 훅
+  const createBulletinMutation = useCreateBulletin(crewId || "");
+  const updateBulletinMutation = useUpdateBulletin(crewId || "", postId || "");
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [images, setImages] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<
+    Array<{ id: number; url: string; imageName: string }>
+  >([]);
   const [type, setType] = useState("regular");
   const [isRequired, setIsRequired] = useState(true);
-  const [fee, setFee] = useState("");
-  const [isFeeRequired, setIsFeeRequired] = useState(true);
-  const [feePurpose, setFeePurpose] = useState("");
   const [allowComment, setAllowComment] = useState(true);
   const [allowPrivateComment, setAllowPrivateComment] = useState(true);
   const [allowShare, setAllowShare] = useState(true);
+
+  // 수정 모드일 때 기존 데이터로 폼 초기화
+  useEffect(() => {
+    if (isEditMode && bulletinData) {
+      setTitle(bulletinData.title || "");
+      setContent(bulletinData.content || "");
+
+      // 기존 이미지 데이터 설정
+      if (
+        bulletinData.originalImages &&
+        bulletinData.originalImages.length > 0
+      ) {
+        const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+        const processedImages = bulletinData.originalImages.map(
+          (img: { imageId: number; imageName: string }) => ({
+            id: img.imageId,
+            url: `${API_BASE_URL}/image?type=2&fileName=${img.imageName}`,
+            imageName: img.imageName,
+          })
+        );
+        setExistingImages(processedImages);
+      }
+    }
+  }, [isEditMode, bulletinData]);
+
+  // 기존 이미지 제거 핸들러
+  const handleRemoveExistingImage = (imageId: number) => {
+    setExistingImages((prev) => prev.filter((img) => img.id !== imageId));
+  };
 
   const handleSubmit = async () => {
     if (!title.trim()) {
@@ -42,43 +92,58 @@ const PostBulletinForm = () => {
     setIsSubmitting(true);
 
     try {
-      const currentCrewId = "1";
-      console.log("PostBulletinForm - 사용할 crewId:", currentCrewId);
-
-      const userId = 1;
-
-      const postData: RequestCreatePostDto = {
-        title: title,
-        content: content,
-        userId: userId,
-        images: images,
-        type,
-        isRequired,
-        fee,
-        isFeeRequired,
-        feePurpose,
-        allowComment,
-        allowPrivateComment,
-        allowShare,
-      };
-
-      console.log("PostBulletinForm - 전송할 데이터:", postData);
-
-      const response = await createPost(currentCrewId, postData);
-
-      console.log("PostBulletinForm - API 응답:", response);
-
-      if (response.resultType === "SUCCESS") {
-        alert("게시글이 성공적으로 등록되었습니다.");
-        navigate(`/crew/${crewId}/bulletin`);
+      if (isEditMode) {
+        // 수정 모드
+        const userId = user?.id || 1;
+        const remainingImageIds = existingImages.map((img) => img.id);
+        console.log("🔍 수정 데이터:", {
+          title,
+          content,
+          images,
+          existingImageIds: remainingImageIds,
+          existingImages,
+        });
+        await updateBulletinMutation.mutateAsync({
+          title,
+          content,
+          userId,
+          images,
+          existingImageIds: remainingImageIds,
+          type,
+          isRequired,
+          allowComment,
+          allowPrivateComment,
+          allowShare,
+        });
+        alert("게시글이 성공적으로 수정되었습니다.");
+        navigate(`/crew/${crewId}/bulletin/${postId}`);
       } else {
-        alert(
-          `게시글 등록에 실패했습니다: ${response.error?.reason || "알 수 없는 오류"}`
-        );
+        // 작성 모드
+        const userId = user?.id || 1;
+
+        const postData: RequestCreatePostDto = {
+          title: title,
+          content: content,
+          userId: userId,
+          images: images,
+          type,
+          isRequired,
+          allowComment,
+          allowPrivateComment,
+          allowShare,
+        };
+
+        console.log("PostBulletinForm - 전송할 데이터:", postData);
+
+        await createBulletinMutation.mutateAsync(postData);
       }
     } catch (error) {
-      console.error("PostBulletinForm - 게시글 등록 오류:", error);
-      alert("게시글 등록 중 오류가 발생했습니다..");
+      console.error("PostBulletinForm - 오류:", error);
+      alert(
+        isEditMode
+          ? "게시글 수정 중 오류가 발생했습니다."
+          : "게시글 등록 중 오류가 발생했습니다."
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -97,7 +162,7 @@ const PostBulletinForm = () => {
 
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="text-2xl font-bold mb-7 mt-4 px-2 lg:px-6">
-              게시글 등록하기
+              {isEditMode ? "게시글 수정하기" : "게시글 등록하기"}
             </div>
 
             <div className="space-y-6 px-2 lg:px-6">
@@ -115,9 +180,13 @@ const PostBulletinForm = () => {
                 allowShare={allowShare}
                 setAllowShare={setAllowShare}
               />
-              <TitleInput onValueChange={setTitle} />
-              <ContentInput onValueChange={setContent} />
-              <ImageAttachment onValueChange={setImages} />
+              <TitleInput onValueChange={setTitle} value={title} />
+              <ContentInput onValueChange={setContent} value={content} />
+              <ImageAttachment
+                onValueChange={setImages}
+                existingImages={existingImages}
+                onExistingImageRemove={handleRemoveExistingImage}
+              />
               <SubmitButton onClick={handleSubmit} disabled={isSubmitting} />
             </div>
           </div>

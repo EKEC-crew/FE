@@ -152,7 +152,6 @@ const BulletinDetail = () => {
 
             {/* 버튼 영역 */}
             <BulletinAction
-              isCommentOpen={isCommentOpen}
               toggleComment={() => setIsCommentOpen((prev) => !prev)}
               isAuthor={isAuthor}
               onEdit={handleEdit}
