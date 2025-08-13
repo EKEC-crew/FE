@@ -5,7 +5,7 @@ import CategoryBgImgs from "../CategoryBgImgs"; // CategoryBgImgs 가져오기
 export interface Crew {
   id: number;
   name: string;
-  description: string;
+  content: string;
   category: string;
   tags: string[];
   imageUrl: string;
@@ -48,7 +48,7 @@ export default function CrewCard({ crew }: CrewCardProps) {
 
       {/* 설명 */}
       <div className="text-[0.875rem] text-gray-500 line-clamp-2">
-        {crew.description}
+        {crew.content}
       </div>
 
       {/* 태그 */}
