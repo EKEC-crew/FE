@@ -16,9 +16,13 @@ const ScheduleApplyCompleteModal = ({
   if (!isOpen) return null;
 
   return (
-    <Modal onClose={onClose} maxWidth="max-w-[400px]" padding="p-8">
+    <Modal onClose={onClose} maxWidth="max-w-[560px]" padding="p-8">
       <div className="flex flex-col items-center text-center space-y-6">
-        <img src={icCompleteApply} alt="신청 완료" className="w-16 h-16" />
+        <img
+          src={icCompleteApply}
+          alt="신청 완료"
+          className="w-[340px] h-[340px]"
+        />
 
         <div className="text-black text-2xl font-bold">
           {getModalTitle(hasFee)}
@@ -30,7 +34,7 @@ const ScheduleApplyCompleteModal = ({
 
         <button
           onClick={onClose}
-          className="w-full py-3 px-4 bg-[#3A3ADB] text-white rounded-xl font-medium hover:bg-[#2d2db5] transition-colors text-lg"
+          className="w-full py-3 px-4 bg-[#3A3ADB] text-white rounded-xl font-medium hover:bg-[#2d2db5] transition-colors text-lg cursor-pointer"
         >
           확인
         </button>

@@ -31,6 +31,9 @@ const ScheduleDetail = () => {
     handleCloseModal,
   } = useScheduleApply(crewId || "", id || "");
 
+  // useScheduleDetail의 데이터를 우선 사용, 낙관적 업데이트 상태는 보조로 사용
+  const finalIsApplied = data?.data?.isApplied || false;
+
   const { handleLikeToggle, isLiked } = useScheduleLikeState(
     crewId || "",
     id || "",
@@ -115,9 +118,9 @@ const ScheduleDetail = () => {
               title={schedule.title}
               writer={schedule.writer}
               day={schedule.day}
-              isApplied={schedule.isApplied || false}
+              isApplied={finalIsApplied} // useScheduleDetail의 데이터 직접 사용
               isPending={applyMutation.isPending}
-              onApplyClick={() => handleApplyClick(schedule.isApplied || false)}
+              onApplyClick={() => handleApplyClick(finalIsApplied)}
             />
 
             {/* 공지 영역 */}

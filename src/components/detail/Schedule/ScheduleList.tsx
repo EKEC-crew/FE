@@ -28,13 +28,6 @@ const ScheduleList = ({
     onPaginationChange(pagination);
   }
 
-  console.log("[ScheduleList Debug]", {
-    crewId,
-    data,
-    isLoading,
-    error,
-  });
-
   if (isLoading) {
     return (
       <div className="mt-6 flex justify-center">
