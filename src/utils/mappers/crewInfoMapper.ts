@@ -1,5 +1,5 @@
-import type { CrewInfo } from "../../types/crewCreate/crew";
-import { regionIdMap } from "./regionMapper";
+import type { CrewInfoRequest } from "../../types/crewCreate/crew";
+import { getRegionId } from "../regions";
 
 interface CrewInfoMapperParams {
   crewName: string;
@@ -16,40 +16,24 @@ interface CrewInfoMapperParams {
   selectedGender: number | null;
   isHeadcountUnlimited: boolean;
   isGenderUnlimited: boolean;
+  recruitMessage: string;
 }
 
-export const toServerCrewInfo = ({
-  crewName,
-  crewDescription,
-  headcount,
-  category,
-  activities,
-  styles,
-  filters,
-  age,
-  selectedGender,
-  isHeadcountUnlimited,
-  isGenderUnlimited,
-}: CrewInfoMapperParams): CrewInfo => {
-  const regionLabel =
-    filters.regionSido && filters.regionGu
-      ? `${filters.regionSido} ${filters.regionGu}`
-      : "";
-  const regionId = regionIdMap[regionLabel] ?? 1;
+export const toServerCrewInfo = (p: CrewInfoMapperParams): CrewInfoRequest => {
+  const regionId = getRegionId(p.filters.regionSido, p.filters.regionGu);
 
-  console.log("[regionLabel]", `"${regionLabel}"`);
-  console.log("[regionId]", regionId);
-
-  return {
-    name: crewName,
-    recruitMessage: "선택해주셔서 감사합니다!",
-    description: crewDescription,
-    maxCapacity: isHeadcountUnlimited ? 0 : (headcount ?? 0),
-    category: category ?? 0,
-    age: age ?? 0,
-    gender: isGenderUnlimited ? 0 : (selectedGender ?? 0),
-    region: regionId,
-    activities,
-    styles,
+  const base: Omit<CrewInfoRequest, "region"> = {
+    name: p.crewName,
+    recruitMessage: (p.recruitMessage ?? "").trim(),
+    description: p.crewDescription,
+    maxCapacity: p.isHeadcountUnlimited ? 0 : (p.headcount ?? 0),
+    category: p.category ?? 0,
+    age: p.age ?? 0,
+    gender: p.isGenderUnlimited ? 0 : (p.selectedGender ?? 0),
+    activities: p.activities,
+    styles: p.styles,
   };
+
+  // 미선택시 region 생략
+  return regionId != null ? { ...base, region: regionId } : base;
 };

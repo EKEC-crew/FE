@@ -26,7 +26,7 @@ export default function SearchInput({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onKeyDown={(e) => e.key === "Enter" && onSearch()}
-        placeholder="검색하고 싶은 테그 혹은 크루명을 입력하세요!"
+        placeholder="검색하고 싶은 태그 혹은 크루명을 입력하세요!"
         className={`w-full pl-10 pr-4 border bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${inputClass}`}
       />
       <button

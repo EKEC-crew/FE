@@ -11,7 +11,6 @@ import {
   regionOptions,
   styleOptions,
 } from "../../constants/crewFilterOptions";
-import { useState } from "react";
 
 export type CrewFilter = {
   category: number[];
@@ -26,8 +25,8 @@ export type CrewFilter = {
 interface CrewFilterBarProps {
   filters: CrewFilter;
   setFilters: React.Dispatch<React.SetStateAction<CrewFilter>>;
-  fetchCrews: () => void;
   onReset: () => void;
+  resetSignal: boolean;
 }
 
 const genderOptions = [
@@ -39,27 +38,15 @@ const genderOptions = [
 const CrewFilterBar = ({
   filters,
   setFilters,
-  fetchCrews,
+  onReset,
+  resetSignal,
 }: CrewFilterBarProps) => {
-  const [resetSignal, setResetSignal] = useState(false);
   return (
     <div className="flex gap-3 flex-wrap pb-8">
       {/* 새로고침 버튼 */}
       <button
         className="h-12 w-12 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD] cursor-pointer"
-        onClick={() => {
-          setFilters({
-            category: [],
-            activity: [],
-            style: [],
-            regionSido: "",
-            regionGu: "",
-            age: null,
-            gender: null,
-          });
-          setResetSignal((prev) => !prev);
-          fetchCrews();
-        }}
+        onClick={onReset}
       >
         <img src={resetIcon} alt="필터 초기화" />
       </button>

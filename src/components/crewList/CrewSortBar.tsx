@@ -1,6 +1,7 @@
 import SingleSelectDropdown from "./SingleSelectDropdown";
 
 const headcountOptions = [
+  { label: "선택 안 함", value: null },
   { label: "5명", value: 5 },
   { label: "10명", value: 10 },
   { label: "20명", value: 20 },
@@ -16,10 +17,10 @@ const headcountOptions = [
 
 const sortOptions = [
   { label: "최신순", value: 1 },
-  { label: "인원 많은순", value: 3 },
-  { label: "인원 적은순", value: 4 },
-  { label: "리뷰 좋은순", value: 5 },
-  { label: "활동 많은순", value: 6 },
+  { label: "인원 많은 순", value: 4 },
+  { label: "인원 적은 순", value: 3 },
+  { label: "리뷰 좋은 순", value: 5, disabled: true },
+  { label: "활동 많은 순", value: 6 },
   { label: "인기순", value: 2 },
 ];
 
