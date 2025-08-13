@@ -4,11 +4,16 @@ import Kakao from "../../../assets/signIn/signInKakaoLogo.svg";
 import Google from "../../../assets/signIn/signInGoogleLogo.svg";
 import Naver from "../../../assets/signIn/signInNaverLogo.svg";
 import Ekec from "../../../assets/signIn/signInEkecLogo.svg";
+import warnIcon from "../../../assets/icons/auth/warn.svg";
 
 import SocialSignInButton from "./socialSignInButton";
 import AuthBtn from "../authBtn";
 
-const SignInForm = () => {
+interface SignInFormProps {
+  showOAuthError?: boolean;
+}
+
+const SignInForm = ({ showOAuthError = false }: SignInFormProps) => {
   const navigate = useNavigate();
 
   const handleEkecSignIn = () => {
@@ -62,6 +67,13 @@ const SignInForm = () => {
           text="Google 계정으로 계속하기"
           border="border border-gray-300 bg-white hover:bg-gray-100"
         />
+
+        {showOAuthError && (
+          <div className="flex items-center justify-start text-[#ff4949] text-sm mt-1 mb-3 w-full">
+            <img src={warnIcon} alt="경고" className="w-4 h-4 mr-2" />
+            다른 방식으로 가입된 계정이에요. 재로그인해주세요.
+          </div>
+        )}
       </div>
     </>
   );
