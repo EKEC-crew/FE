@@ -36,7 +36,7 @@ export default function HomeCrewSection() {
     return {
       id: crew.id,
       name: crew.title,
-      description: crew.introduction || "소개글이 없습니다.",
+      content: crew.content || "소개글이 없습니다.",
       category: crew.crewCategory,
       tags: [...crew.crewStyle, ...crew.crewActivity],
       imageUrl: imageUrl,
