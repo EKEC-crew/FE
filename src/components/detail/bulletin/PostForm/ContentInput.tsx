@@ -32,7 +32,7 @@ const ContentInput: React.FC<ContentInputProps> = ({
       <div className="mb-6">
         <Editor
           ref={editorRef}
-          initialValue=""
+          initialValue=" "
           height="400px"
           useCommandShortcut
           hideModeSwitch={true}

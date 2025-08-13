@@ -18,9 +18,9 @@ export const useCreateBulletin = (crewId: string) => {
   return useMutation({
     mutationFn: (data: RequestCreatePostDto) => createBulletinApi(crewId, data),
     onSuccess: () => {
-      // 게시글 목록 재조회
+      // 게시글 목록 재조회 (정확한 쿼리 키 사용)
       queryClient.invalidateQueries({
-        queryKey: ["bulletinList", crewId],
+        queryKey: ["bulletins", Number(crewId)],
       });
       alert("게시글이 성공적으로 등록되었습니다.");
       navigate(`/crew/${crewId}/bulletin`);
@@ -39,19 +39,59 @@ export const useUpdateBulletin = (crewId: string, postId: string) => {
   return useMutation({
     mutationFn: (data: RequestUpdatePostDto) =>
       updateBulletinApi(crewId, postId, data),
+    onMutate: async (newData) => {
+      // 낙관적 업데이트를 위한 이전 데이터 백업
+      await queryClient.cancelQueries({
+        queryKey: ["bulletin", Number(crewId), Number(postId)],
+      });
+
+      const previousData = queryClient.getQueryData([
+        "bulletin",
+        Number(crewId),
+        Number(postId),
+      ]);
+
+      // 낙관적 업데이트 적용
+      queryClient.setQueryData(
+        ["bulletin", Number(crewId), Number(postId)],
+        (old: any) =>
+          old
+            ? {
+                ...old,
+                title: newData.title,
+                content: newData.content,
+              }
+            : old
+      );
+
+      return { previousData };
+    },
     onSuccess: () => {
       // 게시글 상세 정보 재조회
       queryClient.invalidateQueries({
-        queryKey: ["bulletinDetail", crewId, postId],
+        queryKey: ["bulletin", Number(crewId), Number(postId)],
       });
       // 게시글 목록도 재조회
       queryClient.invalidateQueries({
-        queryKey: ["bulletins", crewId],
+        queryKey: ["bulletins", Number(crewId)],
       });
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
+      // 오류 발생 시 이전 데이터로 롤백
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          ["bulletin", Number(crewId), Number(postId)],
+          context.previousData
+        );
+      }
       console.error("게시글 수정 실패:", error);
       alert("게시글 수정에 실패했습니다. 다시 시도해주세요.");
+    },
+    onSettled: () => {
+      // 성공/실패와 관계없이 쿼리 다시 가져오기
+      queryClient.invalidateQueries({
+        queryKey: ["bulletin", Number(crewId), Number(postId)],
+      });
     },
   });
 };
@@ -64,9 +104,9 @@ export const useDeleteBulletin = (crewId: string) => {
   return useMutation({
     mutationFn: (postId: string) => deleteBulletinApi(crewId, postId),
     onSuccess: () => {
-      // 게시글 목록 재조회
+      // 게시글 목록 재조회 (정확한 쿼리 키 사용)
       queryClient.invalidateQueries({
-        queryKey: ["bulletins", crewId],
+        queryKey: ["bulletins", Number(crewId)],
       });
       // 게시글 목록 페이지로 이동
       navigate(`/crew/${crewId}/bulletin`);
