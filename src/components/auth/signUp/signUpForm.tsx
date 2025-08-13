@@ -108,6 +108,12 @@ const SignUpForm = () => {
                 showPassword={showPasswordConfirm}
                 togglePassword={handlePasswordConfirmToggle}
               />
+              {/* 기본 가이드 텍스트 */}
+              {!errors?.password && !watchedPassword ? (
+                <div className="text-[#93959D] text-sm mt-1 w-full">
+                  영문과 숫자, 특수문자(.!@#$%^&*)의 7~12자리
+                </div>
+              ) : null}
             </div>
 
             {/* 비밀번호 유효성 메시지 */}
