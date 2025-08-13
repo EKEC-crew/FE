@@ -46,6 +46,8 @@ const transformBulletinData = (apiData: BulletinApiData): Bulletin => ({
   likeCount: apiData.likeCount || 0,
   isPopular: apiData.isPopular,
   hasAttachment: (apiData.imageCount || 0) > 0,
+  userId: apiData.userId, // 추가
+  isLiked: apiData.isLiked, // 추가
   content: apiData.content,
   profileImage: apiData.profileImage,
   images: apiData.images?.map((img) => getImageUrl(img.imageName)) || [],

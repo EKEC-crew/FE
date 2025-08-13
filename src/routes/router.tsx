@@ -157,6 +157,10 @@ const router = createBrowserRouter([
             path: "bulletin/post",
             element: <PostBulletinForm />,
           },
+          {
+            path: "bulletin/:id/edit",
+            element: <PostBulletinForm />,
+          },
         ],
       },
     ],
