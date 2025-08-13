@@ -68,6 +68,7 @@ export interface ScheduleItem {
   updatedAt: string | null;
   userId?: number;
   isLiked?: boolean;
+  isApplied?: boolean;
 }
 
 export interface PaginationInfo {
@@ -154,3 +155,24 @@ export interface ResponseScheduleLike {
 
 // 일정 좋아요 취소 응답 타입
 export type ResponseScheduleUnlike = ResponseScheduleLike;
+
+// 일정 신청 응답 데이터 타입
+export interface ScheduleApplyData {
+  message?: string;
+  planId: number;
+  status: 0 | 1; // 0: 미신청, 1: 신청완료
+  applicant?: string;
+  crewId?: number;
+  memberId?: number;
+}
+
+// 일정 신청 응답 타입
+export interface ResponseScheduleApply {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: any;
+  };
+  success: ScheduleApplyData | null;
+}
