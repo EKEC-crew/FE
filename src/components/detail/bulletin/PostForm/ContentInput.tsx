@@ -41,11 +41,6 @@ const ContentInput: React.FC<ContentInputProps> = ({ onValueChange }) => {
           ]}
         />
       </div>
-
-      <div
-        className="border border-gray-300 p-2"
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
     </div>
   );
 };

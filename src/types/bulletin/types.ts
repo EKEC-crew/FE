@@ -26,8 +26,8 @@ export interface BulletinApiData {
   likeCount: number;
   imageCount: number;
   isPopular: boolean;
-  userId: number; // 추가
-  isLiked: boolean; // 추가
+  userId: number;
+  isLiked: boolean;
   // detail 필드들
   content?: string;
   profileImage?: string;

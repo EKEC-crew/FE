@@ -78,12 +78,7 @@ const PostBulletinForm = () => {
       }
     } catch (error) {
       console.error("PostBulletinForm - 게시글 등록 오류:", error);
-      alert(
-        "게시글 등록 중 오류가 발생했습니다. 하지만 테스트용으로 성공 처리합니다."
-      );
-
-      // 테스트용: 에러가 발생해도 성공으로 처리
-      navigate("/detail/bulletin");
+      alert("게시글 등록 중 오류가 발생했습니다..");
     } finally {
       setIsSubmitting(false);
     }
@@ -122,14 +117,6 @@ const PostBulletinForm = () => {
               />
               <TitleInput onValueChange={setTitle} />
               <ContentInput onValueChange={setContent} />
-              <FeeSection
-                fee={fee}
-                setFee={setFee}
-                isFeeRequired={isFeeRequired}
-                setIsFeeRequired={setIsFeeRequired}
-                feePurpose={feePurpose}
-                setFeePurpose={setFeePurpose}
-              />
               <ImageAttachment onValueChange={setImages} />
               <SubmitButton onClick={handleSubmit} disabled={isSubmitting} />
             </div>

@@ -46,7 +46,7 @@ const BulletinAction = ({
         <button>
           <img src={iconShare} alt="공유" className="w-5 h-5" />
         </button>
-        
+
         <button
           className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm flex items-center gap-1 hover:bg-gray-50 cursor-pointer"
           onClick={toggleComment}
