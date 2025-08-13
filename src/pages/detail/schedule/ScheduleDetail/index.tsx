@@ -13,6 +13,7 @@ import ScheduleComments from "../../../../components/detail/Schedule/ScheduleCom
 import ScheduleHeader from "../../../../components/detail/Schedule/ScheduleHeader";
 import ScheduleApplyButton from "../../../../components/detail/Schedule/ScheduleApplyButton";
 import ScheduleApplyCompleteModal from "../../../../components/detail/Schedule/ScheduleApplyCompleteModal";
+import ScheduleFeeSection from "../../../../components/detail/Schedule/ScheduleFee";
 
 const ScheduleDetail = () => {
   const { crewId, id } = useParams<{ crewId: string; id: string }>();
@@ -128,16 +129,11 @@ const ScheduleDetail = () => {
 
             {/* 회비 정보 */}
             {schedule.hasFee && (
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <p className="text-sm font-semibold text-blue-800">
-                  💰 회비: {schedule.fee.toLocaleString()}원
-                </p>
-                {schedule.feePurpose && (
-                  <p className="text-xs text-blue-600 mt-1">
-                    사용 목적: {schedule.feePurpose}
-                  </p>
-                )}
-              </div>
+              <ScheduleFeeSection
+                hasFee={!!schedule.hasFee}
+                fee={schedule.fee}
+                feePurpose={schedule.feePurpose}
+              />
             )}
 
             {/* 신청 버튼 영역 */}
