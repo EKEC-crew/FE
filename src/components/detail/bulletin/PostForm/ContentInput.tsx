@@ -1,8 +1,12 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 
-const ContentInput = () => {
+interface ContentInputProps {
+  onValueChange?: (value: string) => void;
+}
+
+const ContentInput: React.FC<ContentInputProps> = ({ onValueChange }) => {
   const editorRef = useRef<Editor>(null);
   const [content, setContent] = useState("");
 
@@ -10,6 +14,10 @@ const ContentInput = () => {
     const html = editorRef.current?.getInstance().getHTML() || "";
     setContent(html);
   };
+
+  useEffect(() => {
+    onValueChange?.(content);
+  }, [content, onValueChange]);
 
   return (
     <div>

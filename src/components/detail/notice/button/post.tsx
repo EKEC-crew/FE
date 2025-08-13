@@ -1,15 +1,18 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 type PostButtonProps = {
-  onClick: () => void;
+  onClick?: () => void;
 };
 
-const PostButton: React.FC<PostButtonProps> = () => {
+const PostButton: React.FC<PostButtonProps> = ({ onClick }) => {
   const navigate = useNavigate();
+  const { crewId } = useParams();
 
   const handleClick = () => {
-    navigate("/detail/notice/post");
+    if (onClick) return onClick();
+    if (!crewId) return navigate("/crewListPage");
+    navigate(`/crew/${crewId}/notice/post`);
   };
 
   return (
