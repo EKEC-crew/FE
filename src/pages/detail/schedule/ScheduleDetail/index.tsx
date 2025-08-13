@@ -161,7 +161,14 @@ const ScheduleDetail = () => {
             />
 
             {/* 댓글 영역 */}
-            <ScheduleComments isOpen={isCommentOpen} comments={comments} />
+            <ScheduleComments
+              isOpen={isCommentOpen}
+              comments={comments}
+              crewId={crewId || ""}
+              planId={id || ""}
+              currentUserId={user?.id}
+              scheduleAuthorId={data?.data?.userId} // 게시글 작성자 ID
+            />
           </div>
         </div>
       </div>

@@ -176,3 +176,31 @@ export interface ResponseScheduleApply {
   };
   success: ScheduleApplyData | null;
 }
+
+// 댓글 작성 요청 타입
+export interface RequestCreateComment {
+  content: string;
+  isPublic: boolean; // true: 공개, false: 비공개
+}
+
+// 댓글 데이터 타입
+export interface CommentData {
+  id: number;
+  content: string;
+  userId: number;
+  writer: string;
+  writerImage: string | null;
+  isPublic: boolean;
+  createdAt: string;
+}
+
+// 댓글 작성 응답 타입
+export interface ResponseCreateComment {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: any;
+  };
+  data: CommentData | null;
+}

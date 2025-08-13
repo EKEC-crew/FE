@@ -10,6 +10,8 @@ import type {
   ResponseScheduleLike,
   ResponseScheduleUnlike,
   ResponseScheduleApply,
+  RequestCreateComment,
+  ResponseCreateComment,
 } from "../types/detail/schedule/types";
 
 // 일정 등록 API 함수
@@ -141,5 +143,23 @@ export const applyScheduleApi = async (
     `/crew/${crewId}/plan/${planId}/apply`
   );
   console.log("[applyScheduleApi] response.data:", response.data);
+  return response.data;
+};
+
+// 댓글 작성 API 함수
+export const createCommentApi = async (
+  crewId: string,
+  planId: string,
+  data: RequestCreateComment
+): Promise<ResponseCreateComment> => {
+  console.log(
+    `[createCommentApi] Requesting: POST /crew/${crewId}/plan/${planId}/comments`
+  );
+  console.log("[createCommentApi] data:", data);
+  const response = await privateAPI.post<ResponseCreateComment>(
+    `/crew/${crewId}/plan/${planId}/comments`,
+    data
+  );
+  console.log("[createCommentApi] response.data:", response.data);
   return response.data;
 };
