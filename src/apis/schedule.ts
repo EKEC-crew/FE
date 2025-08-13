@@ -9,6 +9,7 @@ import type {
   ResponseDeleteSchedule,
   ResponseScheduleLike,
   ResponseScheduleUnlike,
+  ResponseScheduleApply,
 } from "../types/detail/schedule/types";
 
 // 일정 등록 API 함수
@@ -125,5 +126,20 @@ export const unlikeScheduleApi = async (
     `/crew/${crewId}/plan/${planId}/like`
   );
   console.log("[unlikeScheduleApi] response.data:", response.data);
+  return response.data;
+};
+
+// 일정 신청 API 함수
+export const applyScheduleApi = async (
+  crewId: string,
+  planId: string
+): Promise<ResponseScheduleApply> => {
+  console.log(
+    `[applyScheduleApi] Requesting: POST /crew/${crewId}/plan/${planId}/apply`
+  );
+  const response = await privateAPI.post<ResponseScheduleApply>(
+    `/crew/${crewId}/plan/${planId}/apply`
+  );
+  console.log("[applyScheduleApi] response.data:", response.data);
   return response.data;
 };
