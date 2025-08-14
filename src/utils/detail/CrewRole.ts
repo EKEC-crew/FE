@@ -4,9 +4,10 @@ import type {
   RoleText,
 } from "../../types/detail/crewMember";
 
-// 숫자 역할을 텍스트로 변환
-export const getRoleText = (role: CrewRole): RoleText => {
-  return ["크루원", "운영진", "크루장"][role] as RoleText;
+export const getRoleText = (role?: CrewRole): RoleText => {
+  const roles: RoleText[] = ["크루원", "운영진", "크루장"];
+  if (role === undefined || role < 0 || role > 2) return "크루원";
+  return roles[role];
 };
 
 // 역할 순으로 정렬 (크루장 > 운영진 > 크루원)

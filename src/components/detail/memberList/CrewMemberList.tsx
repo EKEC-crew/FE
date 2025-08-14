@@ -1,13 +1,12 @@
-import { useCrewMembers } from "../../../hooks/CrewMemberList/useCrewMember";
-import type {
-  CrewMemberListProps,
+import { useMyCrewRole } from "../../../hooks/CrewMemberList/useMyCrewRole";
+import { useCrewMembers } from "../../../hooks/CrewMemberList/useCrewMember"; // ← 파일명이 useCrewMembers라면 맞춰주세요
+import {
   CrewRole,
+  type CrewMemberListProps,
 } from "../../../types/detail/crewMember";
 import { sortByRole, getRoleText } from "../../../utils/detail/CrewRole";
 import Pagination from "../bulletin/button/pagination";
-
 import MemberCard from "./MemberCard";
-
 import { useNavigate } from "react-router-dom";
 
 export default function CrewMemberList({
@@ -17,21 +16,34 @@ export default function CrewMemberList({
   currentPage,
   onPageChange,
 }: CrewMemberListProps) {
+  // 멤버 목록
   const { data, isLoading, error } = useCrewMembers(crewId);
+
+  // 현재 로그인 유저 권한 (React Query: data, isLoading, error)
+  const {
+    data: myRole,
+    isLoading: roleLoading,
+    error: roleError,
+  } = useMyCrewRole(crewId);
+
   const navigate = useNavigate();
 
-  if (isLoading) return <div>불러오는 중...</div>;
-  if (error || !data) return <div>불러오기 실패</div>;
+  if (isLoading || roleLoading) return <div>불러오는 중...</div>;
+  if (error || roleError || !data) return <div>불러오기 실패</div>;
 
-  const { members, userRole } = data;
+  const { members } = data;
   const sortedMembers = sortByRole(members);
-  // 현재 페이지에 따라 1페이지당 24명씩 보여줌
+
+  // 페이지네이션
   const itemsPerPage = 24;
   const paginatedMembers = sortedMembers.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-  const totalPages = Math.ceil(sortedMembers.length / itemsPerPage);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(sortedMembers.length / itemsPerPage)
+  );
 
   return (
     <div className="p-[1.5rem] px-[3rem] py-[2.5rem] bg-white rounded-xl shadow w-[82.625rem] mx-auto">
@@ -40,7 +52,9 @@ export default function CrewMemberList({
         <div className="text-[2.25rem] font-semibold mb-[0.5rem]">
           크루원 목록
         </div>
-        {getRoleText(userRole) === "크루장" && (
+
+        {/* 문자열 비교 대신 enum 비교 */}
+        {myRole === CrewRole.LEADER && (
           <button
             onClick={() => navigate(`/crew/${crewId}/applicants`)}
             className="w-[11.0625rem] h-[3.4375rem] rounded-[0.75rem] text-[1.625rem] bg-[#3A3ADB] text-white"
@@ -62,12 +76,12 @@ export default function CrewMemberList({
             crewId={crewId}
             name={member.nickname ?? "이름 없음"}
             role={getRoleText(member.role as CrewRole)}
-            currentUserRole={getRoleText(userRole)}
+            currentUserRole={getRoleText(myRole)}
             isSelected={selection.selectedId === member.memberId}
             openToggleId={selection.toggleId}
             onClick={selection.onSelect}
             onToggleClick={selection.onToggle}
-            canManage={userRole !== 0}
+            canManage={myRole !== CrewRole.MEMBER}
             onPromoteOrDemote={() =>
               onPromoteOrDemote(member.memberId, member.role)
             }
