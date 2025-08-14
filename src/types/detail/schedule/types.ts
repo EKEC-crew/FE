@@ -21,6 +21,7 @@ export interface ScheduleData {
   id: number;
   crew_name: string;
   writer: string;
+  writerImage?: string | null;
   title: string;
   content: string;
   day: string;
@@ -51,6 +52,7 @@ export interface ScheduleItem {
   id: number;
   crew_name: string;
   writer: string;
+  writerImage?: string | null;
   title: string;
   content: string;
   day: string;
@@ -203,4 +205,36 @@ export interface ResponseCreateComment {
     data?: any;
   };
   data: CommentData | null;
+}
+
+// 댓글 목록 조회 요청 파라미터 타입
+export interface RequestGetComments {
+  crewId: string;
+  planId: string;
+  page?: number;
+  size?: number;
+}
+
+// 페이지네이션 타입
+export interface Pagination {
+  totalElements: number;
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
+// 댓글 목록 조회 응답 타입
+export interface ResponseGetComments {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: any;
+  };
+  data: {
+    comments: CommentData[];
+    pagination: Pagination;
+  } | null;
 }

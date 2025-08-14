@@ -3,11 +3,13 @@ import {
   getApplyButtonStyle,
   formatScheduleDate,
 } from "../../../../utils/scheduleUtils";
+import ProfileImage from "../../../common/ProfileImage";
 
 interface ScheduleHeaderProps {
   type: number;
   title: string;
   writer: string;
+  writerImage?: string | null; // 작성자 프로필 이미지 추가
   day: string;
   isApplied: boolean;
   isPending: boolean;
@@ -18,6 +20,7 @@ const ScheduleHeader = ({
   type,
   title,
   writer,
+  writerImage,
   day,
   isApplied,
   isPending,
@@ -40,7 +43,12 @@ const ScheduleHeader = ({
       {/* 작성자 정보 + 버튼 */}
       <div className="flex justify-between items-center">
         <div className="flex py-1 items-center gap-2">
-          <p className="text-sm text-gray-600">{writer}님</p>
+          <ProfileImage
+            imageUrl={writerImage}
+            alt={`${writer} 프로필`}
+            size="md"
+          />
+          <p className="text-sm text-gray-600">{writer}</p>
           <p className="text-sm text-gray-500">{formatScheduleDate(day)}</p>
         </div>
         <button

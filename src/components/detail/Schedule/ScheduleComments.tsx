@@ -1,44 +1,41 @@
 import { useState } from "react";
-import iconMore from "../../../assets/schedule/ic_More.svg";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCreateComment } from "../../../hooks/schedule/useCreateComment";
+import { useGetComments } from "../../../hooks/schedule/useGetComments";
 import { useAuthStore } from "../../../store/useAuthStore";
-
-type Comment = {
-  id: number;
-  text: string;
-  date: string;
-  writer?: string;
-  isPublic?: boolean;
-  userId?: number;
-};
+import type { CommentData } from "../../../types/detail/schedule/types";
+import CommentDropdown from "./CommentDropdown";
+import Pagination from "../bulletin/button/pagination";
+import ProfileImage from "../../common/ProfileImage";
 
 type Props = {
   isOpen: boolean;
-  comments: Comment[];
   crewId: string;
   planId: string;
-  currentUserId?: number;
   scheduleAuthorId?: number; // 게시글 작성자 ID
 };
 
 const ScheduleComments = ({
   isOpen,
-  comments,
   crewId,
   planId,
-  currentUserId,
   scheduleAuthorId,
 }: Props) => {
   const [content, setContent] = useState("");
   const [isPrivate, setIsPrivate] = useState(false);
+  const [page, setPage] = useState(1);
 
   const { user, status } = useAuthStore();
   const createCommentMutation = useCreateComment(crewId, planId);
 
-  // 로그인 체크 (status가 authenticated이고 user가 있어야 로그인 상태로 간주)
-  const isLoggedIn = status === "authenticated" && !!user;
+  // 댓글 목록 조회
+  const { data: commentsData } = useGetComments(crewId, planId, page, 10);
+  const comments = commentsData?.data?.comments || [];
+  const pagination = commentsData?.data?.pagination;
 
+  // 로그인 체크
+  const isLoggedIn = status === "authenticated" && !!user;
+  const currentUserId = user?.id;
   const handleSubmit = async () => {
     // 디버깅을 위한 로그인 상태 출력
     console.log("🔍 로그인 상태 체크:", { status, user: !!user, isLoggedIn });
@@ -74,11 +71,62 @@ const ScheduleComments = ({
   };
 
   // 댓글 표시 권한
-  const canViewComment = (comment: Comment) => {
+  const canViewComment = (comment: CommentData) => {
     if (comment.isPublic === true) return true;
     return (
       currentUserId === scheduleAuthorId || currentUserId === comment.userId
     );
+  };
+
+  // 댓글 내용 표시 (비공개 댓글 처리)
+  const getCommentContent = (comment: CommentData) => {
+    if (comment.isPublic === true) return comment.content;
+    if (
+      currentUserId === scheduleAuthorId ||
+      currentUserId === comment.userId
+    ) {
+      return comment.content;
+    }
+    return "비공개 댓글입니다.";
+  };
+
+  // 날짜 포맷팅
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInDays === 0) {
+      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+      if (diffInHours === 0) {
+        const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+        return diffInMinutes === 0 ? "방금 전" : `${diffInMinutes}분 전`;
+      }
+      return `${diffInHours}시간 전`;
+    }
+    return `${diffInDays}일 전`;
+  };
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
+
+  // 드롭다운 액션 핸들러
+  const handleEdit = (commentId: number) => {
+    console.log("수정 클릭:", commentId);
+    // TODO: 수정 기능 구현
+  };
+
+  const handleDelete = (commentId: number) => {
+    console.log("삭제 클릭:", commentId);
+    // TODO: 삭제 기능 구현
+  };
+
+  const handleReport = (commentId: number) => {
+    console.log("신고 클릭:", commentId);
+    // TODO: 신고 기능 구현
   };
 
   return (
@@ -134,27 +182,57 @@ const ScheduleComments = ({
                 key={comment.id}
                 className="bg-[#F6F7FA] px-4 py-3 rounded-lg shadow-sm text-sm flex items-center justify-between"
               >
-                <div className="text-gray-400 w-[70px] shrink-0">
-                  {comment.writer || "0000님"}
+                <div className="flex items-center gap-2 w-[90px] shrink-0">
+                  <ProfileImage
+                    imageUrl={comment.writerImage}
+                    alt={`${comment.writer} 프로필`}
+                    size="sm"
+                  />
+                  <span className="text-gray-400 text-xs">
+                    {comment.writer || "0000님"}
+                  </span>
                 </div>
-                <div className="flex-1 px-2 text-gray-800">{comment.text}</div>
+                <div className="flex-1 px-2 text-gray-800 whitespace-pre-wrap">
+                  {getCommentContent(comment)}
+                </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-gray-400 text-sm">{comment.date}</span>
+                  <span className="text-gray-400 text-sm">
+                    {formatDate(comment.createdAt)}
+                  </span>
                   {comment.isPublic === false && (
                     <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">
                       비공개
                     </span>
                   )}
-                  <button className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm">
-                    댓글
+                  <button className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm cursor-pointer">
+                    답글
                   </button>
-                  <button>
-                    <img src={iconMore} alt="더보기" className="w-5 h-5" />
-                  </button>
+                  <CommentDropdown
+                    isAuthor={currentUserId === comment.userId}
+                    onEdit={() => handleEdit(comment.id)}
+                    onDelete={() => handleDelete(comment.id)}
+                    onReport={() => handleReport(comment.id)}
+                  />
                 </div>
               </div>
             ))}
+
+            {/* 댓글이 없을 때 */}
+            {comments.length === 0 && (
+              <div className="text-center py-8 text-gray-500">
+                아직 댓글이 없습니다.
+              </div>
+            )}
           </div>
+
+          {/* 페이지네이션 */}
+          {pagination && pagination.totalPages > 1 && (
+            <Pagination
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
         </motion.div>
       )}
     </AnimatePresence>
