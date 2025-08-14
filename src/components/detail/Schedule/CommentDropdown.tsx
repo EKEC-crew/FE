@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import icMore from "../../../assets/schedule/ic_More.svg";
 
 interface CommentDropdownProps {
-  isAuthor: boolean; // 댓글 작성자인지 여부
-  onEdit?: () => void; // 수정 함수
-  onDelete?: () => void; // 삭제 함수
-  onReport?: () => void; // 신고 함수
+  isAuthor: boolean;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  onReport?: () => void;
 }
 
 const CommentDropdown = ({
@@ -51,13 +51,13 @@ const CommentDropdown = ({
             <>
               <button
                 onClick={() => handleAction(onEdit || (() => {}))}
-                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 수정
               </button>
               <button
                 onClick={() => handleAction(onDelete || (() => {}))}
-                className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 transition-colors"
+                className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 삭제
               </button>
@@ -66,7 +66,7 @@ const CommentDropdown = ({
             // 작성자가 아닌 경우: 신고
             <button
               onClick={() => handleAction(onReport || (() => {}))}
-              className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 transition-colors"
+              className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-50 transition-colors cursor-pointer"
             >
               신고
             </button>

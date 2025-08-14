@@ -238,3 +238,40 @@ export interface ResponseGetComments {
     pagination: Pagination;
   } | null;
 }
+
+// 댓글 수정 요청 타입
+export interface RequestUpdateComment {
+  content: string;
+}
+
+// 댓글 수정 응답 데이터 타입
+export interface UpdatedCommentData {
+  id: number;
+  content: string;
+  writer: string;
+  writerImage: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 댓글 수정 응답 타입
+export interface ResponseUpdateComment {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: any;
+  };
+  data: UpdatedCommentData | null;
+}
+
+// 댓글 삭제 응답 타입
+export interface ResponseDeleteComment {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: any;
+  };
+  data: null;
+}

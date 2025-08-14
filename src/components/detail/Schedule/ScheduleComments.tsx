@@ -2,6 +2,8 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCreateComment } from "../../../hooks/schedule/useCreateComment";
 import { useGetComments } from "../../../hooks/schedule/useGetComments";
+import { useUpdateComment } from "../../../hooks/schedule/useUpdateComment";
+import { useDeleteComment } from "../../../hooks/schedule/useDeleteComment";
 import { useAuthStore } from "../../../store/useAuthStore";
 import type { CommentData } from "../../../types/detail/schedule/types";
 import CommentDropdown from "./CommentDropdown";
@@ -25,6 +27,13 @@ const ScheduleComments = ({
   const [isPrivate, setIsPrivate] = useState(false);
   const [page, setPage] = useState(1);
 
+  // 수정 관련 상태
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editContent, setEditContent] = useState("");
+  const [deletingCommentId, setDeletingCommentId] = useState<number | null>(
+    null
+  );
+
   const { user, status } = useAuthStore();
   const createCommentMutation = useCreateComment(crewId, planId);
 
@@ -36,6 +45,37 @@ const ScheduleComments = ({
   // 로그인 체크
   const isLoggedIn = status === "authenticated" && !!user;
   const currentUserId = user?.id;
+
+  // 수정/삭제 뮤테이션 훅들
+  const updateCommentMutation = useUpdateComment({
+    crewId,
+    planId,
+    commentId: editingCommentId || 0,
+    onSuccess: () => {
+      setEditingCommentId(null);
+      setEditContent("");
+    },
+    onError: (error) => {
+      console.error("댓글 수정 오류:", error);
+      alert("댓글 수정에 실패했습니다.");
+    },
+  });
+
+  const deleteCommentMutation = useDeleteComment({
+    crewId,
+    planId,
+    commentId: deletingCommentId || 0,
+    onSuccess: () => {
+      console.log("댓글 삭제 완료");
+      setDeletingCommentId(null);
+    },
+    onError: (error) => {
+      console.error("댓글 삭제 오류:", error);
+      alert("댓글 삭제에 실패했습니다.");
+      setDeletingCommentId(null);
+    },
+  });
+
   const handleSubmit = async () => {
     // 디버깅을 위한 로그인 상태 출력
     console.log("🔍 로그인 상태 체크:", { status, user: !!user, isLoggedIn });
@@ -116,17 +156,39 @@ const ScheduleComments = ({
   // 드롭다운 액션 핸들러
   const handleEdit = (commentId: number) => {
     console.log("수정 클릭:", commentId);
-    // TODO: 수정 기능 구현
+    const comment = comments.find((c) => c.id === commentId);
+    if (comment) {
+      setEditingCommentId(commentId);
+      setEditContent(comment.content);
+    }
   };
 
   const handleDelete = (commentId: number) => {
     console.log("삭제 클릭:", commentId);
-    // TODO: 삭제 기능 구현
+    if (window.confirm("댓글을 삭제하시겠습니까?")) {
+      setDeletingCommentId(commentId);
+      deleteCommentMutation.mutate();
+    }
   };
 
-  const handleReport = (commentId: number) => {
-    console.log("신고 클릭:", commentId);
-    // TODO: 신고 기능 구현
+  const handleReport = () => {
+    alert("신고가 완료되었습니다.");
+  };
+
+  // 댓글 수정 저장
+  const handleSaveEdit = () => {
+    if (!editContent.trim()) {
+      alert("댓글 내용을 입력해주세요.");
+      return;
+    }
+
+    updateCommentMutation.mutate({ content: editContent.trim() });
+  };
+
+  // 댓글 수정 취소
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditContent("");
   };
 
   return (
@@ -143,7 +205,7 @@ const ScheduleComments = ({
           {/* 댓글 작성 영역 */}
           <div className="space-y-3 w-full">
             {/* 체크박스 */}
-            <label className="flex items-center gap-2 text-sm text-gray-600">
+            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
               <input
                 type="checkbox"
                 checked={isPrivate}
@@ -193,7 +255,34 @@ const ScheduleComments = ({
                   </span>
                 </div>
                 <div className="flex-1 px-2 text-gray-800 whitespace-pre-wrap">
-                  {getCommentContent(comment)}
+                  {editingCommentId === comment.id ? (
+                    // 수정 모드
+                    <div className="space-y-2">
+                      <textarea
+                        value={editContent}
+                        onChange={(e) => setEditContent(e.target.value)}
+                        className="w-full bg-white border border-gray-300 rounded px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#3A3ADB33]"
+                        rows={3}
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleSaveEdit}
+                          className="px-3 py-1 bg-[#3A3ADB] text-white rounded text-xs hover:bg-[#2a2ac0]"
+                        >
+                          저장
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="px-3 py-1 bg-gray-300 text-gray-700 rounded text-xs hover:bg-gray-400"
+                        >
+                          취소
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    // 일반 모드
+                    getCommentContent(comment)
+                  )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
                   <span className="text-gray-400 text-sm">
@@ -211,7 +300,7 @@ const ScheduleComments = ({
                     isAuthor={currentUserId === comment.userId}
                     onEdit={() => handleEdit(comment.id)}
                     onDelete={() => handleDelete(comment.id)}
-                    onReport={() => handleReport(comment.id)}
+                    onReport={handleReport}
                   />
                 </div>
               </div>

@@ -13,6 +13,9 @@ import type {
   RequestCreateComment,
   ResponseCreateComment,
   ResponseGetComments,
+  RequestUpdateComment,
+  ResponseUpdateComment,
+  ResponseDeleteComment,
   CommentData,
 } from "../types/detail/schedule/types";
 
@@ -36,6 +39,12 @@ const getImageUrl = (
 
 // 댓글 데이터의 이미지 URL 변환
 const transformCommentData = (comment: CommentData): CommentData => ({
+  ...comment,
+  writerImage: getImageUrl(comment.writerImage, 1),
+});
+
+// 수정된 댓글 데이터의 이미지 URL 변환
+const transformUpdatedCommentData = (comment: any): any => ({
   ...comment,
   writerImage: getImageUrl(comment.writerImage, 1),
 });
@@ -224,4 +233,58 @@ export const getCommentsApi = async (
   }
 
   return response.data;
+};
+
+// 댓글 수정 API 함수
+export const updateCommentApi = async (
+  crewId: string,
+  planId: string,
+  commentId: number,
+  data: RequestUpdateComment
+): Promise<ResponseUpdateComment> => {
+  console.log(
+    `[updateCommentApi] Requesting: PATCH /crew/${crewId}/plan/${planId}/comments/${commentId}`
+  );
+  console.log("[updateCommentApi] data:", data);
+  const response = await privateAPI.patch<ResponseUpdateComment>(
+    `/crew/${crewId}/plan/${planId}/comments/${commentId}`,
+    data
+  );
+  console.log("[updateCommentApi] response.data:", response.data);
+
+  // 댓글 데이터의 이미지 URL 변환
+  if (response.data.data) {
+    response.data.data = transformUpdatedCommentData(response.data.data);
+  }
+
+  return response.data;
+};
+
+// 댓글 삭제 API 함수
+export const deleteCommentApi = async (
+  crewId: string,
+  planId: string,
+  commentId: number
+): Promise<ResponseDeleteComment> => {
+  console.log(
+    `[deleteCommentApi] Requesting: DELETE /crew/${crewId}/plan/${planId}/comments/${commentId}`
+  );
+
+  try {
+    const response = await privateAPI.delete<ResponseDeleteComment>(
+      `/crew/${crewId}/plan/${planId}/comments/${commentId}`
+    );
+    console.log("[deleteCommentApi] response.status:", response.status);
+    console.log("[deleteCommentApi] response.data:", response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error("[deleteCommentApi] Error details:", {
+      message: error.message,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data,
+      headers: error.response?.headers,
+    });
+    throw error;
+  }
 };
