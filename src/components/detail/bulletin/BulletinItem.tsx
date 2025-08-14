@@ -1,15 +1,19 @@
 import React, { useCallback } from "react";
+import isAttachedIcon from "../../../assets/icons/ic_isAttached.svg";
 import type { Bulletin } from "../../../types/bulletin/types";
+import iconHeart from "../../../assets/schedule/ic_Heart.svg";
 interface BulletinItemProps {
   bulletin: Bulletin;
   onBulletinClick?: (bulletin: Bulletin) => void;
   index: number;
+  likeCount?: number;
 }
 
 const BulletinItem: React.FC<BulletinItemProps> = ({
   bulletin,
   onBulletinClick,
   index,
+  likeCount = 0,
 }) => {
   const handleClick = useCallback(() => {
     onBulletinClick?.(bulletin);
@@ -40,7 +44,13 @@ const BulletinItem: React.FC<BulletinItemProps> = ({
           {bulletin.title}
 
           {bulletin.hasAttachment && (
-            <span className="text-blue-500 text-xs ml-1">📎</span>
+            <span className="text-blue-500 text-xs ml-1">
+              <img
+                src={isAttachedIcon}
+                alt="첨부파일여부"
+                className="inline-block w-4 h-4"
+              />
+            </span>
           )}
           {bulletin.commentCount > 0 && (
             <span className="text-blue-500 text-xs px-2">
@@ -50,10 +60,18 @@ const BulletinItem: React.FC<BulletinItemProps> = ({
         </span>
       </div>
 
-      {/* 오른쪽 영역: 날짜와 작성자 */}
-      <div className="flex items-center text-gray-400 text-xs md:text-sm space-x-4 flex-shrink-0">
-        <span>{bulletin.date}</span>
-        <span>{bulletin.author}</span>
+      {/* 오른쪽 영역: 날짜, 좋아요 수,작성자 */}
+      <div className="flex items-center gap-2 text-gray-400 flex-shrink-0">
+        <span className="text-gray-400 text-sm whitespace-nowrap">
+          {bulletin.date}
+        </span>
+        <div className="flex items-center ml-6 gap-1">
+          <img src={iconHeart} alt="좋아요" className="w-4 h-4 grayscale" />
+          <span className="text-[#93949D] text-sm">{likeCount}</span>
+        </div>
+        <span className="text-gray-400 text-xs text-right min-w-16 truncate">
+          {bulletin.author}
+        </span>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { privateAPI } from "../../apis/axios";
 import type {
   BulletinApiResponse,
   BulletinDetailApiResponse,
@@ -13,27 +14,29 @@ const getImageUrl = (imageName: string): string => {
   return `${API_BASE_URL}/image?type=2&fileName=${imageName}`;
 };
 
+// 프로필 이미지 URL 변환 함수
+const getProfileImageUrl = (
+  fileName?: string | null,
+  type: number = 1
+): string | undefined => {
+  if (!fileName || !fileName.trim()) {
+    return undefined;
+  }
+
+  return `${API_BASE_URL}/image/?type=${type}&fileName=${encodeURIComponent(fileName)}`;
+};
+
 // 날짜 포맷
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  const now = new Date();
-  const diffInMs = now.getTime() - date.getTime();
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-  if (diffInDays === 0) {
-    return date.toLocaleTimeString("ko-KR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  } else if (diffInDays < 7) {
-    return `${diffInDays}일 전`;
-  } else {
-    return date.toLocaleDateString("ko-KR", {
-      month: "2-digit",
-      day: "2-digit",
-    });
-  }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${year}.${month}.${day} ${hours}:${minutes}`;
 };
 
 // 게시글 데이터 변환 함수
@@ -49,7 +52,7 @@ const transformBulletinData = (data: BulletinApiData): Bulletin => ({
   userId: data.userId,
   isLiked: data.isLiked,
   content: data.content,
-  profileImage: data.profileImage,
+  profileImage: getProfileImageUrl(data.profileImage, 1),
   images: data.images?.map((img) => getImageUrl(img.imageName)) || [],
   originalImages: data.images || [],
 });
@@ -110,21 +113,11 @@ export const useBulletin = (crewId: number, postId: number) => {
   return useQuery({
     queryKey: ["bulletin", crewId, postId],
     queryFn: async (): Promise<Bulletin> => {
-      const response = await fetch(
-        `${API_BASE_URL}/crew/${crewId}/post/${postId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const response = await privateAPI.get<BulletinDetailApiResponse>(
+        `/crew/${crewId}/post/${postId}`
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result: BulletinDetailApiResponse = await response.json();
+      const result = response.data;
 
       if (result.resultType !== "SUCCESS") {
         throw new Error(

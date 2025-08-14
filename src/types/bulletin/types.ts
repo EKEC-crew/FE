@@ -107,3 +107,59 @@ export interface ResponseCreatePostDto
   extends BaseApiResponse<BulletinApiData> {}
 export interface ResponseUpdatePostDto
   extends BaseApiResponse<BulletinApiData> {}
+
+// 댓글 관련 타입들
+export interface BulletinCommentData {
+  commentId: number;
+  content: string;
+  nickname: string;
+  image: string | null;
+  userId: number;
+  isPublic: number; // 0: 전체 공개, 1: 비밀 댓글
+  createdAt: string;
+}
+
+// 댓글 목록 조회 응답 타입
+export interface ResponseGetBulletinComments {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: any;
+  };
+  data: {
+    comments: BulletinCommentData[];
+    totalElements: number;
+    totalPages: number;
+    hasNext: boolean;
+    pageNum: number;
+    pageSize: number;
+  } | null;
+}
+
+// 댓글 작성 요청 타입
+export interface RequestCreateBulletinComment {
+  content: string;
+  isPublic: number; // 0: 전체 공개, 1: 비밀 댓글
+}
+
+// 댓글 작성 응답 데이터 타입
+export interface CreatedBulletinCommentData {
+  commentId: number;
+  content: string;
+  nickname: string;
+  image: string | null;
+  isPublic: number;
+  createdAt: string;
+}
+
+// 댓글 작성 응답 타입
+export interface ResponseCreateBulletinComment {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: any;
+  };
+  data: CreatedBulletinCommentData | null;
+}
