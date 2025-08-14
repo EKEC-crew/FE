@@ -1,6 +1,9 @@
 // 역할 숫자 정의 (서버 기준: 0 = 크루원, 1 = 운영진, 2 = 크루장)
-export type CrewRole = 0 | 1 | 2;
-
+export enum CrewRole {
+  MEMBER = 0,
+  MANAGER = 1,
+  LEADER = 2,
+}
 // 역할 텍스트 타입
 export type RoleText = "크루원" | "운영진" | "크루장";
 

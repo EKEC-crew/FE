@@ -25,11 +25,7 @@ export default function ApplicationDetailPage() {
     validIds ? applyId : (NaN as unknown as number)
   );
   const { data, isLoading, isError, error } = detailQuery;
-  const {
-    data: initData,
-    isLoading: initLoading,
-    error: initError,
-  } = initQuery;
+  const { data: initData, isLoading: initLoading } = initQuery;
 
   // 3) 지역 옵션도 항상 useMemo로 계산 (조건부로 호출 금지)
   const regionOptions: ApplyOption[] = useMemo(
