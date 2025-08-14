@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { privateAPI } from "../../apis/axios";
 import type {
   BulletinApiResponse,
   BulletinDetailApiResponse,
@@ -11,6 +12,18 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const getImageUrl = (imageName: string): string => {
   return `${API_BASE_URL}/image?type=2&fileName=${imageName}`;
+};
+
+// 프로필 이미지 URL 변환 함수
+const getProfileImageUrl = (
+  fileName?: string | null,
+  type: number = 1
+): string | undefined => {
+  if (!fileName || !fileName.trim()) {
+    return undefined;
+  }
+
+  return `${API_BASE_URL}/image/?type=${type}&fileName=${encodeURIComponent(fileName)}`;
 };
 
 // 날짜 포맷
@@ -39,7 +52,7 @@ const transformBulletinData = (data: BulletinApiData): Bulletin => ({
   userId: data.userId,
   isLiked: data.isLiked,
   content: data.content,
-  profileImage: data.profileImage,
+  profileImage: getProfileImageUrl(data.profileImage, 1),
   images: data.images?.map((img) => getImageUrl(img.imageName)) || [],
   originalImages: data.images || [],
 });
@@ -100,21 +113,11 @@ export const useBulletin = (crewId: number, postId: number) => {
   return useQuery({
     queryKey: ["bulletin", crewId, postId],
     queryFn: async (): Promise<Bulletin> => {
-      const response = await fetch(
-        `${API_BASE_URL}/crew/${crewId}/post/${postId}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
+      const response = await privateAPI.get<BulletinDetailApiResponse>(
+        `/crew/${crewId}/post/${postId}`
       );
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const result: BulletinDetailApiResponse = await response.json();
+      const result = response.data;
 
       if (result.resultType !== "SUCCESS") {
         throw new Error(

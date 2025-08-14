@@ -1,4 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { useBulletinDetail } from "../../../../hooks/bulletin/useBulletins";
 import { useDeleteBulletin } from "../../../../hooks/bulletin/useBulletinActions";
 import { useAuthStore } from "../../../../store/useAuthStore";
@@ -7,12 +8,14 @@ import Tabs from "../../tabs";
 import BulletinAbout from "./BulletinAbout";
 import BulletinAction from "./BulletinAction";
 import BulletinComments from "./BulletinComments";
+import ProfileImage from "../../../common/ProfileImage";
 
 const BulletinDetail = () => {
   const { crewId, id } = useParams();
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const deleteBulletinMutation = useDeleteBulletin(crewId || "");
+  const [isCommentOpen, setIsCommentOpen] = useState(false);
 
   const {
     data: bulletin,
@@ -72,6 +75,11 @@ const BulletinDetail = () => {
   // 작성자 여부 확인
   const isAuthor = user?.id === bulletin.userId;
 
+  // 댓글 토글 함수
+  const toggleComment = () => {
+    setIsCommentOpen(!isCommentOpen);
+  };
+
   // 수정 버튼 핸들러
   const handleEdit = () => {
     navigate(`/crew/${crewId}/bulletin/${id}/edit`);
@@ -120,23 +128,21 @@ const BulletinDetail = () => {
               )}
             </div>
 
-            {/* 작성자 정보 + 버튼 */}
-            <div className="flex justify-between items-center">
-              <div className="flex py-1 items-center gap-4">
-                <p className="text-sm text-gray-500">{bulletin.author}</p>
-                <p className="text-sm text-gray-500">{bulletin.date}</p>
-                <div className="flex items-center gap-2">
-                  {bulletin.likeCount > 0 && (
-                    <span className="text-red-500 text-sm">
-                      ♥ {bulletin.likeCount}
-                    </span>
-                  )}
-                  {bulletin.commentCount > 0 && (
-                    <span className="text-blue-500 text-sm">
-                      💬 {bulletin.commentCount}
-                    </span>
-                  )}
-                </div>
+            {/* 작성자 정보 */}
+            <div className="flex py-1 items-center gap-2">
+              <ProfileImage
+                imageUrl={bulletin.profileImage}
+                alt={`${bulletin.author} 프로필`}
+                size="md"
+              />
+              <p className="text-sm text-gray-600">{bulletin.author}</p>
+              <p className="text-sm text-gray-500">{bulletin.date}</p>
+              <div className="flex items-center gap-2">
+                {bulletin.likeCount > 0 && (
+                  <span className="text-red-500 text-sm">
+                    ♥ {bulletin.likeCount}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -145,7 +151,7 @@ const BulletinDetail = () => {
 
             {/* 버튼 영역 */}
             <BulletinAction
-              toggleComment={() => {}}
+              toggleComment={toggleComment}
               isAuthor={isAuthor}
               onEdit={handleEdit}
               onDelete={handleDelete}
@@ -158,6 +164,7 @@ const BulletinDetail = () => {
 
             {/* 댓글 영역 */}
             <BulletinComments
+              isOpen={isCommentOpen}
               bulletinId={parseInt(id || "0")}
               crewId={crewId || ""}
               currentUserId={user?.id}

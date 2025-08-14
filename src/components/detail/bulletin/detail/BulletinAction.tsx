@@ -31,7 +31,7 @@ const BulletinAction = ({
       <div className="flex items-center gap-2">
         <button
           onClick={onLikeToggle}
-          className="flex items-center gap-1 hover:opacity-70 transition-opacity"
+          className="flex items-center gap-1 hover:opacity-70 transition-opacity cursor-pointer"
         >
           <img
             src={isLiked ? iconLikedHeart : iconHeart}
@@ -42,13 +42,13 @@ const BulletinAction = ({
         </button>
 
         <button
-          className="bg-white px-3 py-0.5 rounded-2xl text-sm flex items-center gap-1"
+          className="bg-white px-3 py-0.5 rounded-2xl text-sm flex items-center gap-1 cursor-pointer"
           onClick={toggleComment}
         >
           <img src={iconComment} alt="댓글" className="w-5 h-5" />
           <span className="text-gray-600 w-5 h-5">{commentCount}</span>
         </button>
-        <button>
+        <button className="cursor-pointer">
           <img src={iconShare} alt="공유" className="w-5 h-5" />
         </button>
       </div>

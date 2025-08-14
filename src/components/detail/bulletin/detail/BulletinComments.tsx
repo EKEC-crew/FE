@@ -1,12 +1,15 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import CommentForm from "./components/CommentForm";
 import CommentList from "./components/CommentList";
+import Pagination from "../../../detail/bulletin/button/pagination";
 import { useGetBulletinComments } from "../../../../hooks/bulletin/useGetBulletinComments";
 import { useCreateBulletinComment } from "../../../../hooks/bulletin/useCreateBulletinComment";
 import { useUpdateBulletinComment } from "../../../../hooks/bulletin/useUpdateBulletinComment";
 import { useDeleteBulletinComment } from "../../../../hooks/bulletin/useDeleteBulletinComment";
 
 type Props = {
+  isOpen: boolean;
   bulletinId: number;
   crewId: string;
   currentUserId?: number;
@@ -14,15 +17,17 @@ type Props = {
 };
 
 const BulletinComments = ({
+  isOpen,
   bulletinId,
   crewId,
   currentUserId,
   bulletinAuthorId,
 }: Props) => {
+  const [page, setPage] = useState(1);
   const { data: commentsData, isLoading } = useGetBulletinComments(
     crewId,
     bulletinId.toString(),
-    1,
+    page,
     10
   );
   const createCommentMutation = useCreateBulletinComment(
@@ -39,8 +44,14 @@ const BulletinComments = ({
   );
 
   const comments = commentsData?.data?.comments || [];
+  const pagination = commentsData?.data;
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
   const [editContent, setEditContent] = useState("");
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage);
+  };
 
   // 이벤트 핸들러들
   const handleSubmit = async (content: string, isPrivate: boolean) => {
@@ -102,25 +113,44 @@ const BulletinComments = ({
   }
 
   return (
-    <div className="space-y-4">
-      {/* 댓글 작성 폼 */}
-      <CommentForm onSubmit={handleSubmit} isLoading={false} />
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          key="comments"
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="space-y-4 overflow-hidden mt-4"
+        >
+          {/* 댓글 작성 폼 */}
+          <CommentForm onSubmit={handleSubmit} isLoading={false} />
 
-      {/* 댓글 목록 */}
-      <CommentList
-        comments={comments}
-        currentUserId={currentUserId}
-        bulletinAuthorId={bulletinAuthorId}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onReport={handleReport}
-        onSaveEdit={handleSaveEdit}
-        editingCommentId={editingCommentId}
-        editContent={editContent}
-        setEditContent={setEditContent}
-        onCancelEdit={handleCancelEdit}
-      />
-    </div>
+          {/* 댓글 목록 */}
+          <CommentList
+            comments={comments}
+            currentUserId={currentUserId}
+            bulletinAuthorId={bulletinAuthorId}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onReport={handleReport}
+            onSaveEdit={handleSaveEdit}
+            editingCommentId={editingCommentId}
+            editContent={editContent}
+            setEditContent={setEditContent}
+            onCancelEdit={handleCancelEdit}
+          />
+          
+          {pagination && pagination.totalPages > 1 && (
+            <Pagination
+              currentPage={page}
+              totalPages={pagination.totalPages}
+              onPageChange={handlePageChange}
+            />
+          )}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
