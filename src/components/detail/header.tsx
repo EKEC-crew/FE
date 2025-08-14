@@ -6,6 +6,7 @@ import UserCircle from "/src/assets/header/ic_UserCircle.svg";
 import crown from "/src/assets/header/ic_crown.png";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCrewInfo, fetchMyRole } from "./constants";
+import { getImageUrl } from "../../apis/bulletins";
 
 function Header() {
   const navigate = useNavigate();
@@ -48,7 +49,8 @@ function Header() {
   const score = typeof crewInfo?.score === "number" ? crewInfo!.score : 0;
   const memberCount = crewInfo?.memberCount ?? 0;
   const capacity = crewInfo?.crewCapacity ?? 0;
-  const profileSrc = crewInfo?.profileImage || DefaultCrewProfile;
+  const profileSrc =
+    getImageUrl(crewInfo?.profileImage, 1) || DefaultCrewProfile;
 
   return (
     <div className="bg-white w-full shadow-lg">
