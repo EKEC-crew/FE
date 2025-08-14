@@ -1,47 +1,97 @@
-import { useState, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Suggestion } from "./types";
-import { cleanKeyword, filterSuggestions } from "./filterSuggestions";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { TAG_INDEX, type TagKind } from "../../constants/searchTags";
+import { fetchCrewNameSuggestions } from "../../apis/search";
 
-// 예시 더미
-const dummySuggestions: Suggestion[] = [
-  { type: "tag", label: "#스포츠" },
-  { type: "tag", label: "#스포츠 직관" },
-  { type: "crew", label: "스파게티 크루" },
-  { type: "crew", label: "스피트 러닝" },
-  { type: "crew", label: "스케치 모임" },
-];
+export type Suggestion =
+  | { type: "crew"; label: string }
+  | { type: "tag"; label: string; id: number; kind: TagKind };
 
-function useSearchController() {
+const MAX_SUGGESTIONS = 8;
+
+function useDebouncedValue<T>(value: T, delay = 150) {
+  const [v, setV] = useState(value);
+  React.useEffect(() => {
+    const id = setTimeout(() => setV(value), delay);
+    return () => clearTimeout(id);
+  }, [value, delay]);
+  return v;
+}
+
+export default function useSearchController() {
   const [keyword, setKeyword] = useState("");
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const debounced = useDebouncedValue(keyword, 150);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // 경로가 바뀔 때 검색 상태 초기화하기!!!
-    setKeyword("");
-    setSuggestions([]);
-  }, [location.pathname]);
+  const key = ["crew-name-auto", debounced] as const;
 
-  useEffect(() => {
-    if (keyword.trim().length >= 1) {
-      setSuggestions(filterSuggestions(dummySuggestions, keyword));
-    } else {
-      setSuggestions([]);
-    }
-  }, [keyword]);
+  const { data: crewNames = [] } = useQuery<
+    string[], // TQueryFnData (queryFn 반환)
+    Error, // TError
+    string[], // TData (select 안 쓰면 동일)
+    typeof key // TQueryKey
+  >({
+    queryKey: key,
+    queryFn: ({ signal }) =>
+      fetchCrewNameSuggestions(debounced.trim(), signal, 5),
+    enabled: debounced.trim().length >= 1 && !debounced.trim().startsWith("#"),
+    staleTime: 10_000,
+    placeholderData: keepPreviousData,
+  });
+  // 태그 자동완성 (항상 위에)
+  const tagSuggestions: Suggestion[] = useMemo(() => {
+    const q = debounced.trim().replace(/^#/, "");
+    if (!q) return [];
+    return TAG_INDEX.filter((t) => t.label.includes(q))
+      .slice(0, 5)
+      .map((t) => ({
+        type: "tag" as const,
+        label: `#${t.label}`,
+        id: t.id,
+        kind: t.kind,
+      }));
+  }, [debounced]);
 
+  // 크루명 제안
+  const crewSuggestions: Suggestion[] = useMemo(
+    () => crewNames.map((n: string) => ({ type: "crew" as const, label: n })),
+    [crewNames]
+  );
+
+  // 합치기
+  const suggestions = useMemo(
+    () => [...tagSuggestions, ...crewSuggestions].slice(0, MAX_SUGGESTIONS),
+    [tagSuggestions, crewSuggestions]
+  );
+
+  // 검색 (엔터/돋보기)
   const handleSearch = () => {
-    if (keyword.trim()) {
-      navigate(`/search?query=${encodeURIComponent(keyword.trim())}`);
+    const q = keyword.trim();
+    if (!q) return;
+    const first = suggestions[0];
+    if (q.startsWith("#") && first?.type === "tag") {
+      handleSuggestionClick(first);
+      return;
     }
+    navigate(`/crewListPage?name=${encodeURIComponent(q)}&page=1&sort=2`);
   };
 
-  const handleSuggestionClick = (label: string) => {
-    const cleaned = cleanKeyword(label);
-    setKeyword(cleaned);
-    setSuggestions([]);
-    navigate(`/search?query=${encodeURIComponent(cleaned)}`);
+  // 자동완성 클릭 시 이동
+  const handleSuggestionClick = (s: Suggestion) => {
+    if (s.type === "crew") {
+      navigate(
+        `/crewListPage?name=${encodeURIComponent(s.label)}&page=1&sort=2`
+      );
+      return;
+    }
+    const key =
+      s.kind === "category"
+        ? "category"
+        : s.kind === "activity"
+          ? "activity"
+          : "style";
+    navigate(`/crewListPage?${key}=${s.id}&page=1&sort=2`);
   };
 
   return {
@@ -52,5 +102,3 @@ function useSearchController() {
     handleSuggestionClick,
   };
 }
-
-export default useSearchController;

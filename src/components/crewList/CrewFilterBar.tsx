@@ -26,7 +26,7 @@ interface CrewFilterBarProps {
   filters: CrewFilter;
   setFilters: React.Dispatch<React.SetStateAction<CrewFilter>>;
   onReset: () => void;
-  resetSignal: boolean;
+  resetSignal?: boolean;
 }
 
 const genderOptions = [
