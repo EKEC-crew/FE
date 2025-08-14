@@ -16,24 +16,14 @@ const getImageUrl = (imageName: string): string => {
 // 날짜 포맷
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
-  const now = new Date();
-  const diffInMs = now.getTime() - date.getTime();
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-  if (diffInDays === 0) {
-    return date.toLocaleTimeString("ko-KR", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: false,
-    });
-  } else if (diffInDays < 7) {
-    return `${diffInDays}일 전`;
-  } else {
-    return date.toLocaleDateString("ko-KR", {
-      month: "2-digit",
-      day: "2-digit",
-    });
-  }
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${year}.${month}.${day} ${hours}:${minutes}`;
 };
 
 // 게시글 데이터 변환 함수

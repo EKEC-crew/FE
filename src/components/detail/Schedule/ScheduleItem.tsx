@@ -61,8 +61,8 @@ const ScheduleItem = ({
         <span className="font-semibold text-sm">{title}</span>
         {isNew && <span className="text-[#FF4949] text-xs">●</span>}
       </div>
-      <div className="flex items-center gap-5">
-        <span className="text-[#93949D] text-sm">{date}</span>
+      <div className="flex items-center gap-2">
+        <span className="text-[#93949D] text-sm whitespace-nowrap">{date}</span>
 
         {/* 좋아요 수 표시 */}
         <div className="flex items-center gap-1">

@@ -26,17 +26,12 @@ export const getCommentContent = (
 // 날짜 포맷팅
 export const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  const now = new Date();
-  const diffInMs = now.getTime() - date.getTime();
-  const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-  if (diffInDays === 0) {
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    if (diffInHours === 0) {
-      const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-      return diffInMinutes === 0 ? "방금 전" : `${diffInMinutes}분 전`;
-    }
-    return `${diffInHours}시간 전`;
-  }
-  return `${diffInDays}일 전`;
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${year}.${month}.${day} ${hours}:${minutes}`;
 };
