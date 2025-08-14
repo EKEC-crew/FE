@@ -2,8 +2,6 @@ import type { Crew } from "../../types/crewCreate/crew";
 import starIcon from "../../assets/icons/ic_Star_36.svg";
 import defaultBanner from "../../assets/logo/img_crew_banner.svg";
 
-const IMAGE_BASE = "https://api.ekec.site/api/image";
-
 const CrewCard = ({
   name,
   description,
@@ -18,7 +16,7 @@ const CrewCard = ({
     bannerImage && bannerImage.trim()
       ? bannerImage.startsWith("http")
         ? bannerImage
-        : `${IMAGE_BASE}/?type=0&fileName=${encodeURIComponent(bannerImage)}`
+        : `${import.meta.env.VITE_API_BASE_URL}/image/?type=0&fileName=${encodeURIComponent(bannerImage)}`
       : defaultBanner;
   return (
     <div className="flex items-center w-full max-w-[1320px] h-auto bg-white rounded-xl border-2 border-[#D9DADD] p-4">
