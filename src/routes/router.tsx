@@ -160,6 +160,10 @@ const router = createBrowserRouter([
             element: <PostBulletinForm />,
           },
           {
+            path: "bulletin/:id/edit",
+            element: <PostBulletinForm />,
+          },
+          {
             path: "apply",
             element: <ApplyPage />,
           },
