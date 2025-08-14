@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import OptionGrid from "../../crewCreate/OptionGrid";
-import ApplyStepHeader from "../common/ApplyStepHeader";
 import {
   categoryOptions as _categoryOptions,
   activityOptions as _activityOptions,

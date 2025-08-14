@@ -58,8 +58,8 @@ export default function ApplicationDetailPage() {
   return (
     <div className="px-40 py-5">
       <div className="mx-auto flex max-w-[56rem] flex-col gap-8">
-        <Header />
-        <Info />
+        <Header crewId={crewId} />
+        <Info crewId={crewId} />
         <section>
           <ApplyStepHeader
             step={1}

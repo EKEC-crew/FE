@@ -97,3 +97,36 @@ export const crewApplyAPI = {
   reject: (crewId: number, applyId: number) =>
     crewApplyAPI.updateApplyStatus(crewId, applyId, { status: 0 }),
 };
+
+// 크루 정보 응답 타입 정의
+export interface CrewInfoResponse {
+  resultType: "SUCCESS" | "FAIL";
+  error: string | null;
+  data: {
+    crewId: number;
+    title: string;
+    content: string;
+    score: number;
+    memberCount: number;
+    crewCapacity: number;
+    bannerImage: string | null;
+    nickname: string;
+    profileImage: string | null;
+    category: string;
+    introduction: string;
+  } | null;
+}
+// 크루정보 조회 api
+export const getCrewInfo = async (
+  crewId: number
+): Promise<CrewInfoResponse> => {
+  try {
+    const response = await privateAPI.get<CrewInfoResponse>(
+      `/crew/${crewId}/info/`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("크루 정보 조회 실패:", error);
+    throw error;
+  }
+};

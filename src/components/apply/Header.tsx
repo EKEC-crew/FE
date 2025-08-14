@@ -1,21 +1,56 @@
 import CategoryBgImgs from "../CategoryBgImgs";
 import logo from "../../assets/logo/ic_logo graphic_45.svg";
+import { useCrewInfo } from "../../hooks/apply/useCrewInfo";
 
-const Header = () => {
-  const tabs = ["소개", "공지", "일정", "리뷰", "게시판"]; // 탭 목록
+interface Props {
+  crewId: number;
+}
+
+const Header = ({ crewId }: Props) => {
+  // 구조분해할당으로 수정
+  const tabs = ["소개", "공지", "일정", "리뷰", "게시판"];
+  const { crewInfo, loading, error } = useCrewInfo(crewId);
+
+  // 디버깅용 콘솔 로그
+  console.log("Header - crewId:", crewId);
+  console.log("Header - crewInfo:", crewInfo);
+  console.log("Header - loading:", loading);
+  console.log("Header - error:", error);
+
+  // 로딩/에러 상태 처리
+  if (loading) return <div>로딩 중...</div>;
+  if (error) return <div>에러: {error}</div>;
+  if (!crewInfo) return <div>크루 정보를 찾을 수 없습니다.</div>;
+
+  // 베너 이미지 추출
+  const bannerImage = crewInfo.bannerImage
+    ? `${import.meta.env.VITE_API_BASE_URL}/image/?type=0&fileName=${crewInfo.bannerImage}`
+    : "";
 
   return (
     <div className="flex flex-col w-full">
       {/* 상단 프로필 영역 */}
       <div className="flex items-center gap-[1rem] py-[1rem]">
-        {/* 프로필 이미지(로고) */}
+        {/* 프로필 이미지 */}
         <div className="w-[5rem] h-[5rem] bg-[#ECECFC] rounded-full flex items-center justify-center">
-          <img src={logo} className="w-[1.625rem] h-[1.625rem]" />
+          {crewInfo.bannerImage ? (
+            <img
+              src={bannerImage}
+              className="w-full h-full rounded-full object-cover"
+              alt="크루 베너"
+            />
+          ) : (
+            <img
+              src={logo}
+              className="w-[1.625rem] h-[1.625rem]"
+              alt="기본 로고"
+            />
+          )}
         </div>
-        {/* 크루명 */}
-        <div className="text-[2.5rem] font-bold">정동열짱짱</div>
-        {/* 카테고리 배경 아이콘 */}
-        <CategoryBgImgs category="스터디" />
+        {/* 크루명 - API에서 받아온 데이터 사용 */}
+        <div className="text-[2.5rem] font-bold">{crewInfo.title}</div>
+        {/* 카테고리 배경 아이콘 - API에서 받아온 카테고리 사용 */}
+        <CategoryBgImgs category={crewInfo.category} />
       </div>
 
       {/* 하단 탭 영역 */}
