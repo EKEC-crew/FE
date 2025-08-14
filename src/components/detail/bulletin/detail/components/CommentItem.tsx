@@ -83,14 +83,15 @@ const CommentItem = ({
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
+        {comment.isPublic === 1 && (
+          <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">
+            비공개
+          </span>
+        )}
         <span className="text-gray-400 text-sm">
           {formatDate(comment.createdAt)}
         </span>
-        {comment.isPublic === 1 && (
-          <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">
-            비밀
-          </span>
-        )}
+
         <div className="flex items-center gap-1">
           <button className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm cursor-pointer hover:bg-gray-50">
             답글
