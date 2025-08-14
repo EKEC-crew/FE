@@ -134,10 +134,10 @@ export interface ApplyRequestBody {
   userId: number;
   activityList: number[];
   styleList: number[];
-  region: 0 | 1; // ✅ 플래그
-  age: 0 | 1; // ✅ 플래그
-  gender: 0 | 1; // ✅ 플래그
-  categoryId: 0 | 1; // ✅ 플래그
+  region: 0 | 1; // 플래그
+  age: 0 | 1; // 플래그
+  gender: 0 | 1; // 플래그
+  categoryId: 0 | 1; // 플래그
   answers: ApplyAnswer[];
 }
 

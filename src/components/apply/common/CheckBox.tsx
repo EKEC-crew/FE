@@ -1,5 +1,5 @@
-import uncheckedIcon from "../../assets/icons/ic_check_de.svg";
-import checkedIcon from "../../assets/icons/ic_check_pressed.svg";
+import uncheckedIcon from "../../../assets/icons/ic_check_de.svg";
+import checkedIcon from "../../../assets/icons/ic_check_pressed.svg";
 
 type Props = {
   label: string;
