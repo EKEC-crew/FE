@@ -130,22 +130,17 @@ const ScheduleComments = ({
     return "비공개 댓글입니다.";
   };
 
-  // 날짜 포맷팅
+  // 날짜 포맷팅 - 서버 시각을 그대로 날짜와 시, 분까지 출력
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    const now = new Date();
-    const diffInMs = now.getTime() - date.getTime();
-    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
 
-    if (diffInDays === 0) {
-      const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-      if (diffInHours === 0) {
-        const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-        return diffInMinutes === 0 ? "방금 전" : `${diffInMinutes}분 전`;
-      }
-      return `${diffInHours}시간 전`;
-    }
-    return `${diffInDays}일 전`;
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    return `${year}.${month}.${day} ${hours}:${minutes}`;
   };
 
   // 페이지 변경 핸들러
@@ -250,7 +245,7 @@ const ScheduleComments = ({
                     alt={`${comment.writer} 프로필`}
                     size="sm"
                   />
-                  <span className="text-gray-400 text-xs">
+                  <span className="text-gray-400 text-xs text-right min-w-16 truncate">
                     {comment.writer || "0000님"}
                   </span>
                 </div>
@@ -285,14 +280,15 @@ const ScheduleComments = ({
                   )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-gray-400 text-sm">
-                    {formatDate(comment.createdAt)}
-                  </span>
                   {comment.isPublic === false && (
                     <span className="bg-red-100 text-red-600 px-2 py-0.5 rounded text-xs">
                       비공개
                     </span>
                   )}
+                  <span className="text-gray-400 text-sm">
+                    {formatDate(comment.createdAt)}
+                  </span>
+
                   <button className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm cursor-pointer">
                     답글
                   </button>
