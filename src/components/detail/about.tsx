@@ -15,11 +15,12 @@ const AboutSection: React.FC = () => {
     [location.pathname]
   );
 
-  const { data: crewInfo } = useQuery({
+  const { data: crewInfo, isLoading: infoLoading } = useQuery({
     queryKey: ["crewInfo", crewId],
     queryFn: () => fetchCrewInfo(crewId!),
     enabled: !!crewId,
     staleTime: 1000 * 60 * 2,
+    refetchOnMount: "always",
   });
 
   const [intro, setIntro] = useState("");
@@ -48,7 +49,11 @@ const AboutSection: React.FC = () => {
         {/* 보기 모드: 텍스트만 표시 */}
         {!isEditMode && (
           <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-            {crewInfo?.introduction ?? "소개가 아직 없습니다."}
+            {infoLoading
+              ? "로딩중…"
+              : (crewInfo?.introduction ?? "").trim().length > 0
+              ? crewInfo!.introduction
+              : "소개가 아직 없습니다."}
           </div>
         )}
 
