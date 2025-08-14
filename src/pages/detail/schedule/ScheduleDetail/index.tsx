@@ -42,10 +42,6 @@ const ScheduleDetail = () => {
   );
 
   const [isCommentOpen, setIsCommentOpen] = useState(false);
-  const [comments] = useState([
-    { id: 2, text: "확인 완료! 열심히 활동하겠습니다.", date: "2025.06.18" },
-    { id: 3, text: "확인 완료! 열심히 활동하겠습니다.", date: "2025.06.18" },
-  ]);
 
   // 목록으로 돌아가기
   const handleGoToList = () => {
@@ -118,6 +114,7 @@ const ScheduleDetail = () => {
               type={schedule.type}
               title={schedule.title}
               writer={schedule.writer}
+              writerImage={schedule.writerImage}
               day={schedule.day}
               isApplied={finalIsApplied} // useScheduleDetail의 데이터 직접 사용
               isPending={applyMutation.isPending}
@@ -161,7 +158,12 @@ const ScheduleDetail = () => {
             />
 
             {/* 댓글 영역 */}
-            <ScheduleComments isOpen={isCommentOpen} comments={comments} />
+            <ScheduleComments
+              isOpen={isCommentOpen}
+              crewId={crewId || ""}
+              planId={id || ""}
+              scheduleAuthorId={data?.data?.userId} // 게시글 작성자 ID
+            />
           </div>
         </div>
       </div>
