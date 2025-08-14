@@ -1,10 +1,9 @@
 // src/components/apply/ApplicationForm.tsx
 import { useMemo, useState } from "react";
-import ApplyStepHeader from "./ApplyStepHeader";
+import ApplyStepHeader from "./common/ApplyStepHeader";
 import ApplySubmitBar from "./ApplySubmitBar";
-import CommonQuestionFlagsOnly from "./ApplyStep1";
-import CustomQuestionsForm from "./ApplyStep1Form";
-import { useApplyInit } from "../../hooks/apply/useCustomQusetion";
+import CommonQuestionFlagsOnly from "./applyStep1/ApplyStep1";
+
 import type {
   ApiStep1,
   ApiQuestion,
@@ -16,6 +15,8 @@ import type { ApplyRequestBody, ApplyAnswer } from "../../types/apply/types";
 import { useApplySubmit } from "../../hooks/apply/useApply";
 import ApplyModal from "./ApplyModal";
 import { useNavigate } from "react-router-dom";
+import CustomQuestionsForm from "./applyStep2/ApplyStep2Form";
+import { useApplyInit } from "../../hooks/apply/useCustomQusetion";
 
 type SelectedFlags = {
   category: 0 | 1;

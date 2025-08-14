@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import OptionGrid from "../../crewCreate/OptionGrid";
-import ApplyStepHeader from "../ApplyStepHeader";
+import ApplyStepHeader from "../common/ApplyStepHeader";
 import {
   categoryOptions as _categoryOptions,
   activityOptions as _activityOptions,
@@ -142,7 +142,6 @@ export default function ApplyDetailStep1({
   return (
     <div className="flex flex-col gap-8">
       <section>
-        <ApplyStepHeader step={1} title="선택한 성향" required />
         <div className="bg-[#F7F7FB] w-[54.6875rem] flex flex-col gap-6 p-6 rounded-[10px]">
           {/* 단일 선택 */}
           {categoryOpts.length > 0 && (

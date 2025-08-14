@@ -7,8 +7,24 @@ import type {
 } from "../types/apply/types";
 import { privateAPI } from "./axios";
 
+//승인 거부 props
+export interface ApprovalRequest {
+  status: number; // 1: 승인, 0: 거부
+}
+
+export interface ApprovalResponse {
+  resultType: "SUCCESS" | "ERROR";
+  error: any;
+  success: {
+    message: string;
+    updated: {
+      count: number;
+    };
+  };
+}
+
 export const getApplyInit = async (crewId: number): Promise<ApiSuccess> => {
-  const res = await privateAPI.get<ApiResponse>(`/crew/${crewId}/apply`);
+  const res = await privateAPI.get<ApiResponse>(`/crew/apply/${crewId}/apply`);
   if (res.data.resultType !== "SUCCESS") {
     throw new Error(res.data.error ?? "질문/조건 조회 실패");
   }
@@ -17,18 +33,67 @@ export const getApplyInit = async (crewId: number): Promise<ApiSuccess> => {
 
 //지원하기
 export const postApply = (crewId: number, body: ApplyRequestBody) =>
-  privateAPI.post(`/crew/${crewId}/apply`, body).then((res) => res.data);
+  privateAPI.post(`/crew/apply/${crewId}/apply`, body).then((res) => res.data);
 
 //지원자 목록 가져오기
 export async function getApplicants(crewId: number) {
   const res = await privateAPI.get<ApplicantsDTO>(
-    `/crew/${crewId}/apply/applicants`
+    `/crew/apply/${crewId}/apply/applicants`
   );
   return res.data;
 }
 
 //특정 크루 특정 지원서 가져오기
 export const getApplyDetail = async (crewId: number, applyId: number) => {
-  const { data } = await privateAPI.get(`/crew/${crewId}/apply/${applyId}`);
+  const { data } = await privateAPI.get(
+    `/crew/apply/${crewId}/apply/${applyId}`
+  );
   return data?.success ?? data;
+};
+
+export const crewApplyAPI = {
+  // 승인/거부 API
+  updateApplyStatus: async (
+    crewId: number,
+    applyId: number,
+    data: ApprovalRequest
+  ): Promise<ApprovalResponse> => {
+    try {
+      console.log("📤 요청:", {
+        url: `/crew/apply/${crewId}/apply/${applyId}`,
+        data,
+      });
+      const response = await privateAPI.patch(
+        `/crew/apply/${crewId}/apply/${applyId}`,
+        data
+      );
+      console.log("📥 응답:", response.data);
+      return response.data;
+    } catch (error: any) {
+      console.log("❌ 에러 상세:", error.response?.data);
+
+      // 서버에서 FAIL 응답이 온 경우 (비즈니스 로직 에러)
+      // 그냥 원본 에러를 그대로 던지기
+      if (error.response?.data?.resultType === "FAIL") {
+        const serverError = error.response.data.error;
+        const errorMessage =
+          serverError?.reason || "처리 중 오류가 발생했습니다.";
+
+        // 원본 에러의 message만 바꾸기
+        error.message = errorMessage;
+        throw error;
+      }
+
+      // 그 외의 네트워크 에러나 다른 에러들
+      throw error;
+    }
+  },
+
+  // 승인 API (편의 함수)
+  approve: (crewId: number, applyId: number) =>
+    crewApplyAPI.updateApplyStatus(crewId, applyId, { status: 1 }),
+
+  // 거부 API (편의 함수)
+  reject: (crewId: number, applyId: number) =>
+    crewApplyAPI.updateApplyStatus(crewId, applyId, { status: 0 }),
 };

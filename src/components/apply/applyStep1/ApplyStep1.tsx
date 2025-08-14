@@ -1,13 +1,13 @@
 import { useEffect, useMemo, useState } from "react";
-import OptionGrid from "../crewCreate/OptionGrid";
+import OptionGrid from "../../crewCreate/OptionGrid";
 import {
   categoryOptions,
   activityOptions,
   styleOptions,
   ageGroupOptions,
-} from "../crewList/optionsDummy";
-import type { ApplyOption, CommonAnswers } from "../../types/apply/types";
-import { applicantGenderOptions } from "../../types/apply/types";
+} from "../../crewList/optionsDummy";
+import type { ApplyOption, CommonAnswers } from "../../../types/apply/types";
+import { applicantGenderOptions } from "../../../types/apply/types";
 
 type SelectedFlags = {
   category: 0 | 1;
