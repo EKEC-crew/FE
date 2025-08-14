@@ -1,32 +1,97 @@
+// src/pages/myPage/AppliedCrewPage.tsx
+import { useMyAppliedCrewList } from "../../hooks/apply/useMyAppliedCrewList";
 import AppliedCrewList from "../../components/myPage/applied/AppliedCrewList";
 import type { AppliedCrew } from "../../types/mypage/AppliedCrew";
-
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
+import type { AppliedItem } from "@/types/apply/types";
 
 const AppliedCrewPage = () => {
-  const [appliedCrews, setAppliedCrews] = useState<AppliedCrew[]>([]);
+  const { data, isLoading, isError, error, refetch } = useMyAppliedCrewList({
+    page: 1,
+    size: 24,
+  });
 
-  useEffect(() => {
-    // 나중에 API 연결할듯...!
-    setAppliedCrews([
-      // 더미데이터 연결이유
-      {
-        id: 1,
-        name: "드로잉 클럽",
-        description: "20,30대 누구나 참여하는 간단한 드로잉",
-        imageUrl: "",
-        status: "미승인",
-      },
-      {
-        id: 2,
-        name: "사이클링히트",
-        description: "잠실 2030 여성 야구 직관 동호회",
-        imageUrl: "/images/crew2.png",
-        status: "크루원",
-      },
-    ]);
-  }, []);
+  // 서버 응답 → UI에서 쓰는 AppliedCrew로 변환
+  const appliedCrews: AppliedCrew[] = useMemo(() => {
+    // data가 AppliedListSuccess 타입이므로 직접 items에 접근
+    const items = data?.items ?? [];
+    return items.map<AppliedCrew>((item: AppliedItem) => ({
+      id: item.applyId,
+      name: item.crewName,
+      description: item.crewContent ?? "",
+      imageUrl: item.crewImage ?? "",
+      status: item.statusLabel as AppliedCrew["status"], // 타입 단언
+      crewId: item.crewId,
+      applyId: item.applyId,
+      appliedAt: item.appliedAt,
+    }));
+  }, [data]);
 
+  // 로딩 상태
+  if (isLoading) {
+    return (
+      <div className="px-10 py-6">
+        <div className="text-[2.25rem] font-semibold mb-5">
+          내가 지원한 크루
+        </div>
+        <div className="space-y-3">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="h-24 rounded-lg border bg-white p-4 animate-pulse"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // 에러 상태
+  if (isError) {
+    return (
+      <div className="px-10 py-6">
+        <div className="text-[2.25rem] font-semibold mb-5">
+          내가 지원한 크루
+        </div>
+        <div className="text-red-600 font-medium mb-3">
+          지원 내역을 불러오지 못했어요.
+        </div>
+        <button
+          className="px-3 py-2 rounded bg-gray-900 text-white"
+          onClick={() => refetch()}
+        >
+          다시 시도
+        </button>
+        <div className="text-sm text-gray-500 mt-2">
+          {error instanceof Error
+            ? error.message
+            : "알 수 없는 오류가 발생했습니다."}
+        </div>
+      </div>
+    );
+  }
+
+  // 데이터가 없는 경우
+  if (appliedCrews.length === 0) {
+    return (
+      <div className="px-10 py-6">
+        <div className="text-[2.25rem] font-semibold mb-5">
+          내가 지원한 크루
+        </div>
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <div className="text-gray-400 text-6xl mb-4"></div>
+          <div className="text-lg font-medium text-gray-600 mb-2">
+            아직 지원한 크루가 없어요
+          </div>
+          <div className="text-sm text-gray-500">
+            관심있는 크루에 지원해보세요!
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 정상 상태
   return (
     <div className="px-10 py-6">
       <div className="text-[2.25rem] font-semibold mb-5">내가 지원한 크루</div>

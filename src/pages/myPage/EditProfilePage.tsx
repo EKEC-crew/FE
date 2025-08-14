@@ -10,15 +10,17 @@ import PhoneNumEdit from "../../components/myPage/edit/PhoneNumEdit";
 
 import ableBtn from "../../assets/signIn/btn_login_520x68.svg";
 import disabledBtn from "../../assets/buttons/disabled.svg";
+import { useAuthStore } from "../../store/useAuthStore";
 
 export default function EditProfilePage() {
   // 서버에서 받아온 기본값 (gender, birthDate는 검증 제외하고 표시만)
+  const { user } = useAuthStore(); // ✅ 컴포넌트 내부에서 Hook 호출
   const defaultValues = {
-    name: "정동열",
-    nickname: "열",
-    gender: "male",
-    birthDate: "2002-01-27",
-    phone: "",
+    name: user?.name,
+    nickname: user?.nickname,
+    gender: user?.gender,
+    birthDate: user?.birthday,
+    phone: user?.phone,
     carrier: "",
     password: "",
     passwordConfirm: "",
@@ -84,7 +86,7 @@ export default function EditProfilePage() {
             type="text"
             value={watchedValues.name}
             disabled
-            placeholder="정동열"
+            placeholder={defaultValues.name}
             width="100%"
           />
         </div>
