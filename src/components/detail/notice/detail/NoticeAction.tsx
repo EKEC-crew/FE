@@ -5,7 +5,7 @@ import iconDown from "../../../../assets/schedule/ic_Down.svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { deleteNotice, likeNotice, unlikeNotice } from "../constants";
+import { deleteNotice, toggleNoticeLike } from "../constants";
 
 type Props = {
   isCommentOpen: boolean;
@@ -50,7 +50,7 @@ const NoticeAction = ({
     }
   };
 
-  // 좋아요 / 좋아요 취소 토글 (낙관적 업데이트)
+  // 좋아요 토글 (낙관적 업데이트)
   const handleToggleLike = async () => {
     if (!crewId || !noticeId || pending) return;
 
@@ -58,35 +58,20 @@ const NoticeAction = ({
     const prev = { liked, likeCount };
 
     try {
-      if (!liked) {
-        // ✅ 좋아요 (낙관적 반영)
-        setLiked(true);
-        setLikeCount((c) => c + 1);
+      // 낙관적 반영
+      setLiked((v) => !v);
+      setLikeCount((c) => (liked ? Math.max(0, c - 1) : c + 1));
 
-        const res = await likeNotice(crewId, noticeId);
-        if (res?.resultType !== "SUCCESS") {
-          throw res?.error ?? new Error("좋아요 실패");
-        }
-
-        // 서버 값으로 정합화(없으면 낙관값 유지)
-        const serverLiked = res.data?.isLiked ?? true;
-        const serverCount = res.data?.likeCount ?? prev.likeCount + 1;
-        setLiked(serverLiked);
-        setLikeCount(serverCount);
-      } else {
-        // ✅ 좋아요 취소 (낙관적 반영)
-        setLiked(false);
-        setLikeCount((c) => Math.max(0, c - 1));
-
-        const res = await unlikeNotice(crewId, noticeId);
-        if (res?.resultType !== "SUCCESS") {
-          throw res?.error ?? new Error("좋아요 취소 실패");
-        }
-        // 서버가 카운트를 내려주면 여기서 동기화
-        // const serverLiked = res.data?.isLiked ?? false;
-        // const serverCount = res.data?.likeCount ?? Math.max(0, prev.likeCount - 1);
-        // setLiked(serverLiked); setLikeCount(serverCount);
+      const res = await toggleNoticeLike(crewId, noticeId);
+      if (res?.resultType !== "SUCCESS") {
+        throw res?.error ?? new Error("좋아요 처리 실패");
       }
+
+      // 서버 응답에 맞춰 정합화
+      const serverLiked = res.data?.isLiked;
+      const totalLikes = res.data?.totalLikes;
+      if (typeof serverLiked === "boolean") setLiked(serverLiked);
+      if (typeof totalLikes === "number") setLikeCount(totalLikes);
 
       // 목록/상세 캐시 무효화로 재검증
       await queryClient.invalidateQueries({ queryKey: ["notice", Number(crewId), Number(noticeId)] });
@@ -96,18 +81,7 @@ const NoticeAction = ({
       setLiked(prev.liked);
       setLikeCount(prev.likeCount);
 
-      const code = e?.errorCode || e?.message;
-      if (code === "ALREADY_LIKED") {
-        setLiked(true);
-        await queryClient.invalidateQueries({ queryKey: ["notice", Number(crewId), Number(noticeId)] });
-        alert("이미 좋아요를 눌렀습니다.");
-      } else if (code === "LIKE_NOT_FOUND") {
-        setLiked(false);
-        await queryClient.invalidateQueries({ queryKey: ["notice", Number(crewId), Number(noticeId)] });
-        alert("좋아요 기록이 없습니다.");
-      } else {
-        alert(`좋아요 처리 중 오류가 발생했습니다: ${e?.reason || e?.message || "알 수 없는 오류"}`);
-      }
+      alert(`좋아요 처리 중 오류가 발생했습니다: ${e?.reason || e?.message || "알 수 없는 오류"}`);
     } finally {
       setPending(false);
     }

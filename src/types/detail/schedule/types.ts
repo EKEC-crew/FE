@@ -21,6 +21,7 @@ export interface ScheduleData {
   id: number;
   crew_name: string;
   writer: string;
+  writerImage?: string | null;
   title: string;
   content: string;
   day: string;
@@ -51,6 +52,7 @@ export interface ScheduleItem {
   id: number;
   crew_name: string;
   writer: string;
+  writerImage?: string | null;
   title: string;
   content: string;
   day: string;
@@ -68,6 +70,7 @@ export interface ScheduleItem {
   updatedAt: string | null;
   userId?: number;
   isLiked?: boolean;
+  isApplied?: boolean;
 }
 
 export interface PaginationInfo {
@@ -154,3 +157,121 @@ export interface ResponseScheduleLike {
 
 // 일정 좋아요 취소 응답 타입
 export type ResponseScheduleUnlike = ResponseScheduleLike;
+
+// 일정 신청 응답 데이터 타입
+export interface ScheduleApplyData {
+  message?: string;
+  planId: number;
+  status: 0 | 1; // 0: 미신청, 1: 신청완료
+  applicant?: string;
+  crewId?: number;
+  memberId?: number;
+}
+
+// 일정 신청 응답 타입
+export interface ResponseScheduleApply {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: any;
+  };
+  success: ScheduleApplyData | null;
+}
+
+// 댓글 작성 요청 타입
+export interface RequestCreateComment {
+  content: string;
+  isPublic: boolean; // true: 공개, false: 비공개
+}
+
+// 댓글 데이터 타입
+export interface CommentData {
+  id: number;
+  content: string;
+  userId: number;
+  writer: string;
+  writerImage: string | null;
+  isPublic: boolean;
+  createdAt: string;
+}
+
+// 댓글 작성 응답 타입
+export interface ResponseCreateComment {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: any;
+  };
+  data: CommentData | null;
+}
+
+// 댓글 목록 조회 요청 파라미터 타입
+export interface RequestGetComments {
+  crewId: string;
+  planId: string;
+  page?: number;
+  size?: number;
+}
+
+// 페이지네이션 타입
+export interface Pagination {
+  totalElements: number;
+  currentPage: number;
+  pageSize: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+}
+
+// 댓글 목록 조회 응답 타입
+export interface ResponseGetComments {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: any;
+  };
+  data: {
+    comments: CommentData[];
+    pagination: Pagination;
+  } | null;
+}
+
+// 댓글 수정 요청 타입
+export interface RequestUpdateComment {
+  content: string;
+}
+
+// 댓글 수정 응답 데이터 타입
+export interface UpdatedCommentData {
+  id: number;
+  content: string;
+  writer: string;
+  writerImage: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 댓글 수정 응답 타입
+export interface ResponseUpdateComment {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: any;
+  };
+  data: UpdatedCommentData | null;
+}
+
+// 댓글 삭제 응답 타입
+export interface ResponseDeleteComment {
+  resultType: "SUCCESS" | "FAIL";
+  error: null | {
+    errorCode: string;
+    reason: string;
+    data?: any;
+  };
+  data: null;
+}

@@ -1,44 +1,94 @@
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Album from "../../components/detail/album";
+import { fetchCrewInfo, updateCrewIntroduction } from "./constants";
+
 const AboutSection: React.FC = () => {
+  const { crewId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const qc = useQueryClient();
+
+  const isEditMode = useMemo(
+    () => location.pathname.split("?")[0].endsWith("/edit-intro"),
+    [location.pathname]
+  );
+
+  const { data: crewInfo, isLoading: infoLoading } = useQuery({
+    queryKey: ["crewInfo", crewId],
+    queryFn: () => fetchCrewInfo(crewId!),
+    enabled: !!crewId,
+    staleTime: 1000 * 60 * 2,
+    refetchOnMount: "always",
+  });
+
+  const [intro, setIntro] = useState("");
+
+  // 편집 모드 진입 시, 기존 소개글을 textarea에 주입
+  useEffect(() => {
+    if (isEditMode) setIntro(crewInfo?.introduction ?? "");
+  }, [isEditMode, crewInfo?.introduction]);
+
+  const { mutate: saveIntro, isPending: saving } = useMutation({
+    mutationFn: (text: string) => updateCrewIntroduction(crewId!, text),
+    onSuccess: async () => {
+      await qc.invalidateQueries({ queryKey: ["crewInfo", crewId] });
+      navigate(`/crew/${crewId}`); // 보기 모드로 복귀
+    },
+    onError: (err: any) => alert(err?.message ?? "소개 수정에 실패했습니다."),
+  });
+
   return (
     <div className="bg-white rounded-xl shadow-md p-14 space-y-8">
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-gray-800 text-2xl">모임 소개</span>
+          <span className="font-bold text-gray-800 text-2xl py-5">모임 소개</span>
         </div>
-        <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
-          {`
-사이클링히트
 
-잠실 2030 여성 야구 직관 동호회,
-"사이클링히트"에 오신 걸 환영합니다!
-야구에 대해 잘 몰라도 괜찮아요.
-함께 즐기고 싶은 마음만 있다면 누구나 환영합니다!
+        {/* 보기 모드: 텍스트만 표시 */}
+        {!isEditMode && (
+          <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-line">
+            {infoLoading
+              ? "로딩중…"
+              : (crewInfo?.introduction ?? "").trim().length > 0
+              ? crewInfo!.introduction
+              : "소개가 아직 없습니다."}
+          </div>
+        )}
 
-✅ 크루 규칙
-- 존중과 배려 : 서로의 팀, 선수, 응원 스타일을 존중합니다.
-- 참여와 소통 : 정기 직관 모임,
-  단체 채팅방 활동에 적극적으로 참여해 주세요.
-- 티켓 예매 : 모임 티켓은 사전에 공지하며,
-  신청 후에는 취소가 어렵습니다.
-  * 신중히 신청해 주세요.
-- 금지사항 : 과도한 음주, 타인 비방, 정치·종교적 발언은 금지입니다.
-  (위반 시 탈퇴 조치될 수 있습니다.)
-
-📌 정기모임 안내
-- 모임 주기 : 매월 1~2회, 주말이나 평일 저녁에 잠실구장에서 직관합니다.
-- 모집 및 일정 안내 : 매월 초, 그달의 직관 일정과 모집 공지를 드립니다.
-- 참가 방법 : 공지된 일정에 '신청' 후, 선착순으로 티켓 예매를 진행합니다.
-- 참가비 : 티켓 가격 + 소정의 운영비를 합산하여 사전 납부합니다.
-- 우천 취소 안내 : 경기 취소 시, 티켓 환불 기준에 따라 처리합니다.
-
-사이클링히트와 함께, 올 시즌 최고의 순간을 만들어봐요!
-Let's go, 사이클링히트! 💙💙`}
-          <div>
-            <div>
-              <Album />
+        {/* 편집 모드: 기존 텍스트를 담은 textarea로 '대체' 표시 */}
+        {isEditMode && (
+          <div className="space-y-3">
+            <textarea
+              autoFocus
+              className="w-full min-h-[240px] border border-gray-300 rounded-lg p-4 text-sm leading-relaxed focus:outline-none focus:ring-2 focus:ring-indigo-400"
+              value={intro}
+              onChange={(e) => setIntro(e.target.value)}
+              placeholder="모임 소개를 입력하세요…"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => navigate(`/crew/${crewId}`)}
+                className="px-4 py-2 text-xs rounded-lg border border-gray-300 hover:bg-gray-50"
+                disabled={saving}
+              >
+                취소
+              </button>
+              <button
+                onClick={() => saveIntro(intro)}
+                disabled={saving || !intro.trim()}
+                className="bg-indigo-600 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow hover:bg-indigo-700 disabled:opacity-50"
+              >
+                {saving ? "수정 중…" : "수정 완료"}
+              </button>
             </div>
           </div>
+        )}
+
+        {/* 앨범은 항상 아래 */}
+        <div className="mt-8">
+          <Album />
         </div>
       </div>
     </div>

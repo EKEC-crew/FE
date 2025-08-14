@@ -11,6 +11,8 @@ export const API = axios.create({
     "Content-Type": "application/json",
   },
   withCredentials: true, // 쿠키 포함
+  xsrfCookieName: "XSRF-TOKEN",
+  xsrfHeaderName: "X-XSRF-TOKEN",
 });
 
 // 🔒 인증이 필요한 요청
@@ -20,6 +22,8 @@ export const privateAPI = axios.create({
     "Content-Type": "application/json",
   },
   withCredentials: true, // 쿠키 포함
+  xsrfCookieName: "XSRF-TOKEN",
+  xsrfHeaderName: "X-XSRF-TOKEN",
 });
 
 // Authorization 헤더 주입 필요 없음 (httpOnly 쿠키 기반이라 우리가 접근 불가)

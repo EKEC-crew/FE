@@ -22,10 +22,10 @@ export const updateMemberRole = async (
   newRole: number
 ) => {
   console.log(
-    "📡 요청 보내는 URL 확인:",
+    "요청 보내는 URL 확인:",
     `/crew/${crewId}/member/${memberId}/role`
   );
-  console.log("📦 보낼 데이터:", { role: newRole });
+  console.log("보낼 데이터:", { role: newRole });
 
   const res = await privateAPI.put(`/crew/${crewId}/member/${memberId}/role`, {
     role: newRole,

@@ -26,6 +26,8 @@ import NoticeDetail from "../components/detail/notice/detail/NoticeDetail";
 import Bulletin from "../pages/detail/bulletin";
 import BulletinDetail from "../components/detail/bulletin/detail/BulletinDetail";
 import PostBulletinForm from "../components/detail/bulletin/PostForm/PostBulletinForm";
+import ApplyPage from "../pages/apply";
+import ApplicationDetailPage from "../pages/apply/ApplicationDetailPage";
 import EditNoticeForm from "../components/detail/notice/detail/edit/EditNoticeForm";
 
 const router = createBrowserRouter([
@@ -97,6 +99,10 @@ const router = createBrowserRouter([
             element: <Detail />,
           },
           {
+            path: "edit-intro",
+            element: <Detail />,
+          },
+          {
             path: "schedule",
             element: <Schedule />,
           },
@@ -156,6 +162,18 @@ const router = createBrowserRouter([
           {
             path: "bulletin/post",
             element: <PostBulletinForm />,
+          },
+          {
+            path: "bulletin/:id/edit",
+            element: <PostBulletinForm />,
+          },
+          {
+            path: "apply",
+            element: <ApplyPage />,
+          },
+          {
+            path: "apply/:applyId",
+            element: <ApplicationDetailPage />,
           },
         ],
       },

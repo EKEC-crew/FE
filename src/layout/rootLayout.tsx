@@ -1,32 +1,39 @@
-import { useEffect, useState } from "react";
-import { Outlet, useSearchParams } from "react-router-dom";
+// layouts/RootLayout.tsx
+import { Outlet } from "react-router-dom";
 import LeftGnb from "../components/LeftGnb/LeftGnb";
 import TopGnb from "../components/TopGnb/TopGnb";
 import CompleteModal from "../components/auth/createProfile/completeModal";
+import { useNavigation } from "../hooks/gnb/useNavigate";
+import { useCompleteModal } from "../hooks/gnb/useCompleteModal";
 
 const RootLayout = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const [showCompleteModal, setShowCompleteModal] = useState(false);
+  // 네비게이션 관련 로직
+  const { isLargeScreen, isLeftGnbOpen, toggleLeftGnb, closeLeftGnb } =
+    useNavigation();
 
-  useEffect(() => {
-    if (searchParams.get("showCompleteModal") === "true") {
-      setShowCompleteModal(true);
-      searchParams.delete("showCompleteModal");
-      setSearchParams(searchParams, { replace: true });
-    }
-  }, [searchParams, setSearchParams]);
-
-  const handleCloseModal = () => {
-    setShowCompleteModal(false);
-  };
+  // 완료 모달 관련 로직
+  const { showCompleteModal, handleCloseModal } = useCompleteModal();
 
   return (
     <div className="relative min-h-screen">
       {/* 메인 레이아웃 */}
       <div className="flex transition-all duration-300">
-        <LeftGnb />
-        <TopGnb />
-        <main className="md:ml-[18.75rem] flex-1">
+        <LeftGnb
+          isOpen={isLeftGnbOpen}
+          isLargeScreen={isLargeScreen}
+          onClose={closeLeftGnb}
+        />
+        <TopGnb
+          onToggleNav={toggleLeftGnb}
+          isNavOpen={isLeftGnbOpen}
+          isLargeScreen={isLargeScreen}
+        />
+        <main
+          className={`
+            pt-16 flex-1 transition-all duration-300
+            ${isLargeScreen && isLeftGnbOpen ? "ml-[18.75rem]" : "ml-0"}
+          `}
+        >
           <Outlet />
         </main>
       </div>
@@ -34,13 +41,10 @@ const RootLayout = () => {
       {/* 프로필 생성 완료 모달 */}
       {showCompleteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          {/* 백드롭*/}
           <div
             className="absolute inset-0 bg-black/60"
             onClick={handleCloseModal}
           />
-
-          {/* 모달 */}
           <div
             className="relative w-full max-w-[560px] min-h-[552px] p-4"
             onClick={(e) => e.stopPropagation()}
