@@ -4,13 +4,6 @@ import Info from "../../components/apply/Info";
 import ApplicationForm from "../../components/apply/ApplyForm";
 import { useParams } from "react-router-dom";
 import { useAuthStore } from "../../store/useAuthStore";
-import type { ApplyOption } from "../../types/apply/types";
-// 임시 지역 옵션
-const REGION_OPTIONS: ApplyOption[] = [
-  { label: "전지역", value: 1 },
-  { label: "서울·강남구", value: 201 },
-  { label: "서울·마포구", value: 202 },
-];
 
 export default function ApplyPage() {
   const { crewId: crewIdParam } = useParams();
@@ -29,7 +22,6 @@ export default function ApplyPage() {
         <ApplicationForm
           crewId={crewId}
           userId={userId}
-          regionOptions={REGION_OPTIONS}
           showDebug
           onSubmit={async (body) => {
             console.log("🚀 submit body", { crewId, body });
