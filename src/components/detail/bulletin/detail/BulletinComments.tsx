@@ -1,62 +1,126 @@
-import { AnimatePresence, motion } from "framer-motion";
-import icMore from "../../../../assets/schedule/ic_More.svg";
-
-type Comment = {
-  id: number;
-  text: string;
-  date: string;
-};
+import { useState } from "react";
+import CommentForm from "./components/CommentForm";
+import CommentList from "./components/CommentList";
+import { useGetBulletinComments } from "../../../../hooks/bulletin/useGetBulletinComments";
+import { useCreateBulletinComment } from "../../../../hooks/bulletin/useCreateBulletinComment";
+import { useUpdateBulletinComment } from "../../../../hooks/bulletin/useUpdateBulletinComment";
+import { useDeleteBulletinComment } from "../../../../hooks/bulletin/useDeleteBulletinComment";
 
 type Props = {
-  isOpen: boolean;
-  comments: Comment[];
+  bulletinId: number;
+  crewId: string;
+  currentUserId?: number;
+  bulletinAuthorId?: number;
 };
 
-const BulletinComments = ({ isOpen, comments }: Props) => {
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          key="comments"
-          initial={{ opacity: 0, height: 0 }}
-          animate={{ opacity: 1, height: "auto" }}
-          exit={{ opacity: 0, height: 0 }}
-          transition={{ duration: 0.3 }}
-          className="space-y-4 overflow-hidden mt-4"
-        >
-          <div className="flex items-center gap-2">
-            <textarea
-              className="flex-1 bg-white border border-gray-300 rounded-lg p-3 text-sm resize-none h-12"
-              placeholder="댓글을 입력하세요."
-            />
-            <button className="bg-[#3A3ADB] text-white text-sm px-4 py-2 rounded-lg h-12 min-w-[60px]">
-              등록
-            </button>
-          </div>
+const BulletinComments = ({
+  bulletinId,
+  crewId,
+  currentUserId,
+  bulletinAuthorId,
+}: Props) => {
+  const { data: commentsData, isLoading } = useGetBulletinComments(
+    crewId,
+    bulletinId.toString(),
+    1,
+    10
+  );
+  const createCommentMutation = useCreateBulletinComment(
+    crewId,
+    bulletinId.toString()
+  );
+  const updateCommentMutation = useUpdateBulletinComment(
+    crewId,
+    bulletinId.toString()
+  );
+  const deleteCommentMutation = useDeleteBulletinComment(
+    crewId,
+    bulletinId.toString()
+  );
 
-          <div className="space-y-2">
-            {comments.map((comment) => (
-              <div
-                key={comment.id}
-                className="bg-[#F6F7FA] px-4 py-3 rounded-lg shadow-sm text-sm flex items-center justify-between"
-              >
-                <div className="text-gray-400 w-[70px] shrink-0">0000님</div>
-                <div className="flex-1 px-2 text-gray-800">{comment.text}</div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-gray-400 text-sm">{comment.date}</span>
-                  <button className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm">
-                    댓글
-                  </button>
-                  <button>
-                    <img src={icMore} alt="더보기" />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+  const comments = commentsData?.data?.comments || [];
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [editContent, setEditContent] = useState("");
+
+  // 이벤트 핸들러들
+  const handleSubmit = async (content: string, isPrivate: boolean) => {
+    try {
+      await createCommentMutation.mutateAsync({
+        content: content.trim(),
+        isPublic: isPrivate ? 1 : 0,
+      });
+    } catch (error) {
+      console.error("댓글 작성 실패:", error);
+    }
+  };
+
+  const handleEdit = (commentId: number, content: string) => {
+    setEditingCommentId(commentId);
+    setEditContent(content);
+  };
+
+  const handleSaveEdit = async (
+    commentId: number,
+    content: string,
+    isPrivateEdit: boolean
+  ) => {
+    try {
+      await updateCommentMutation.mutateAsync({
+        commentId: commentId.toString(),
+        data: {
+          content,
+          isPublic: isPrivateEdit ? 1 : 0,
+        },
+      });
+      setEditingCommentId(null);
+      setEditContent("");
+    } catch (error) {
+      console.error("댓글 수정 실패:", error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditContent("");
+  };
+
+  const handleDelete = async (commentId: number) => {
+    if (!confirm("댓글을 삭제하시겠습니까?")) return;
+    try {
+      await deleteCommentMutation.mutateAsync(commentId.toString());
+    } catch (error) {
+      console.error("댓글 삭제 실패:", error);
+    }
+  };
+
+  const handleReport = () => {
+    alert("신고가 완료되었습니다.");
+  };
+
+  if (isLoading) {
+    return <div className="text-center py-4">댓글을 불러오는 중...</div>;
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* 댓글 작성 폼 */}
+      <CommentForm onSubmit={handleSubmit} isLoading={false} />
+
+      {/* 댓글 목록 */}
+      <CommentList
+        comments={comments}
+        currentUserId={currentUserId}
+        bulletinAuthorId={bulletinAuthorId}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onReport={handleReport}
+        onSaveEdit={handleSaveEdit}
+        editingCommentId={editingCommentId}
+        editContent={editContent}
+        setEditContent={setEditContent}
+        onCancelEdit={handleCancelEdit}
+      />
+    </div>
   );
 };
 

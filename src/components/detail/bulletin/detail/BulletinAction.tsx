@@ -41,16 +41,15 @@ const BulletinAction = ({
           <span className="text-sm text-gray-600">{likeCount}</span>
         </button>
 
-        <button>
-          <img src={iconShare} alt="공유" className="w-5 h-5" />
-        </button>
-
         <button
-          className="bg-white border border-gray-300 px-3 py-0.5 rounded-2xl text-sm flex items-center gap-1 hover:bg-gray-50 cursor-pointer"
+          className="bg-white px-3 py-0.5 rounded-2xl text-sm flex items-center gap-1"
           onClick={toggleComment}
         >
           <img src={iconComment} alt="댓글" className="w-5 h-5" />
-          <span className="text-gray-600">{commentCount}</span>
+          <span className="text-gray-600 w-5 h-5">{commentCount}</span>
+        </button>
+        <button>
+          <img src={iconShare} alt="공유" className="w-5 h-5" />
         </button>
       </div>
 

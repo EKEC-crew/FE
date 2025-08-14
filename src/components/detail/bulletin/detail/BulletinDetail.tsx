@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useBulletinDetail } from "../../../../hooks/bulletin/useBulletins";
 import { useDeleteBulletin } from "../../../../hooks/bulletin/useBulletinActions";
@@ -14,12 +13,6 @@ const BulletinDetail = () => {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const deleteBulletinMutation = useDeleteBulletin(crewId || "");
-
-  const [isCommentOpen, setIsCommentOpen] = useState(false);
-  const [comments] = useState([
-    { id: 2, text: "확인 완료! 열심히 활동하겠습니다.", date: "2025.06.18" },
-    { id: 3, text: "확인 완료! 열심히 활동하겠습니다.", date: "2025.06.18" },
-  ]);
 
   const {
     data: bulletin,
@@ -152,7 +145,7 @@ const BulletinDetail = () => {
 
             {/* 버튼 영역 */}
             <BulletinAction
-              toggleComment={() => setIsCommentOpen((prev) => !prev)}
+              toggleComment={() => {}}
               isAuthor={isAuthor}
               onEdit={handleEdit}
               onDelete={handleDelete}
@@ -164,7 +157,12 @@ const BulletinDetail = () => {
             />
 
             {/* 댓글 영역 */}
-            <BulletinComments isOpen={isCommentOpen} comments={comments} />
+            <BulletinComments
+              bulletinId={parseInt(id || "0")}
+              crewId={crewId || ""}
+              currentUserId={user?.id}
+              bulletinAuthorId={bulletin.userId}
+            />
           </div>
         </div>
       </div>
