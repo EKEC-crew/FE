@@ -1,9 +1,9 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 // import { ChevronRight } from "lucide-react";
-import { fetchAlbumList, uploadAlbumImage, type AlbumListItem } from "../../apis/album";
+import { fetchAlbumList, uploadAlbumImage } from "../../apis/album";
 import { fetchMyRole as fetchMyRoleDetail } from "./constants";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import crewBanner from "../../assets/logo/img_crew_banner.svg";
 
 const Album: React.FC = () => {
@@ -40,14 +40,38 @@ const Album: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [targetSlot, setTargetSlot] = useState<number | null>(null);
+
+  // slotIndex -> objectURL
   const [previews, setPreviews] = useState<Record<number, string>>({});
+
+  // ObjectURL 정리
+  useEffect(() => {
+    return () => {
+      Object.values(previews).forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [previews]);
+
   const onPick = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
-    if (!f) return;
-    if (targetSlot != null) {
-      const url = URL.createObjectURL(f);
-      setPreviews((prev) => ({ ...prev, [targetSlot]: url }));
+    // 같은 파일 다시 고를 수 있도록 초기화
+    e.currentTarget.value = "";
+
+    if (!f || targetSlot == null) return;
+
+    // 간단한 클라이언트 검증(선택)
+    if (!f.type.startsWith("image/")) {
+      alert("이미지 파일만 업로드할 수 있어요.");
+      return;
     }
+
+    // 이전 URL 정리 후, 새 URL 등록
+    setPreviews((prev) => {
+      const prevUrl = prev[targetSlot];
+      if (prevUrl) URL.revokeObjectURL(prevUrl);
+      return { ...prev, [targetSlot]: URL.createObjectURL(f) };
+    });
+
+    // 업로드
     upload(f);
   };
 
@@ -66,27 +90,31 @@ const Album: React.FC = () => {
     slot: { kind: "banner" | "square"; bg?: string },
     globalIdx: number
   ) => {
-    const apiSrc = items[globalIdx]?.imageName
-      ? `${imageBase}/image/?type=0&fileName=${encodeURIComponent(
-          items[globalIdx].imageName
-        )}`
-      : "";
+    const apiSrc =
+      items[globalIdx]?.imageName
+        ? `${imageBase}/image/?type=0&fileName=${encodeURIComponent(items[globalIdx].imageName)}`
+        : "";
     const src = previews[globalIdx] || apiSrc;
+
     const isBanner = slot.kind === "banner";
     const baseCls = isBanner ? "aspect-[3/2]" : "aspect-square";
     const bg = slot.bg || "bg-indigo-50";
 
+    const clickable = canUpload && !isPending;
+
     return (
       <div
         key={globalIdx}
-        className={`relative rounded-2xl overflow-hidden ${baseCls} ${bg}`}
+        className={`group relative rounded-2xl overflow-hidden ${baseCls} ${bg} ${clickable ? "cursor-pointer" : "cursor-default"}`}
         onClick={() => {
-          if (!canUpload) return;
+          if (!clickable) return;
           setTargetSlot(globalIdx);
           fileInputRef.current?.click();
         }}
-        role={canUpload ? "button" : undefined}
+        role={clickable ? "button" : undefined}
+        aria-disabled={!clickable}
       >
+        {/* 실제 이미지 */}
         {src ? (
           <img
             src={src}
@@ -96,7 +124,19 @@ const Album: React.FC = () => {
           />
         ) : slot.kind === "banner" ? (
           <img src={crewBanner} alt="배너" className="w-full h-full object-cover" />
-        ) : null}
+        ) : (
+          // 스퀘어 타일에서 이미지/배너가 없을 때 비어있는 자리 표현
+          <div className="w-full h-full flex items-center justify-center text-white/90 font-semibold">
+            +
+          </div>
+        )}
+
+        {/* 업로드 가능 시 오버레이 힌트 */}
+        {clickable && (
+          <div className="pointer-events-none absolute inset-0 hidden group-hover:flex items-center justify-center bg-black/30">
+            <span className="text-white text-sm font-semibold">이미지 선택</span>
+          </div>
+        )}
       </div>
     );
   };
@@ -126,26 +166,24 @@ const Album: React.FC = () => {
         {/* 1행 썸네일 3개 (2-4열) */}
         {isLoading ? (
           <div className="lg:col-span-3 text-center text-gray-500 py-12">로딩중…</div>
-        ) : !isLoading && items.length === 0 ? (
-          <div className="lg:col-span-3 text-center text-gray-400 py-12">아직 등록된 사진이 없습니다.</div>
+        ) : !isLoading && items.length === 0 && Object.keys(previews).length === 0 ? (
+          <div className="lg:col-span-3 text-center text-gray-400 py-12">
+            아직 등록된 사진이 없습니다.
+          </div>
         ) : (
           <>
             {slots.slice(0, 3).map((slot, i) => (
-              <div key={i}>
-                {renderTile(slot, i)}
-              </div>
+              <div key={i}>{renderTile(slot, i)}</div>
             ))}
           </>
         )}
       </div>
 
       {/* 2행: 썸네일 3개 = 총 3열 */}
-      {!isLoading && items.length > 0 && (
+      {!isLoading && (items.length > 0 || Object.keys(previews).length > 0) && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
           {slots.slice(3).map((slot, i) => (
-            <div key={i + 3}>
-              {renderTile(slot, i + 3)}
-            </div>
+            <div key={i + 3}>{renderTile(slot, i + 3)}</div>
           ))}
         </div>
       )}
