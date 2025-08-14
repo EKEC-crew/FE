@@ -7,16 +7,19 @@ import CommonQuestionFlagsOnly from "./applyStep1/ApplyStep1";
 import type {
   ApiStep1,
   ApiQuestion,
-  ApplyOption,
   CommonAnswers,
+  ApplyRequestBody,
+  ApplyAnswer,
 } from "../../types/apply/types";
 import { toApiStep1FromCommonAnswers } from "../../types/apply/types";
-import type { ApplyRequestBody, ApplyAnswer } from "../../types/apply/types";
 import { useApplySubmit } from "../../hooks/apply/useApply";
 import ApplyModal from "./ApplyModal";
 import { useNavigate } from "react-router-dom";
 import CustomQuestionsForm from "./applyStep2/ApplyStep2Form";
 import { useApplyInit } from "../../hooks/apply/useCustomQusetion";
+
+// ⬇️ 추가: 지역 옵션 변환 유틸
+import { mapServerRegionsToOptions } from "../../utils/apply/mappingRegions";
 
 type SelectedFlags = {
   category: 0 | 1;
@@ -28,23 +31,19 @@ type SelectedFlags = {
 export default function ApplicationForm({
   crewId,
   userId,
-  regionOptions,
   onChangeAnswers,
 }: {
   crewId: number;
   userId: number;
-  regionOptions: ApplyOption[];
-  onSubmit: (body: ApplyRequestBody) => Promise<void> | void;
+  onSubmit: (body: ApplyRequestBody) => Promise<void> | void; // 외부에서 쓰면 남겨두기
   onChangeAnswers?: (answers: ApplyAnswer[]) => void;
   submitLabel?: string;
   showDebug?: boolean;
 }) {
-  //지원하기 api 연결
   const { mutateAsync, isPending } = useApplySubmit();
-  // 모달 변수 생성
   const [showComplete, setShowComplete] = useState(false);
-  //네비게이트 연결
   const navigate = useNavigate();
+
   // 1) 초기 데이터 로드
   const { data, isLoading, isError, error } = useApplyInit(crewId);
 
@@ -60,6 +59,7 @@ export default function ApplicationForm({
     }),
     []
   );
+
   const step1: ApiStep1 = useMemo(() => {
     const fromSuccess = (data as any)?.success?.step1 as ApiStep1 | undefined;
     if (fromSuccess) return fromSuccess;
@@ -70,6 +70,7 @@ export default function ApplicationForm({
     return defaultStep1;
   }, [data, defaultStep1]);
 
+  // step2 질문
   const questions: ApiQuestion[] = useMemo(() => {
     const fromSuccess = (data as any)?.success?.step2 as
       | ApiQuestion[]
@@ -93,7 +94,7 @@ export default function ApplicationForm({
   const [valid, setValid] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | undefined>();
 
-  // step1 제한
+  // 제한 값 (ID 목록)
   const allowedCategories = useMemo(
     () => (step1.category ? [step1.category] : []),
     [step1.category]
@@ -116,6 +117,7 @@ export default function ApplicationForm({
   );
   const allowedStyles = useMemo(() => step1.styles ?? [], [step1.styles]);
 
+  // UI에서 선택된(혹은 기본 고정된) step1 ID 맵
   const step1Map = useMemo(
     () => ({
       category: step1.category || undefined,
@@ -126,14 +128,17 @@ export default function ApplicationForm({
     [step1.category, step1.region, step1.age, step1.gender]
   );
 
-  // 제출 바디(플래그 전송)
+  // 지역 옵션 리스트 (라벨/값)
+  const regionOptions = useMemo(() => mapServerRegionsToOptions(), []);
+
+  // 제출 바디(플래그 전송) - 서버가 플래그 받음!
   const buildStep1Flags = () => ({
     activityList,
     styleList,
     categoryFlag: flags.category,
     regionFlag: flags.region,
     ageFlag: flags.age,
-    genderFlag: step1.gender === 0 ? 0 : flags.gender, // 무관이면 0
+    genderFlag: step1.gender === 0 ? 0 : flags.gender, // 성별 무관(0)이면 항상 0 전송
   });
 
   return (
@@ -147,11 +152,11 @@ export default function ApplicationForm({
         />
         <CommonQuestionFlagsOnly
           step1Map={step1Map}
-          regionOptions={regionOptions}
+          regionOptions={regionOptions} // ✅ 옵션 리스트 전달
           allowedCategories={allowedCategories}
           allowedActivities={allowedActivities}
           allowedStyles={allowedStyles}
-          allowedRegions={allowedRegions}
+          allowedRegions={allowedRegions} // ✅ 허용 ID 목록
           allowedAges={allowedAges}
           allowedGenders={allowedGenders}
           selected={flags}
@@ -187,7 +192,6 @@ export default function ApplicationForm({
       </section>
 
       {/* SUBMIT BAR */}
-
       <ApplySubmitBar
         disabled={
           isLoading || isPending || !valid || !userId || questions.length === 0
@@ -207,10 +211,8 @@ export default function ApplicationForm({
 
           try {
             await mutateAsync({ crewId, body });
-            // 성공 시 모달 열기
-            setShowComplete(true);
+            setShowComplete(true); // 성공 모달
           } catch (err: any) {
-            // 실패 시 경고창 or 토스트
             const msg =
               err?.response?.data?.message ||
               "지원에 실패했습니다. 잠시 후 다시 시도해주세요.";
@@ -218,15 +220,16 @@ export default function ApplicationForm({
           }
         }}
       />
+
       {showComplete && (
         <ApplyModal
           onClose={() => {
             setShowComplete(false);
-            // 원하는 UX로 이동 (예: 해당 크루 상세)
             navigate(`/crew/${crewId}`);
           }}
         />
       )}
+
       {/* 로딩/에러 */}
       {isLoading && <div>불러오는 중...</div>}
       {isError && (

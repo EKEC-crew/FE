@@ -48,6 +48,9 @@ export default function CheckboxQuestion({
       ? Array.from(new Set([...selected.map(canon), resolvedEtcValue]))
       : selected.map(canon);
 
+  // ✅ 이 줄 추가
+  const textareaValue = etcText ?? "";
+
   return (
     <div className="bg-[#F7F7FB] rounded-xl py-6 px-10">
       <p className="text-[22px] font-semibold mb-3">
@@ -59,7 +62,7 @@ export default function CheckboxQuestion({
         options={checkOptions}
         value={renderSelected}
         onChange={onChange}
-        etcText={etcText}
+        etcText={textareaValue} // ✅ 여기 바꿈
         onEtcTextChange={onEtcTextChange}
       />
     </div>

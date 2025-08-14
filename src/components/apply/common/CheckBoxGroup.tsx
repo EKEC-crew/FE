@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Checkbox from "./CheckBox";
 
 export type CheckOption = { label: string; value: string; isEtc?: boolean };
@@ -23,6 +24,12 @@ export default function CheckboxGroup({
   etcText,
   onEtcTextChange,
 }: Props) {
+  const [inputValue, setInputValue] = useState(etcText ?? "");
+
+  useEffect(() => {
+    setInputValue(etcText ?? "");
+  }, [etcText]);
+
   const safeSelected = (value ?? []).map(canon);
 
   const handleToggle = (vRaw: string, nextChecked: boolean) => {
@@ -34,6 +41,11 @@ export default function CheckboxGroup({
     const opt = options.find((o) => canon(o.value) === v);
     if (opt?.isEtc && !nextChecked && onEtcTextChange) onEtcTextChange("");
     onChange(next);
+
+    if (opt?.isEtc && !nextChecked) {
+      setInputValue(""); // 로컬 상태 초기화
+      onEtcTextChange?.(""); // 부모에게 초기화 알림
+    }
   };
 
   const etcOption = options.find((o) => o.isEtc);
@@ -60,8 +72,14 @@ export default function CheckboxGroup({
         <textarea
           className="mt-2 w-full rounded-md border border-gray-300 p-2 text-sm"
           placeholder="기타 내용을 입력해주세요"
-          value={etcText ?? ""}
-          onChange={(e) => onEtcTextChange?.(e.target.value)}
+          value={inputValue}
+          onChange={(e) => {
+            const newValue = e.target.value;
+            console.log("🟢 기타 텍스트 입력:", newValue);
+            console.log("🟢 현재 선택된 옵션들:", value);
+            setInputValue(newValue);
+            onEtcTextChange?.(newValue);
+          }}
         />
       )}
     </div>

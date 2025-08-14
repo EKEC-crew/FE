@@ -142,9 +142,15 @@ export default function CustomQuestionsForm({
             { shouldValidate: true, shouldDirty: true }
           );
         };
-
         const handleEtcChange = (text: string) => {
+          console.log("🔵 handleEtcChange 호출:", {
+            text,
+            key,
+            currentValues: cur?.values,
+            currentEtc: cur?.etc,
+          });
           if (disabled || !allowEtc) return;
+
           setValue(
             key,
             {
