@@ -11,6 +11,23 @@ export interface CrewInfo {
   styles: number[];
 }
 
+export type CrewInfoRequest = Omit<CrewInfo, "region"> & { region?: number };
+
+// InfoStep이 넘길 draft 타입
+export interface CrewInfoDraft {
+  crewName: string;
+  crewDescription: string;
+  headcount: number | null;
+  category: number | null;
+  activities: number[];
+  styles: number[];
+  filters: { regionSido: string | null; regionGu: string | null };
+  age: number | null;
+  selectedGender: number | null;
+  isHeadcountUnlimited: boolean;
+  isGenderUnlimited: boolean;
+}
+
 export interface ServerQuestion {
   question: string;
   type: 0 | 1;
@@ -34,9 +51,10 @@ export interface Crew {
   description: string;
   introduction: string;
   capacity: number;
+  memberCount: number;
   noticeCount: number;
   postCount: number;
-  bannerImage: string;
+  bannerImage: string | null;
   ageLimit: number;
   genderLimit: number;
   ownerName: string;

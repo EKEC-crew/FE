@@ -22,6 +22,10 @@ export const signUpSchema = z
         errors.push("7자 이상 12자 이하의 글자 수를 맞춰주세요");
       }
 
+      if (!/[0-9]/.test(password)) {
+        errors.push("숫자는 반드시 포함해주세요");
+      }
+
       if (!/[.!@#$%^&*]/.test(password)) {
         errors.push("특수문자(!@#$%^&* 등)를 포함해주세요");
       }

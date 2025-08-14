@@ -41,6 +41,7 @@ import shortTerm from "../assets/icons/style/ic_short_60.svg";
 import novice from "../assets/icons/style/ic_novice_60.svg";
 import together from "../assets/icons/style/ic_together_60.svg";
 import improve from "../assets/icons/style/ic_improve_60.svg";
+import { serverRegions } from "./serverRegions";
 
 export const categoryOptions = [
   { label: "스터디", value: 1, icon: study },
@@ -92,38 +93,14 @@ export const styleOptions = [
   { label: "실력향상", value: 15, icon: improve },
 ];
 
-export const regionOptions = {
-  서울: [
-    "전지역",
-    "강남구",
-    "강동구",
-    "강북구",
-    "강서구",
-    "관악구",
-    "광진구",
-    "구로구",
-    "금천구",
-    "노원구",
-    "도봉구",
-    "동대문구",
-  ],
-  경기: ["수원시", "성남시", "고양시", "안양시"],
-  인천: ["계양구", "부평구", "남동구", "연수구"],
-  강원: ["춘천시", "원주시", "강릉시", "동해시"],
-  대전: ["동구", "중구", "서구", "유성구"],
-  세종: ["세종시"],
-  충남: ["천안시", "아산시", "공주시"],
-  충북: ["청주시", "충주시", "제천시"],
-  부산: ["해운대구", "수영구", "동래구", "부산진구"],
-  울산: ["남구", "중구", "동구", "북구"],
-  경남: ["창원시", "김해시", "양산시", "진주시"],
-  경북: ["포항시", "경주시", "구미시", "안동시"],
-  대구: ["중구", "동구", "서구", "남구"],
-  광주: ["북구", "서구", "남구", "동구"],
-  전남: ["여수시", "순천시", "광양시", "목포시"],
-  전북: ["전주시", "익산시", "군산시", "정읍시"],
-  제주: ["제주시", "서귀포시"],
-};
+export const regionOptions: Record<string, string[]> = serverRegions.reduce(
+  (acc, r) => {
+    if (!acc[r.sido]) acc[r.sido] = [];
+    acc[r.sido].push(r.goo);
+    return acc;
+  },
+  {} as Record<string, string[]>
+);
 
 export const ageOptions = [
   { label: "1998" },

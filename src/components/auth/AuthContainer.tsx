@@ -4,13 +4,17 @@ import SignUpForm from "./signUp/signUpForm";
 
 interface AuthContainerProps {
   variant: "signIn" | "emailsignIn" | "signUp";
+  showOAuthError?: boolean;
 }
 
-const AuthContainer: React.FC<AuthContainerProps> = ({ variant }) => {
+const AuthContainer: React.FC<AuthContainerProps> = ({
+  variant,
+  showOAuthError = false,
+}) => {
   const children = () => {
     switch (variant) {
       case "signIn":
-        return <SignInForm />;
+        return <SignInForm showOAuthError={showOAuthError} />;
       case "emailsignIn":
         return <EmailSignInForm />;
       case "signUp":

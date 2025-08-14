@@ -15,9 +15,12 @@ const mapToServerQuestions = (questions: QuestionData[]): ServerQuestion[] => {
 
 const CrewApplicationStep = ({
   onSubmit,
+  loading = false,
 }: {
-  onSubmit: (questions: ServerQuestion[]) => void;
+  onSubmit: (questions: ServerQuestion[], recruitMessage: string) => void;
+  loading?: boolean;
 }) => {
+  const [recruitMessage, setRecruitMessage] = useState("");
   const [questions, setQuestions] = useState<QuestionData[]>([
     {
       id: Date.now(),
@@ -71,6 +74,8 @@ const CrewApplicationStep = ({
           </span>
         </div>
         <textarea
+          value={recruitMessage}
+          onChange={(e) => setRecruitMessage(e.target.value)}
           placeholder="나의 크루가 어떤 사람을 원하는지, 활동 내용들을 간략히 소개하면 지원율이 높아질 거예요!"
           className="border-[2px] border-[#C5C6CB] focus:border-[#3A3ADB] focus:outline-none placeholder:text-[#93959D] font-medium text-xl p-4 rounded-lg resize-none h-40"
         />
@@ -103,7 +108,9 @@ const CrewApplicationStep = ({
       {/* 완료 버튼 */}
       <div className="w-full flex justify-center mt-8">
         <button
-          onClick={() => onSubmit(mapToServerQuestions(questions))}
+          onClick={() =>
+            onSubmit(mapToServerQuestions(questions), recruitMessage)
+          }
           disabled={!isValid}
           className={`w-full h-17 text-xl font-semibold rounded-lg cursor-pointer 
             ${
@@ -112,7 +119,7 @@ const CrewApplicationStep = ({
                 : "bg-[#93959D] text-white cursor-not-allowed"
             }`}
         >
-          크루 생성 완료하기
+          {loading ? "생성 중..." : "크루 생성 완료하기"}
         </button>
       </div>
     </div>

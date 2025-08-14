@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useBulletinDetail } from "../../../../hooks/bulletin/useBulletins";
+import { useDeleteBulletin } from "../../../../hooks/bulletin/useBulletinActions";
+import { useAuthStore } from "../../../../store/useAuthStore";
 import Header from "../../header";
 import Tabs from "../../tabs";
 import BulletinAbout from "./BulletinAbout";
@@ -10,6 +12,8 @@ import BulletinComments from "./BulletinComments";
 const BulletinDetail = () => {
   const { crewId, id } = useParams();
   const navigate = useNavigate();
+  const user = useAuthStore((state) => state.user);
+  const deleteBulletinMutation = useDeleteBulletin(crewId || "");
 
   const [isCommentOpen, setIsCommentOpen] = useState(false);
   const [comments] = useState([
@@ -72,6 +76,32 @@ const BulletinDetail = () => {
     );
   }
 
+  // 작성자 여부 확인
+  const isAuthor = user?.id === bulletin.userId;
+
+  // 수정 버튼 핸들러
+  const handleEdit = () => {
+    navigate(`/crew/${crewId}/bulletin/${id}/edit`);
+  };
+
+  // 삭제 버튼 핸들러
+  const handleDelete = () => {
+    if (window.confirm("정말 삭제하시겠습니까?")) {
+      deleteBulletinMutation.mutate(id || "");
+    }
+  };
+
+  // 목록으로 이동
+  const handleGoToList = () => {
+    navigate(`/crew/${crewId}/bulletin`);
+  };
+
+  // 좋아요 토글 (추후 구현)
+  const handleLikeToggle = () => {
+    // TODO: 좋아요 API 연결
+    console.log("좋아요 토글");
+  };
+
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="py-6 space-y-6 pt-12">
@@ -115,12 +145,6 @@ const BulletinDetail = () => {
                   )}
                 </div>
               </div>
-              <button
-                onClick={() => navigate(`/crew/${crewId}/bulletin`)}
-                className="bg-gray-500 text-white font-semibold px-5 py-1.5 rounded-xl text-sm hover:bg-gray-600"
-              >
-                목록
-              </button>
             </div>
 
             {/* 게시글 내용 */}
@@ -128,8 +152,15 @@ const BulletinDetail = () => {
 
             {/* 버튼 영역 */}
             <BulletinAction
-              isCommentOpen={isCommentOpen}
               toggleComment={() => setIsCommentOpen((prev) => !prev)}
+              isAuthor={isAuthor}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onGoToList={handleGoToList}
+              likeCount={bulletin.likeCount}
+              commentCount={bulletin.commentCount}
+              isLiked={bulletin.isLiked}
+              onLikeToggle={handleLikeToggle}
             />
 
             {/* 댓글 영역 */}

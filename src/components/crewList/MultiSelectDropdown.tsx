@@ -39,14 +39,17 @@ const MultiSelectDropdown = ({
 
   // 외부 클릭 시 드롭다운 닫힘
   useEffect(() => {
+    if (!open) return;
+
     const handleClickOutside = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) {
+        onChange(localSelected);
         setOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [open, localSelected, onChange]);
 
   const toggleOption = (value: number) => {
     setLocalSelected((prev) =>

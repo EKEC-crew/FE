@@ -6,21 +6,31 @@ const CrewCard = ({
   name,
   description,
   capacity,
+  memberCount,
   bannerImage,
   crewCategory,
   crewActivity,
   crewStyle,
 }: Crew) => {
+  const bannerSrc =
+    bannerImage && bannerImage.trim()
+      ? bannerImage.startsWith("http")
+        ? bannerImage
+        : `${import.meta.env.VITE_API_BASE_URL}/image/?type=0&fileName=${encodeURIComponent(bannerImage)}`
+      : defaultBanner;
   return (
     <div className="flex items-center w-full max-w-[1320px] h-auto bg-white rounded-xl border-2 border-[#D9DADD] p-4">
       {/* 배너 이미지 */}
       <div className="relative w-1/3 aspect-[3/2] rounded-lg overflow-hidden min-w-[280px] max-w-[360px]">
         <img
-          src={`https://api.ekec.site/api/image/?type=0&fileName=${bannerImage}`}
+          src={bannerSrc}
           alt="배너이미지"
           onError={(e) => {
-            console.error(`이미지 로드 실패: ${bannerImage}`);
-            e.currentTarget.src = defaultBanner;
+            const img = e.currentTarget;
+            if (img.src !== defaultBanner) {
+              img.onerror = null;
+              img.src = defaultBanner;
+            }
           }}
           className="w-full h-full object-cover"
         />
@@ -47,8 +57,12 @@ const CrewCard = ({
 
         {/* 인원, 별점 */}
         <div className="flex items-center gap-4 mt-2">
-          <span className="flex items-center text-sm sm:text-base md:text-xl font-normal bg-[#3A3ADB] text-white h-10 px-3 rounded-full">
-            크루 /{capacity === 0 ? "00" : capacity}
+          <span
+            className={`flex items-center text-sm sm:text-base md:text-xl font-normal text-white h-10 px-3 rounded-full ${
+              memberCount === capacity ? "bg-[#5E6068]" : "bg-[#3A3ADB]"
+            }`}
+          >
+            크루 {memberCount ?? 0}/{capacity === 0 ? "00" : capacity}
           </span>
           <span className="text-sm sm:text-base md:text-xl font-normal text-[#1A1B1E] flex items-center gap-2">
             <img src={starIcon} alt="별점" />

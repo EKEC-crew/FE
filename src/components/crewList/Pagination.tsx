@@ -14,9 +14,17 @@ const Pagination = ({
   totalPages,
   onPageChange,
 }: PaginationProps) => {
-  // 최대 5개까지만 페이지 번호 표시
+  // 페이지 이동 시 1 ~ totalPages 범위로 클램프
+  const goTo = (p: number) => {
+    const clamped = Math.min(Math.max(1, p), Math.max(1, totalPages || 1));
+    if (clamped !== currentPage) onPageChange(clamped);
+  };
+
+  // 페이지 번호 목록 (최대 5개, 실제 totalPages보다 넘지 않음)
   const getPageNumbers = () => {
     const maxButtons = 5;
+    if (!totalPages || totalPages <= 0) return [1];
+
     let start = Math.max(1, currentPage - 2);
     let end = start + maxButtons - 1;
 
@@ -28,47 +36,49 @@ const Pagination = ({
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   };
 
+  // 페이지가 1장뿐이면 아예 렌더링하지 않음
+  // if (!totalPages || totalPages <= 1) return null;
+
   const pages = getPageNumbers();
+  const isFirst = currentPage <= 1;
+  const isLast = currentPage >= totalPages;
 
   return (
     <div className="flex items-center gap-4">
-      {/* 왼쪽 화살표 */}
+      {/* 이전 */}
       <button
-        onClick={() => onPageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className="w-11 h-11 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD] disabled:cursor-not-allowed"
+        onClick={() => goTo(currentPage - 1)}
+        disabled={isFirst}
+        className="w-11 h-11 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD] cursor-pointer disabled:cursor-not-allowed"
+        aria-label="이전 페이지"
       >
-        <img src={currentPage === 1 ? leftIconDisabled : leftIcon} alt="이전" />
+        <img src={isFirst ? leftIconDisabled : leftIcon} alt="이전" />
       </button>
 
       {/* 페이지 번호들 */}
-      {pages.map((page) => (
+      {pages.map((p) => (
         <button
-          key={page}
-          onClick={() => onPageChange(page)}
-          className={`
-            w-11 h-11 flex items-center justify-center rounded-full border-[2px] text-2xl font-medium
-            ${
-              page === currentPage
-                ? "border-[#3A3ADB] bg-[#3A3ADB] text-white"
-                : "border-[#93959D] text-[#93959D]"
-            }
-          `}
+          key={p}
+          onClick={() => goTo(p)}
+          className={`w-11 h-11 flex items-center justify-center rounded-full border-[2px] text-2xl font-medium cursor-pointer ${
+            p === currentPage
+              ? "border-[#3A3ADB] bg-[#3A3ADB] text-white"
+              : "border-[#93959D] text-[#93959D]"
+          }`}
+          aria-current={p === currentPage ? "page" : undefined}
         >
-          {page}
+          {p}
         </button>
       ))}
 
-      {/* 오른쪽 화살표 */}
+      {/* 다음 */}
       <button
-        onClick={() => onPageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className="w-11 h-11 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD] disabled:cursor-not-allowed"
+        onClick={() => goTo(currentPage + 1)}
+        disabled={isLast}
+        className="w-11 h-11 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD] cursor-pointer disabled:cursor-not-allowed"
+        aria-label="다음 페이지"
       >
-        <img
-          src={currentPage === totalPages ? rightIconDisabled : rightIcon}
-          alt="다음"
-        />
+        <img src={isLast ? rightIconDisabled : rightIcon} alt="다음" />
       </button>
     </div>
   );

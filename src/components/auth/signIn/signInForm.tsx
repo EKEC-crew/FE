@@ -4,11 +4,16 @@ import Kakao from "../../../assets/signIn/signInKakaoLogo.svg";
 import Google from "../../../assets/signIn/signInGoogleLogo.svg";
 import Naver from "../../../assets/signIn/signInNaverLogo.svg";
 import Ekec from "../../../assets/signIn/signInEkecLogo.svg";
+import warnIcon from "../../../assets/icons/auth/warn.svg";
 
 import SocialSignInButton from "./socialSignInButton";
-import AuthBtn from "../authBtn"; // 기존 AuthBtn 컴포넌트 import
+import AuthBtn from "../authBtn";
 
-const SignInForm = () => {
+interface SignInFormProps {
+  showOAuthError?: boolean;
+}
+
+const SignInForm = ({ showOAuthError = false }: SignInFormProps) => {
   const navigate = useNavigate();
 
   const handleEkecSignIn = () => {
@@ -42,26 +47,33 @@ const SignInForm = () => {
         </div>
 
         <SocialSignInButton
-          to="/signIn/kakao"
+          provider="kakao"
           imgSrc={Kakao}
           alt="카카오 로고"
           text="카카오 계정으로 계속하기"
           bgColor="#FEE500"
         />
         <SocialSignInButton
-          to="/signIn/naver"
+          provider="naver"
           imgSrc={Naver}
           alt="네이버 로고"
           text="네이버 계정으로 계속하기"
           bgColor="#03C75A"
         />
         <SocialSignInButton
-          to="/signIn/google"
+          provider="google"
           imgSrc={Google}
           alt="구글 로고"
           text="Google 계정으로 계속하기"
           border="border border-gray-300 bg-white hover:bg-gray-100"
         />
+
+        {showOAuthError && (
+          <div className="flex items-center justify-start text-[#ff4949] text-sm mt-1 mb-3 w-full">
+            <img src={warnIcon} alt="경고" className="w-4 h-4 mr-2" />
+            다른 방식으로 가입된 계정이에요. 재로그인해주세요.
+          </div>
+        )}
       </div>
     </>
   );

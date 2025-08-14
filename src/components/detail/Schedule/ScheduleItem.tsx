@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
+import iconHeart from "../../../assets/schedule/ic_Heart.svg";
 
 interface Props {
   id?: number;
@@ -6,8 +7,9 @@ interface Props {
   label?: string;
   title: string;
   date: string;
-  status: string;
+  status: number; // 0: 신청하기, 1: 신청완료
   isNew?: boolean;
+  likeCount?: number;
 }
 
 const ScheduleItem = ({
@@ -18,13 +20,24 @@ const ScheduleItem = ({
   date,
   status,
   isNew,
+  likeCount = 0,
 }: Props) => {
   const navigate = useNavigate();
-
   const { crewId } = useParams();
 
   const handleClick = () => {
     navigate(`/crew/${crewId}/schedule/${id}`);
+  };
+
+  const getStatusText = () => {
+    return status === 0 ? "신청하기" : "신청완료";
+  };
+
+  const getStatusStyle = () => {
+    if (status === 1) {
+      return "bg-[#D9DADD] text-[#5E6068]"; // 신청완료 상태
+    }
+    return "bg-[#3A3ADB] text-white"; // 신청하기 상태
   };
 
   return (
@@ -50,14 +63,17 @@ const ScheduleItem = ({
       </div>
       <div className="flex items-center gap-5">
         <span className="text-[#93949D] text-sm">{date}</span>
+
+        {/* 좋아요 수 표시 */}
+        <div className="flex items-center gap-1">
+          <img src={iconHeart} alt="좋아요" className="w-4 h-4 grayscale" />
+          <span className="text-[#93949D] text-sm">{likeCount}</span>
+        </div>
+
         <button
-          className={`text-xs font-semibold px-2 py-1 rounded ${
-            status === "신청하기"
-              ? "bg-[#3A3ADB] text-white"
-              : "bg-gray-200 text-gray-500"
-          }`}
+          className={`text-xs font-semibold px-2 py-1 rounded ${getStatusStyle()} cursor-pointer`}
         >
-          {status}
+          {getStatusText()}
         </button>
       </div>
     </div>

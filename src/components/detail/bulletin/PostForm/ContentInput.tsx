@@ -1,23 +1,28 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 
 interface ContentInputProps {
   onValueChange?: (value: string) => void;
+  value?: string;
 }
 
-const ContentInput: React.FC<ContentInputProps> = ({ onValueChange }) => {
+const ContentInput: React.FC<ContentInputProps> = ({
+  onValueChange,
+  value = "",
+}) => {
   const editorRef = useRef<Editor>(null);
-  const [content, setContent] = useState("");
 
   const handleChange = () => {
     const html = editorRef.current?.getInstance().getHTML() || "";
-    setContent(html);
+    onValueChange?.(html);
   };
 
   useEffect(() => {
-    onValueChange?.(content);
-  }, [content, onValueChange]);
+    if (value && editorRef.current) {
+      editorRef.current.getInstance().setHTML(value);
+    }
+  }, [value]);
 
   return (
     <div>
@@ -27,7 +32,7 @@ const ContentInput: React.FC<ContentInputProps> = ({ onValueChange }) => {
       <div className="mb-6">
         <Editor
           ref={editorRef}
-          initialValue=""
+          initialValue=" "
           height="400px"
           useCommandShortcut
           hideModeSwitch={true}
@@ -41,11 +46,6 @@ const ContentInput: React.FC<ContentInputProps> = ({ onValueChange }) => {
           ]}
         />
       </div>
-
-      <div
-        className="border border-gray-300 p-2"
-        dangerouslySetInnerHTML={{ __html: content }}
-      />
     </div>
   );
 };

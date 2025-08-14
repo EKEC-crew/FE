@@ -36,106 +36,116 @@ const formatDate = (dateString: string): string => {
   }
 };
 
-// API 데이터를 컴포넌트용 데이터로 변환
-const transformBulletinData = (apiData: BulletinApiData): Bulletin => ({
-  id: apiData.postId,
-  title: apiData.title,
-  date: formatDate(apiData.createdAt),
-  author: apiData.nickname,
-  commentCount: apiData.commentCount,
-  likeCount: apiData.likeCount || 0,
-  isPopular: apiData.isPopular,
-  hasAttachment: (apiData.imageCount || 0) > 0,
-  content: apiData.content,
-  profileImage: apiData.profileImage,
-  images: apiData.images?.map((img) => getImageUrl(img.imageName)) || [],
+// 게시글 데이터 변환 함수
+const transformBulletinData = (data: BulletinApiData): Bulletin => ({
+  id: data.postId,
+  title: data.title,
+  date: formatDate(data.createdAt),
+  author: data.nickname,
+  commentCount: data.commentCount,
+  likeCount: data.likeCount || 0,
+  isPopular: data.isPopular,
+  hasAttachment: (data.imageCount || 0) > 0,
+  userId: data.userId,
+  isLiked: data.isLiked,
+  content: data.content,
+  profileImage: data.profileImage,
+  images: data.images?.map((img) => getImageUrl(img.imageName)) || [],
+  originalImages: data.images || [],
 });
 
-// 게시글 목록 조회 API 함수
-const fetchBulletinList = async (
-  crewId: number,
-  page: number = 1,
-  size: number = 10
-): Promise<BulletinListResponse> => {
-  const response = await fetch(
-    `${API_BASE_URL}/crew/${crewId}/post/list?page=${page}&size=${size}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+// 게시글 목록 조회
+export const useBulletins = (crewId: number, page = 1, size = 10) => {
+  return useQuery({
+    queryKey: ["bulletins", crewId, page, size],
+    queryFn: async (): Promise<BulletinListResponse> => {
+      const response = await fetch(
+        `${API_BASE_URL}/crew/${crewId}/post/list?page=${page}&size=${size}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-  const result: BulletinApiResponse = await response.json();
+      const result: BulletinApiResponse = await response.json();
 
-  if (result.resultType !== "SUCCESS") {
-    throw new Error(result.error || "게시글을 불러오는데 실패했습니다.");
-  }
+      if (result.resultType !== "SUCCESS") {
+        throw new Error(
+          typeof result.error === "string"
+            ? result.error
+            : result.error?.reason || "게시글을 불러오는데 실패했습니다."
+        );
+      }
 
-  return {
-    bulletins: result.data.posts.map(transformBulletinData),
-    pagination: {
-      totalElements: result.data.totalElements,
-      totalPages: result.data.totalPages,
-      hasNext: result.data.hasNext,
-      pageNum: result.data.pageNum,
-      pageSize: result.data.pageSize,
+      const data = result.data;
+      if (!data) {
+        throw new Error("게시글 데이터를 찾을 수 없습니다.");
+      }
+
+      return {
+        bulletins: data.posts.map(transformBulletinData),
+        pagination: {
+          totalElements: data.totalElements,
+          totalPages: data.totalPages,
+          hasNext: data.hasNext,
+          pageNum: data.pageNum,
+          pageSize: data.pageSize,
+        },
+      };
     },
-  };
-};
-
-export const useBulletinList = (
-  crewId: number,
-  page: number = 1,
-  size: number = 10
-) => {
-  return useQuery({
-    queryKey: ["bulletinList", crewId, page, size],
-    queryFn: () => fetchBulletinList(crewId, page, size),
-    enabled: !!crewId, // crewId가 있을 때만 쿼리 실행
-    staleTime: 1000 * 60 * 5, // 5분 fresh 유지
-    gcTime: 1000 * 60 * 10, // 10분 캐시 유지
+    enabled: !!crewId,
+    staleTime: 1000 * 60 * 5, // 5분
+    gcTime: 1000 * 60 * 10, // 10분
   });
 };
 
-const fetchBulletinDetail = async (
-  crewId: number,
-  postId: number
-): Promise<Bulletin> => {
-  const response = await fetch(
-    `${API_BASE_URL}/crew/${crewId}/post/${postId}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  const result: BulletinDetailApiResponse = await response.json();
-
-  if (result.resultType !== "SUCCESS") {
-    throw new Error(result.error || "게시글을 불러오는데 실패했습니다.");
-  }
-
-  return transformBulletinData(result.data);
-};
-
-export const useBulletinDetail = (crewId: number, postId: number) => {
+// 게시글 상세 조회
+export const useBulletin = (crewId: number, postId: number) => {
   return useQuery({
-    queryKey: ["bulletinDetail", crewId, postId],
-    queryFn: () => fetchBulletinDetail(crewId, postId),
+    queryKey: ["bulletin", crewId, postId],
+    queryFn: async (): Promise<Bulletin> => {
+      const response = await fetch(
+        `${API_BASE_URL}/crew/${crewId}/post/${postId}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result: BulletinDetailApiResponse = await response.json();
+
+      if (result.resultType !== "SUCCESS") {
+        throw new Error(
+          typeof result.error === "string"
+            ? result.error
+            : result.error?.reason || "게시글을 불러오는데 실패했습니다."
+        );
+      }
+
+      const data = result.data;
+      if (!data) {
+        throw new Error("게시글 데이터를 찾을 수 없습니다.");
+      }
+
+      return transformBulletinData(data);
+    },
     enabled: !!(crewId && postId),
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 10,
+    staleTime: 1000 * 60 * 5, // 5분
+    gcTime: 1000 * 60 * 10, // 10분
   });
 };
+
+// 별칭 추가 (기존 코드 호환성을 위해)
+export const useBulletinDetail = useBulletin;
