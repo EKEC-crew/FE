@@ -27,7 +27,7 @@ const BulletinList: React.FC = () => {
   );
 
   const bulletins = bulletinListResponse?.bulletins ?? [];
-  const pagination = bulletinListResponse?.pagination; // <-- 사용됨
+  const pagination = bulletinListResponse?.pagination;
   const totalElements = pagination?.totalElements ?? 0;
 
   const handleBulletinClick = useCallback(

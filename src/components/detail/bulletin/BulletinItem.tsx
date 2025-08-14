@@ -60,17 +60,15 @@ const BulletinItem: React.FC<BulletinItemProps> = ({
         </span>
       </div>
 
-      {/* 좋아요 수 표시 */}
-      <div className="flex items-center gap-1">
-        <img src={iconHeart} alt="좋아요" className="w-4 h-4 grayscale" />
-        <span className="text-[#93949D] text-sm">{likeCount}</span>
-      </div>
-
-      {/* 오른쪽 영역: 날짜와 작성자 */}
+      {/* 오른쪽 영역: 날짜, 좋아요 수,작성자 */}
       <div className="flex items-center gap-2 text-gray-400 flex-shrink-0">
         <span className="text-gray-400 text-sm whitespace-nowrap">
           {bulletin.date}
         </span>
+        <div className="flex items-center ml-6 gap-1">
+          <img src={iconHeart} alt="좋아요" className="w-4 h-4 grayscale" />
+          <span className="text-[#93949D] text-sm">{likeCount}</span>
+        </div>
         <span className="text-gray-400 text-xs text-right min-w-16 truncate">
           {bulletin.author}
         </span>
