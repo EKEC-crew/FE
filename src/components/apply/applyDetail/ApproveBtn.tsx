@@ -1,10 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom"; // 추가
 import {
   useApproveMutation,
   useRejectMutation,
 } from "../../../hooks/apply/useApprove";
 import type { ApprovalResponse } from "../../../apis/crewApply";
-import Modal from "../../../components/common/Modal"; // Modal 컴포넌트 import
+import Modal from "../../../components/common/Modal";
 import approveimg from "../../../assets/icons/img_graphic2_340.svg";
 import rejectimg from "../../../assets/icons/img_graphic3_340.svg";
 interface props {
@@ -15,18 +16,21 @@ interface props {
 }
 
 export const ApproveBtn = ({ crewId, applyId, onSuccess, onError }: props) => {
+  const navigate = useNavigate(); // 추가
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
 
   const approveMutation = useApproveMutation({
     onSuccess: (data: ApprovalResponse) => {
       console.log("승인 완료:", data.success?.message);
-      setShowApproveModal(false); // 모달 닫기
+      setShowApproveModal(false);
       onSuccess?.();
+      // 승인 완료 후 지원자 목록으로 이동
+      navigate(`/crew/${crewId}/applicants`);
     },
     onError: (error: Error) => {
       console.error("승인 실패:", error);
-      setShowApproveModal(false); // 모달 닫기
+      setShowApproveModal(false);
       onError?.(error.message);
     },
   });
@@ -34,22 +38,24 @@ export const ApproveBtn = ({ crewId, applyId, onSuccess, onError }: props) => {
   const rejectMutation = useRejectMutation({
     onSuccess: (data: ApprovalResponse) => {
       console.log("거부 완료:", data.success?.message);
-      setShowRejectModal(false); // 모달 닫기
+      setShowRejectModal(false);
       onSuccess?.();
+      // 거부 완료 후 지원자 목록으로 이동
+      navigate(`/crew/${crewId}/applicants`);
     },
     onError: (error: Error) => {
       console.error("거부 실패:", error);
-      setShowRejectModal(false); // 모달 닫기
+      setShowRejectModal(false);
       onError?.(error.message);
     },
   });
 
   const handleApproveClick = () => {
-    setShowApproveModal(true); // 모달 열기
+    setShowApproveModal(true);
   };
 
   const handleRejectClick = () => {
-    setShowRejectModal(true); // 모달 열기
+    setShowRejectModal(true);
   };
 
   const handleApproveConfirm = () => {
@@ -60,7 +66,6 @@ export const ApproveBtn = ({ crewId, applyId, onSuccess, onError }: props) => {
     rejectMutation.reject(crewId, applyId);
   };
 
-  // 둘 중 하나라도 로딩 중이면 로딩 상태
   const isLoading = approveMutation.isLoading || rejectMutation.isLoading;
 
   return (
@@ -88,13 +93,18 @@ export const ApproveBtn = ({ crewId, applyId, onSuccess, onError }: props) => {
 
       {/* 승인 확인 모달 */}
       {showApproveModal && (
-        <Modal onClose={() => setShowApproveModal(false)}>
+        <Modal
+          onClose={() => setShowApproveModal(false)}
+          maxWidth="max-w-[600px]"
+        >
+          {" "}
+          {/* 모달 크기 조정 */}
           <div className="text-center">
             <div className="mb-6">
               <img
                 src={approveimg}
                 alt="승인"
-                className="w-[340px] h-[340] mx-auto mb-4"
+                className="w-[340px] h-[340px] mx-auto mb-4" // h-[340] → h-[340px] 수정
               />
             </div>
             <h2 className="text-xl font-bold mb-4">
@@ -125,12 +135,17 @@ export const ApproveBtn = ({ crewId, applyId, onSuccess, onError }: props) => {
 
       {/* 거부 확인 모달 */}
       {showRejectModal && (
-        <Modal onClose={() => setShowRejectModal(false)}>
+        <Modal
+          onClose={() => setShowRejectModal(false)}
+          maxWidth="max-w-[600px]"
+        >
+          {" "}
+          {/* 모달 크기 조정 */}
           <div className="text-center">
             <img
               src={rejectimg}
-              alt="승인"
-              className="w-[340px] h-[340] mx-auto mb-4"
+              alt="거부"
+              className="w-[340px] h-[340px] mx-auto mb-4" // alt 수정
             />
             <h2 className="text-xl font-bold mb-4">
               이 크루원의 가입 요청을 거절하시겠어요?
@@ -147,7 +162,7 @@ export const ApproveBtn = ({ crewId, applyId, onSuccess, onError }: props) => {
                 취소
               </button>
               <button
-                className="px-6 py-2 bg-[#3A3ADB] text-white rounded-lg hover:bg-[#7a7c84] disabled:opacity-50 w-[238px] h-[55px]"
+                className="px-6 py-2 bg-[#3A3ADB] text-white rounded-lg hover:bg-[#2e2eb8] disabled:opacity-50 w-[238px] h-[55px]" // hover 색상 수정
                 onClick={handleRejectConfirm}
                 disabled={rejectMutation.isLoading}
               >
