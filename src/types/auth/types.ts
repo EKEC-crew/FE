@@ -39,7 +39,7 @@ export interface ResponseRefresh {
     isCompleted: boolean;
     gender: number;
     phone: string;
-    birthday: string;
+    birth: string;
     defaultImage: boolean;
   };
 }
