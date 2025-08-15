@@ -57,6 +57,7 @@ export const useFilterSync = ({
     const params = new URLSearchParams(location.search);
 
     const regionIds = parseNumberArray(params.get("region"));
+
     let regionSidoLabel = params.get("regionSido") || "";
     let regionGuLabel = params.get("regionGu") || "";
 
@@ -78,8 +79,8 @@ export const useFilterSync = ({
       activity: parseNumberArray(params.get("activity")),
       style: parseNumberArray(params.get("style")),
       regionIds,
-      regionSido: "",
-      regionGu: "",
+      regionSido: regionSidoLabel,
+      regionGu: regionGuLabel,
       age: params.get("age") ? Number(params.get("age")) : null,
       gender: params.get("gender") ? Number(params.get("gender")) : null,
     };
