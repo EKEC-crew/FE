@@ -92,7 +92,12 @@ export const createProfileApi = async (
 
   const response = await authApi.post<ResponseCreateProfile>(
     "/auth/profile",
-    form
+    form,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    }
   );
   return response.data;
 };
