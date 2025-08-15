@@ -1,203 +1,102 @@
-import { useNavigate, useParams } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-// import { ChevronRight } from "lucide-react";
-import { fetchAlbumList, uploadAlbumImage } from "../../apis/album";
-import { fetchMyRole as fetchMyRoleDetail } from "./constants";
-import { useEffect, useRef, useState } from "react";
-import crewBanner from "../../assets/logo/img_crew_banner.svg";
+import { useRef, useState, useEffect } from "react";
+import CrewBanner from "../../assets/logo/img_crew_banner.svg";
 
-const Album: React.FC = () => {
-  const qc = useQueryClient();
-  const navigate = useNavigate();
-  const { crewId } = useParams();
-  const base = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
-  const imageBase = base.replace(/\/api$/, "");
+function Album() {
+  // 타일별 미리보기 URL
+  const [preview, setPreview] = useState<Record<number, string>>({});
+  // 타일별 파일 인풋 ref
+  const inputRefs = useRef<HTMLInputElement[]>([]);
 
-  const { data: items = [], isLoading } = useQuery({
-    queryKey: ["album", crewId],
-    queryFn: () => fetchAlbumList(crewId!),
-    enabled: !!crewId,
-    staleTime: 1000 * 60,
-  });
-
-  // 업로드 권한
-  const { data: myRole } = useQuery({
-    queryKey: ["myRole", crewId],
-    queryFn: () => fetchMyRoleDetail(crewId!),
-    enabled: !!crewId,
-    staleTime: 1000 * 60 * 2,
-    retry: false,
-  });
-  const canUpload = myRole === "LEADER" || myRole === "MANAGER";
-
-  const { mutate: upload, isPending } = useMutation({
-    mutationFn: (file: File) => uploadAlbumImage(crewId!, file),
-    onSuccess: async () => {
-      await qc.invalidateQueries({ queryKey: ["album", crewId] });
-    },
-    onError: (e: any) => alert(e?.message || "업로드 실패"),
-  });
-
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [targetSlot, setTargetSlot] = useState<number | null>(null);
-
-  // slotIndex -> objectURL
-  const [previews, setPreviews] = useState<Record<number, string>>({});
-
-  // ObjectURL 정리
   useEffect(() => {
     return () => {
-      Object.values(previews).forEach((url) => URL.revokeObjectURL(url));
+      Object.values(preview).forEach((u) => URL.revokeObjectURL(u));
     };
-  }, [previews]);
+  }, [preview]);
 
-  const onPick = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const openPicker = (idx: number) => inputRefs.current[idx]?.click();
+
+  const onPick = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
-    // 같은 파일 다시 고를 수 있도록 초기화
-    e.currentTarget.value = "";
-
-    if (!f || targetSlot == null) return;
-
-    // 간단한 클라이언트 검증(선택)
+    e.currentTarget.value = ""; // 같은 파일 재선택 허용
+    if (!f) return;
     if (!f.type.startsWith("image/")) {
-      alert("이미지 파일만 업로드할 수 있어요.");
+      alert("이미지 파일만 가능합니다.");
       return;
     }
-
-    // 이전 URL 정리 후, 새 URL 등록
-    setPreviews((prev) => {
-      const prevUrl = prev[targetSlot];
-      if (prevUrl) URL.revokeObjectURL(prevUrl);
-      return { ...prev, [targetSlot]: URL.createObjectURL(f) };
+    setPreview((prev) => {
+      if (prev[idx]) URL.revokeObjectURL(prev[idx]);
+      return { ...prev, [idx]: URL.createObjectURL(f) };
     });
-
-    // 업로드
-    upload(f);
   };
 
-  // 고정 슬롯: 1행 배너+배너+보라, 2행 하늘색+배너+배너
-  const slots: Array<{ kind: "banner" | "square"; bg?: string }> = [
-    { kind: "banner" },
-    { kind: "banner" },
-    { kind: "square", bg: "bg-[#3A3ADB]" },
-    { kind: "square", bg: "bg-[#6EE7F0]" },
-    { kind: "banner" },
-    { kind: "banner" },
-  ];
-
-  // 헬퍼: 슬롯 렌더러
-  const renderTile = (
-    slot: { kind: "banner" | "square"; bg?: string },
-    globalIdx: number
-  ) => {
-    const apiSrc =
-      items[globalIdx]?.imageName
-        ? `${imageBase}/image/?type=0&fileName=${encodeURIComponent(items[globalIdx].imageName)}`
-        : "";
-    const src = previews[globalIdx] || apiSrc;
-
-    const isBanner = slot.kind === "banner";
-    const baseCls = isBanner ? "aspect-[3/2]" : "aspect-square";
-    const bg = slot.bg || "bg-indigo-50";
-
-    const clickable = canUpload && !isPending;
+  // 공용 타일
+  const Tile = ({
+    idx,
+    hasBanner = false,
+  }: {
+    idx: number;
+    hasBanner?: boolean;
+  }) => {
+    const src = preview[idx];
 
     return (
       <div
-        key={globalIdx}
-        className={`group relative rounded-2xl overflow-hidden ${baseCls} ${bg} ${clickable ? "cursor-pointer" : "cursor-default"}`}
-        onClick={() => {
-          if (!clickable) return;
-          setTargetSlot(globalIdx);
-          fileInputRef.current?.click();
-        }}
-        role={clickable ? "button" : undefined}
-        aria-disabled={!clickable}
+        className="relative rounded-xl bg-[#D9D9D9] overflow-hidden cursor-pointer w-full aspect-square flex items-center justify-center"
+        onClick={() => openPicker(idx)}
+        role="button"
+        aria-label={`tile-${idx}`}
       >
-        {/* 실제 이미지 */}
         {src ? (
-          <img
-            src={src}
-            alt="앨범"
-            className="w-full h-full object-cover"
-            onError={(e) => (e.currentTarget.style.display = "none")}
-          />
-        ) : slot.kind === "banner" ? (
-          <img src={crewBanner} alt="배너" className="w-full h-full object-cover" />
+          <img src={src} alt="preview" className="w-full h-full object-cover" />
+        ) : hasBanner ? (
+          <img src={CrewBanner} alt="crew banner" className="w-full h-full object-cover" />
         ) : (
-          // 스퀘어 타일에서 이미지/배너가 없을 때 비어있는 자리 표현
-          <div className="w-full h-full flex items-center justify-center text-white/90 font-semibold">
-            +
+          <div className="w-full h-full flex items-center justify-center">
+            <span className="text-gray-400 text-3xl leading-none">+</span>
           </div>
         )}
 
-        {/* 업로드 가능 시 오버레이 힌트 */}
-        {clickable && (
-          <div className="pointer-events-none absolute inset-0 hidden group-hover:flex items-center justify-center bg-black/30">
-            <span className="text-white text-sm font-semibold">이미지 선택</span>
-          </div>
-        )}
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          ref={(el) => {
+            if (el) inputRefs.current[idx] = el;
+          }}
+          onChange={(e) => onPick(idx, e)}
+        />
       </div>
     );
   };
 
   return (
     <section className="w-full">
-      {/* 1행: 정보카드(1열) + 썸네일 3개(2-4열) = 총 4열 */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 mb-3">
-        {/* 좌측 정보 카드 (1열) */}
-        <div className="bg-white rounded-2xl p-9 flex flex-col justify-between">
-          <div>
-            <h3 className="text-xl font-extrabold text-gray-900">크루 활동 미리보기</h3>
-            <h4 className="text-xl font-bold text-gray-900">앨범</h4>
-            <p className="text-sm text-gray-500">크루원의 활동 사진으로 활동 맛보기</p>
-          </div>
+      <h2 className="text-2xl font-bold mb-4 p-3">앨범</h2>
 
-          <div className="flex items-center gap-3 pt-6">
-            <button
-              onClick={() => navigate(`/crew/${crewId}/album`)}
-              className="inline-flex items-center gap-2 py-1.5 px-7 rounded-xl bg-[#373EE7] text-white text-sm font-semibold hover:opacity-90"
-            >
-              전체보기
-            </button>
+      {/* 부모 컨테이너: 가로폭 제한 + 가운데 정렬 */}
+      <div className="max-w-5xl mx-auto rounded-2xl bg-[#F6F7FB] p-8">
+        {/* 모바일 1열 → sm부터 3열 */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {/* 각 칸 중앙정렬 + sm부터 2/3 크기 */}
+          <div className="flex justify-center">
+            <div className="w-full sm:w-2/3">
+              <Tile idx={0} hasBanner />
+            </div>
+          </div>
+          <div className="flex justify-center">
+            <div className="w-full sm:w-2/3">
+              <Tile idx={1} />
+            </div>
+          </div>
+          <div className="flex justify-center">
+            <div className="w-full sm:w-2/3">
+              <Tile idx={2} />
+            </div>
           </div>
         </div>
-
-        {/* 1행 썸네일 3개 (2-4열) */}
-        {isLoading ? (
-          <div className="lg:col-span-3 text-center text-gray-500 py-12">로딩중…</div>
-        ) : !isLoading && items.length === 0 && Object.keys(previews).length === 0 ? (
-          <div className="lg:col-span-3 text-center text-gray-400 py-12">
-            아직 등록된 사진이 없습니다.
-          </div>
-        ) : (
-          <>
-            {slots.slice(0, 3).map((slot, i) => (
-              <div key={i}>{renderTile(slot, i)}</div>
-            ))}
-          </>
-        )}
       </div>
-
-      {/* 2행: 썸네일 3개 = 총 3열 */}
-      {!isLoading && (items.length > 0 || Object.keys(previews).length > 0) && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-          {slots.slice(3).map((slot, i) => (
-            <div key={i + 3}>{renderTile(slot, i + 3)}</div>
-          ))}
-        </div>
-      )}
-
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={onPick}
-        disabled={isPending}
-      />
     </section>
   );
-};
+}
 
 export default Album;
