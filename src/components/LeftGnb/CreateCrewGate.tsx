@@ -2,7 +2,7 @@ import { Navigate, useNavigate } from "react-router-dom";
 import Modal from "../common/Modal";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useEffect } from "react";
-
+import modalImg from "../../assets/icons/img_graphic2_340.svg";
 const CREATE_PATH = "/crewCreatePage";
 const LOGIN_PATH = "/signIn";
 
@@ -34,10 +34,13 @@ const CreateCrewGate = () => {
 
   return (
     <Modal onClose={onCancel} maxWidth="max-w-125" padding="p-6">
-      <h3 className="text-2xl font-bold my-3">로그인이 필요합니다</h3>
-      <p className="text-lg text-[#5E6068] mb-6">
-        크루를 만들려면 로그인해 주세요
-      </p>
+      <div className="flex flex-col items-center justify-center">
+        <img src={modalImg} className="h-[340px] w-[340px]" />
+        <h3 className="text-2xl font-bold my-3">로그인이 필요합니다</h3>
+        <p className="text-lg text-[#5E6068] mb-6">
+          크루를 만들려면 로그인해 주세요
+        </p>
+      </div>
       <div className="flex gap-3 w-full">
         <button
           type="button"
