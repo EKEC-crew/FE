@@ -2,10 +2,8 @@ import { useRef, useState, useEffect } from "react";
 import CrewBanner from "../../assets/logo/img_crew_banner.svg";
 
 function Album() {
-  // 타일별 미리보기 URL
   const [preview, setPreview] = useState<Record<number, string>>({});
-  // 타일별 파일 인풋 ref
-  const inputRefs = useRef<HTMLInputElement[]>([]);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   useEffect(() => {
     return () => {
@@ -17,7 +15,7 @@ function Album() {
 
   const onPick = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
-    e.currentTarget.value = ""; // 같은 파일 재선택 허용
+    e.currentTarget.value = "";
     if (!f) return;
     if (!f.type.startsWith("image/")) {
       alert("이미지 파일만 가능합니다.");
@@ -29,27 +27,39 @@ function Album() {
     });
   };
 
-  // 공용 타일
+  const Badge = ({ text }: { text: string }) => (
+    <span className="absolute -top-2 -left-2 rounded-lg bg-[#2F6BFF] text-white text-xs font-semibold px-2 py-1 shadow">
+      {text}
+    </span>
+  );
+
   const Tile = ({
     idx,
     hasBanner = false,
+    badge,
   }: {
     idx: number;
     hasBanner?: boolean;
+    badge?: string;
   }) => {
     const src = preview[idx];
-
     return (
       <div
-        className="relative rounded-xl bg-[#D9D9D9] overflow-hidden cursor-pointer w-full aspect-square flex items-center justify-center"
+        className="relative w-full aspect-square rounded-xl bg-[#D9D9D9] overflow-hidden cursor-pointer"
         onClick={() => openPicker(idx)}
         role="button"
         aria-label={`tile-${idx}`}
       >
+        {badge ? <Badge text={badge} /> : null}
+
         {src ? (
           <img src={src} alt="preview" className="w-full h-full object-cover" />
         ) : hasBanner ? (
-          <img src={CrewBanner} alt="crew banner" className="w-full h-full object-cover" />
+          <img
+            src={CrewBanner}
+            alt="crew banner"
+            className="w-full h-full object-cover transform scale-110"
+          />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
             <span className="text-gray-400 text-3xl leading-none">+</span>
@@ -60,9 +70,7 @@ function Album() {
           type="file"
           accept="image/*"
           className="hidden"
-          ref={(el) => {
-            if (el) inputRefs.current[idx] = el;
-          }}
+          ref={(el) => { inputRefs.current[idx] = el; }}
           onChange={(e) => onPick(idx, e)}
         />
       </div>
@@ -71,28 +79,19 @@ function Album() {
 
   return (
     <section className="w-full">
-      <h2 className="text-2xl font-bold mb-4 p-3">앨범</h2>
+      <h2 className="text-2xl font-bold mb-4 px-4">앨범</h2>
 
-      {/* 부모 컨테이너: 가로폭 제한 + 가운데 정렬 */}
-      <div className="max-w-5xl mx-auto rounded-2xl bg-[#F6F7FB] p-8">
-        {/* 모바일 1열 → sm부터 3열 */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {/* 각 칸 중앙정렬 + sm부터 2/3 크기 */}
-          <div className="flex justify-center">
-            <div className="w-full sm:w-2/3">
-              <Tile idx={0} hasBanner />
-            </div>
-          </div>
-          <div className="flex justify-center">
-            <div className="w-full sm:w-2/3">
-              <Tile idx={1} />
-            </div>
-          </div>
-          <div className="flex justify-center">
-            <div className="w-full sm:w-2/3">
-              <Tile idx={2} />
-            </div>
-          </div>
+      <div className="w-full rounded-2xl bg-[#F6F7FB] p-6 md:p-8 shadow-sm">
+        <div
+          className="
+            grid w-full
+            grid-cols-[repeat(auto-fit,minmax(9rem,1fr))]
+            gap-4 md:gap-6
+          "
+        >
+          <Tile idx={0} hasBanner badge="6-1" />
+          <Tile idx={1} />
+          <Tile idx={2} />
         </div>
       </div>
     </section>
