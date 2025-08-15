@@ -10,9 +10,10 @@ const tabItems = [
       "/crew/:crewId/applicants",
     ],
   },
+  { name: "공지", path: "/crew/:crewId/notice" },
   { name: "일정", path: "/crew/:crewId/schedule" },
   { name: "리뷰", path: "/crew/:crewId/review" },
-  { name: "앨범", path: "/crew/:crewId/album" },
+
   { name: "게시판", path: "/crew/:crewId/bulletin" },
 ];
 
