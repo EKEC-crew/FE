@@ -9,6 +9,7 @@ import {
   Transition,
 } from "@headlessui/react";
 import { Fragment } from "react";
+import { useAuthStore } from "../../../store/useAuthStore";
 
 const carriers = ["SKT", "KT", "LG U+", "알뜰폰"];
 
@@ -30,7 +31,7 @@ const PhoneNumEdit = ({ onPassClick }: PhoneNumEditProps) => {
   const phone = watch("phone");
   const isPhoneValid = /^010\d{8}$/.test(phone);
   const isPassActive = carrier !== "" && isPhoneValid;
-
+  const { user } = useAuthStore();
   return (
     <div className="space-y-2">
       <label className="block font-semibold text-lg">전화번호</label>
@@ -94,7 +95,7 @@ const PhoneNumEdit = ({ onPassClick }: PhoneNumEditProps) => {
             render={({ field }) => (
               <Input
                 type="phoneNum"
-                placeholder="01012345678"
+                placeholder={user?.phone}
                 value={field.value || ""}
                 onChange={(e) =>
                   field.onChange(e.target.value.replace(/[^0-9]/g, ""))

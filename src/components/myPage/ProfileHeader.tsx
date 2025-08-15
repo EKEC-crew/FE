@@ -1,16 +1,17 @@
 import noProfileImage from "../../assets/icons/ic_logo graphic_74.svg";
 import camera from "../../assets/icons/ic_line_Camera.svg";
+import { useAuthStore } from "../../store/useAuthStore";
 
-interface Props {
-  profileImg: string;
-  nickname: string;
-  name: string;
-}
+export default function ProfileHeader() {
+  const { user } = useAuthStore(); // ✅ 컴포넌트 내부에서 Hook 호출
 
-export default function ProfileHeader({ profileImg, nickname, name }: Props) {
   const handleProfileClick = () => {
     alert("프로필 이미지 변경");
   };
+  //이미지로드 가공
+  const profileimageUrl = user?.profileImage
+    ? `${import.meta.env.VITE_API_BASE_URL}/image/?type=1&fileName=${user?.profileImage}`
+    : "";
 
   return (
     <div className="p-4 text-center">
@@ -20,7 +21,7 @@ export default function ProfileHeader({ profileImg, nickname, name }: Props) {
           className="w-full h-full bg-[#ECECFC] rounded-full flex items-center justify-center overflow-hidden"
         >
           <img
-            src={profileImg ? profileImg : noProfileImage}
+            src={profileimageUrl ? profileimageUrl : noProfileImage}
             alt="프로필 이미지"
             className="w-[4.625rem] h-[4.625rem]"
           />
@@ -34,8 +35,8 @@ export default function ProfileHeader({ profileImg, nickname, name }: Props) {
         </button>
       </div>
 
-      <div className="text-[38px] font-bold text-black">{nickname}</div>
-      <div className="text-[18px] text-gray-500">{name}</div>
+      <div className="text-[38px] font-bold text-black">{user?.nickname}</div>
+      <div className="text-[18px] text-gray-500">{user?.name}</div>
     </div>
   );
 }

@@ -13,6 +13,8 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { createNotice } from "../constants";
+import { useQuery } from "@tanstack/react-query";
+import { fetchMyRole as fetchMyRoleDetail } from "../../constants";
 
 const PostNoticeForm = () => {  
   const navigate = useNavigate();
@@ -27,8 +29,29 @@ const PostNoticeForm = () => {
   const [allowPrivateComment, setAllowPrivateComment] = useState(false);
   const [allowShare, setAllowShare] = useState(false);
   const queryClient = useQueryClient();
+  const { data: myRole } = useQuery({
+    queryKey: ["myRole", crewId],
+    queryFn: () => fetchMyRoleDetail(crewId!),
+    enabled: !!crewId,
+    staleTime: 1000 * 60 * 2,
+    retry: false,
+  });
+  const canPost = myRole === "LEADER" || myRole === "MANAGER";
 
   const handleSubmit = async () => {
+    console.log("=== 공지 작성 시도 디버깅 ===");
+    console.log("crewId:", crewId);
+    console.log("myRole 원본:", myRole);
+  console.log("myRole type:", typeof myRole);
+  console.log("myRole JSON:", JSON.stringify(myRole));
+    console.log("myRole 원본:", myRole);
+    console.log("canPost:", canPost);
+    console.log("title:", title.trim());
+    console.log("content length:", content.trim().length);
+    console.log("isRequired:", isRequired);
+    console.log("allowComment:", allowComment);
+    console.log("================================");
+
     if (!title.trim() || !content.trim()) {
       alert("제목과 내용을 입력해주세요.");
       return;
@@ -39,10 +62,18 @@ const PostNoticeForm = () => {
       return;
     }
 
+    if (!canPost) {
+      alert("공지 작성 권한이 없습니다. 크루 멤버인지 확인하세요.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
-      const res = await createNotice(crewId, title.trim(), content.trim());
+      const res = await createNotice(crewId, title.trim(), content.trim(), {
+        isRequired,
+        allowComment,
+      });
       if (res?.resultType !== "SUCCESS") {
         throw new Error(res?.message || "공지사항 등록에 실패했습니다.");
       }
@@ -98,7 +129,7 @@ const PostNoticeForm = () => {
               <NoticeAbout contentHtml={content} />
               <FeeSection {...{ fee, setFee }} />
               <ImageAttachment onValueChange={setImages} />
-              <SubmitButton onClick={handleSubmit} disabled={isSubmitting} />
+              <SubmitButton onClick={handleSubmit} disabled={isSubmitting || !canPost} />
             </div>
           </div>
         </div>
