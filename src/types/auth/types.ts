@@ -37,6 +37,10 @@ export interface ResponseRefresh {
     nickname: string;
     profileImage: string;
     isCompleted: boolean;
+    gender: number;
+    phone: string;
+    birth: string;
+    defaultImage: boolean;
   };
 }
 

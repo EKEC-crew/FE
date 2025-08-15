@@ -182,3 +182,34 @@ export interface ApplicantsAll {
   totalCount: number;
   all: Applicant[];
 }
+
+// 내가 지원한 크루 타입 정의
+export type ApplyStatus = 0 | 1;
+// 0: 미승인, 1: 승인,
+export type AppliedItem = {
+  applyId: number;
+  crewId: number;
+  crewName: string;
+  crewImage: string | null;
+  crewContent: string;
+  status: ApplyStatus;
+  statusLabel: string; // "미승인" 등 서버에서 내려준 라벨
+  appliedAt: string; // ISO
+};
+
+export type AppliedListSuccess = {
+  totalCount: number;
+  items: AppliedItem[];
+};
+
+export type AppliedListResponse =
+  | {
+      resultType: "SUCCESS";
+      error: null;
+      success: AppliedListSuccess;
+    }
+  | {
+      resultType: "FAIL";
+      error: { errorCode: string; reason: string };
+      success?: never;
+    };
