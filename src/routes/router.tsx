@@ -42,6 +42,8 @@ import ApplyPage from "../pages/apply";
 import ApplicationDetailPage from "../pages/apply/ApplicationDetailPage";
 import ProtectedRoute from "./protectedRouter";
 
+import CreateCrewGate from "../components/LeftGnb/CreateCrewGate";
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -77,6 +79,15 @@ const router = createBrowserRouter([
       },
 
       /* ---------- 크루 상세 (대부분 공개) ---------- */
+      {
+        path: "createCrewGate",
+        children: [
+          {
+            index: true,
+            element: <CreateCrewGate />,
+          },
+        ],
+      },
       {
         path: "crew/:crewId",
         children: [

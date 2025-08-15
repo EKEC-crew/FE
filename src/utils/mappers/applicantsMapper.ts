@@ -7,7 +7,7 @@ export function mapApplicants(dto: ApplicantsDTO): ApplicantsAll {
   return {
     totalCount: box?.totalCount ?? list.length,
     all: list.map((it) => ({
-      applyid: it.applyId, // 그대로 네 키에 맞춤
+      applyid: it.applyId,
       nickname: it.nickname,
       appliedAt: it.appliedAt,
       ProfileImage: it.profileImage ?? null,

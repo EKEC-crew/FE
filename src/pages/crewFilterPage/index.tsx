@@ -14,14 +14,14 @@ import { useNavigate } from "react-router-dom";
 import { useCrewFilters } from "../../hooks/crewFilter/useCrewFilters.ts";
 import { buildFilterQuery } from "../../utils/crewFilter/buildFilterQuery.ts";
 
-const crewFilterPage = () => {
+const CrewFilterPage = () => {
   const navigate = useNavigate();
 
   const { filters, setFilters, isFilterSelected } = useCrewFilters();
 
   const handleSearch = () => {
     const query = buildFilterQuery(filters);
-    navigate(`/crewListPage?${query}`);
+    navigate({ pathname: "/crewListPage", search: `?${query}` });
   };
 
   return (
@@ -78,11 +78,13 @@ const crewFilterPage = () => {
             <RegionSelectDropdown
               label="지역"
               regions={regionOptions}
-              onChange={(sido, gu) =>
+              valueIds={filters.regionIds}
+              onChangeIds={(ids) =>
                 setFilters((prev) => ({
                   ...prev,
-                  regionSido: sido,
-                  regionGu: gu,
+                  regionIds: ids,
+                  regionSido: "",
+                  regionGu: "",
                 }))
               }
             />
@@ -108,6 +110,7 @@ const crewFilterPage = () => {
         {/* 크루 찾아보기 버튼 */}
         <div className="w-full flex justify-center mt-20  px-18">
           <button
+            type="button"
             disabled={!isFilterSelected()}
             onClick={handleSearch}
             className={`w-full h-17 text-[1.675rem] font-semibold rounded-lg 
@@ -125,4 +128,4 @@ const crewFilterPage = () => {
   );
 };
 
-export default crewFilterPage;
+export default CrewFilterPage;

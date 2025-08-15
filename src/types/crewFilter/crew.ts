@@ -6,4 +6,5 @@ export interface CrewFilters {
   regionGu: string;
   age: number | null;
   gender: number | null;
+  regionIds: number[];
 }

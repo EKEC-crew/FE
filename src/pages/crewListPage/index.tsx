@@ -1,17 +1,23 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CrewCardList from "../../components/crewList/CrewCardList";
 import CrewFilterBar from "../../components/crewList/CrewFilterBar";
 import CrewSortBar from "../../components/crewList/CrewSortBar";
 import Pagination from "../../components/crewList/Pagination";
 import cautionIcon from "../../assets/icons/img_graphic_320.svg";
 import type { CrewFilter } from "../../components/crewList/CrewFilterBar";
-import { useNavigate } from "react-router-dom";
-import type { Crew } from "../../types/crewCreate/crew";
-import { API } from "../../apis/axios";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useFilterSync } from "../../hooks/crewList/useFilterSync";
+import { filtersAreEmpty } from "../../utils/crewFilter/filtersAreEmpty";
+import { useCrewSearchDetail } from "../../hooks/crewList/useCrewSearchDetail";
+import { buildDetailQS } from "../../utils/crewFilter/buildCrewListQs";
+import { useInternalSetters } from "../../hooks/crewList/useInternalSetters";
+import { useUrlSync } from "../../hooks/crewList/useUrlSync";
+
+const PAGE_SIZE = 10;
 
 const CrewListPage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [filters, setFilters] = useState<CrewFilter>({
     category: [],
@@ -21,111 +27,112 @@ const CrewListPage = () => {
     regionGu: "",
     age: null,
     gender: null,
+    regionIds: [],
   });
 
   const [page, setPage] = useState(1);
   const [sort, setSort] = useState(2);
+  const [name, setName] = useState<string>("");
   const [headcount, setHeadcount] = useState<number | null>(null);
 
-  const [crews, setCrews] = useState<Crew[]>([]);
-  const [totalPages, setTotalPages] = useState<number>(1);
-  const [totalCount, setTotalCount] = useState(0);
+  const [hydrated, setHydrated] = useState(false);
 
-  // url 동기화
-  useFilterSync({ setFilters, setPage, setSort, setHeadcount });
+  // 내부 변경 인지 훅
+  const { flagRef: internalChangeRef, wrap } = useInternalSetters();
 
-  // 쿼리 파라미터 생성
-  const buildQueryParams = (
-    filters: CrewFilter,
-    page: number,
-    sort: number,
-    headcount: number | null
-  ) => {
-    const queryParams = new URLSearchParams();
+  const setFiltersI = useCallback(wrap(setFilters), [wrap, setFilters]);
+  const setSortI = useCallback(wrap(setSort), [wrap, setSort]);
+  const setHeadcountI = useCallback(wrap(setHeadcount), [wrap, setHeadcount]);
+  const setPageI = useCallback(wrap(setPage), [wrap, setPage]);
 
-    if (filters.category.length > 0)
-      queryParams.append("category", filters.category.join(","));
-    if (filters.activity.length > 0)
-      queryParams.append("activity", filters.activity.join(","));
-    if (filters.style.length > 0)
-      queryParams.append("style", filters.style.join(","));
+  // URL -> 상태 (초기/ 뒤로가기)
+  useFilterSync({
+    setFilters,
+    setPage,
+    setSort,
+    setHeadcount,
+    setName,
+    onHydrated: () => setHydrated(true),
+  });
 
-    if (filters.regionSido)
-      queryParams.append("regionSido", filters.regionSido);
-    if (filters.regionGu) queryParams.append("regionGu", filters.regionGu);
+  // 상태 → URL (replace)
+  const qs = useMemo(
+    () =>
+      buildDetailQS({
+        page,
+        sort,
+        name,
+        category: filters.category,
+        activity: filters.activity,
+        style: filters.style,
+        regionSido: filters.regionSido || undefined,
+        regionGu: filters.regionGu || undefined,
+        regionIds: filters.regionIds,
+        age: filters.age ?? undefined,
+        gender: filters.gender ?? undefined,
+        capacity: headcount ?? undefined,
+      }),
+    [page, sort, name, filters, headcount]
+  );
 
-    if (filters.age !== null && filters.age !== undefined)
-      queryParams.append("age", filters.age.toString());
-    if (filters.gender !== null && filters.gender !== undefined)
-      queryParams.append("gender", filters.gender.toString());
+  useUrlSync({
+    hydrated,
+    locationSearch: location.search,
+    navigate: (path: string, opts: { replace: boolean }) =>
+      navigate(path, opts),
+    qs,
+    isInternalRef: internalChangeRef,
+  });
 
-    if (headcount != null && headcount > 0)
-      queryParams.append("capacity", String(headcount));
+  // 데이터 가져오기 (react-query)
+  const { data } = useCrewSearchDetail({
+    name,
+    category: filters.category,
+    activity: filters.activity,
+    style: filters.style,
+    regionSido: filters.regionSido || undefined,
+    regionGu: filters.regionGu || undefined,
+    regionIds: filters.regionIds,
+    age: filters.age,
+    gender: filters.gender,
+    capacity: headcount,
+    page,
+    sort,
+  });
 
-    queryParams.append("page", page.toString());
-    queryParams.append("sort", sort.toString());
+  const crews = data?.crews ?? [];
+  const totalCount = data?.count ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
-    return queryParams;
-  };
-  const PAGE_SIZE = 10;
-
-  // 크루 데이터 불러오기
-  const fetchCrews = async () => {
-    try {
-      const queryParams = buildQueryParams(filters, page, sort, headcount);
-      console.log("보내는 쿼리", queryParams.toString());
-      const response = await API.get("/crew/search/detail", {
-        params: queryParams,
-      });
-
-      console.log("응답 전체 구조 확인", response.data);
-
-      const { crews, count } = response.data.data;
-      setCrews(crews);
-      setTotalCount(count);
-      const totalPages = Math.max(1, Math.ceil(count / PAGE_SIZE));
-      setTotalPages(totalPages);
-
-      if (page > totalPages) {
-        setPage(totalPages);
-      }
-    } catch (err) {
-      console.error("크루 불러오기 실패", err);
-    }
-  };
-
+  // 필터 변경 시 페이지 1로 초기화
   useEffect(() => {
-    setPage(1); // 필터가 바뀔 때 페이지를 1로 초기화
+    if (page !== 1) setPageI(1);
   }, [filters, sort, headcount]);
 
-  // 상태 바뀌면 api 호출
+  // 페이지 범위 보정
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
+
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
-    fetchCrews();
-  }, [filters, page, sort, headcount]);
-
-  const [resetSignal, setResetSignal] = useState<boolean>(false);
+  }, [qs]);
 
   const handleReset = () => {
-    setFilters({
+    setFiltersI({
       category: [],
       activity: [],
       style: [],
       regionSido: "",
       regionGu: "",
+      regionIds: [],
       age: null,
       gender: null,
     });
     setHeadcount(null);
-    setSort(2); // 인기순
+    setSort(2); // 활동 많은 순
     setPage(1);
-    setResetSignal((prev) => !prev); // 내부 초기화
-
-    // setTimeout(() => {
-    //   fetchCrews();
-    // }, 0);
-
-    navigate("/crewListPage?page=1&sort=2", { replace: true });
+    setName("");
   };
 
   return (
@@ -133,23 +140,26 @@ const CrewListPage = () => {
       <div className="w-full max-w-[1620px] px-50 lg:px-[150px] pt-30 pb-20">
         {/* 헤더 */}
         <h2 className="text-4xl font-semibold text-[#000000] mb-6">
-          맞춤 크루를 찾아보세요!
+          {!name && filtersAreEmpty(filters) && page === 1 && sort === 2
+            ? "맞춤 크루를 찾아보세요!"
+            : name
+              ? `‘${name}’ 검색 결과`
+              : "맞춤 크루를 찾아봤어요!"}
         </h2>
 
         {/* 필터 옵션 */}
         <CrewFilterBar
           filters={filters}
-          setFilters={setFilters}
+          setFilters={setFiltersI}
           onReset={handleReset}
-          resetSignal={resetSignal}
         />
 
         {/* 크루 개수 + 정렬 옵션 */}
         <CrewSortBar
           sort={sort}
-          setSort={setSort}
+          setSort={setSortI}
           headcount={headcount}
-          setHeadcount={setHeadcount}
+          setHeadcount={setHeadcountI}
           totalCount={totalCount}
         />
 
@@ -171,7 +181,7 @@ const CrewListPage = () => {
             <Pagination
               currentPage={page}
               totalPages={totalPages}
-              onPageChange={setPage}
+              onPageChange={setPageI}
             />
           </div>
         )}

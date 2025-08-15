@@ -3,6 +3,7 @@ import router from "./routes/router";
 import { RouterProvider } from "react-router-dom";
 import { useAuthStore } from "./store/useAuthStore";
 import { useEffect } from "react";
+import LoginRequiredModal from "./components/common/loginRequiredModal";
 
 function App() {
   const initAuth = useAuthStore((s) => s.initAuth);
@@ -13,6 +14,7 @@ function App() {
   return (
     <>
       <RouterProvider router={router} />
+      <LoginRequiredModal />
     </>
   );
 }

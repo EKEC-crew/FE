@@ -1,16 +1,17 @@
 // src/api/apiClient.ts
 import axios from "axios";
-import { refreshApi } from "./auth"; // 리프레시 API 함수
+import { refreshApi } from "./auth";
+import { useAuthStore } from "../store/useAuthStore";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// 공개 API (엑세스 토큰 없이도 되는 요청)
+// 공개 API
 export const API = axios.create({
   baseURL: BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // 쿠키 포함
+  withCredentials: true,
   xsrfCookieName: "XSRF-TOKEN",
   xsrfHeaderName: "X-XSRF-TOKEN",
 });
@@ -21,36 +22,38 @@ export const privateAPI = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true, // 쿠키 포함
+  withCredentials: true,
   xsrfCookieName: "XSRF-TOKEN",
   xsrfHeaderName: "X-XSRF-TOKEN",
 });
 
-// Authorization 헤더 주입 필요 없음 (httpOnly 쿠키 기반이라 우리가 접근 불가)
-
-// 응답 인터셉터: 401 발생 시 → refresh 요청 → 재요청 시도
+// 응답 인터셉터
 privateAPI.interceptors.response.use(
-  (response) => response, // 성공 그대로 통과
+  (response) => response,
   async (error) => {
+    console.log("🔥 인터셉터 에러 발생:", error.response?.status);
+
     const originalRequest = error.config;
 
-    // 401 에러 + 무한루프 방지용 플래그
     if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log("🔥 401 에러 감지!");
       originalRequest._retry = true;
 
       try {
-        // 리프레시 API 요청 (쿠키 기반)
         await refreshApi();
-
-        // 재요청만 해주면 됨 (서버가 새 accessToken을 쿠키에 세팅)
+        console.log("🔥 refresh 성공");
         return privateAPI(originalRequest);
       } catch (refreshError) {
-        // 리프레시 실패 = 로그인 필요
-        window.location.href = "/signIn";
+        console.log("🔥 refresh 실패, 홈으로 이동 + URL 파라미터");
+
+        // ✅ URL 파라미터로 모달 표시 신호
+        window.location.href = "/?needLogin=true";
+
+        useAuthStore.getState().forceLogout();
         return Promise.reject(refreshError);
       }
     }
 
-    return Promise.reject(error); // 그 외 에러는 그대로 던짐
+    return Promise.reject(error);
   }
 );
