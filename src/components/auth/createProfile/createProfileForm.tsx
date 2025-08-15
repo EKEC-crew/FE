@@ -44,10 +44,12 @@ const CreateProfileForm = () => {
     };
 
     const file = watchedValues.profileImage as File | null;
-    // 폼 데이터를 API 형식에 맞게 변환
+    const isValidFile = file && file instanceof File && file.size > 0;
+    const finalFile = isValidFile ? file : null;
+
     const profileData = {
-      profileImage: file,
-      defaultImage: !file,
+      profileImage: finalFile,
+      defaultImage: !finalFile,
       name: watchedValues.name,
       nickname: watchedValues.nickname || watchedValues.name,
       gender: convertGender(watchedValues.gender),
@@ -59,7 +61,6 @@ const CreateProfileForm = () => {
       await createProfileMutation.mutateAsync(profileData);
     } catch (error) {
       console.error("프로필 생성 실패:", error);
-      console.error("전송된 프로필 데이터:", profileData);
     }
   };
 

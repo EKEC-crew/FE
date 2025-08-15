@@ -16,12 +16,7 @@ export const useCreateProfile = () => {
     Error,
     RequestCreateProfile
   >({
-    onMutate: (variables) => {
-      console.log("전송할 profileData:", variables);
-    },
     mutationFn: async (profileData) => {
-      // 프로필 생성 후
-      console.log("프로필 생성 요청");
       const profileResponse = await createProfileApi(profileData);
       if (profileResponse.resultType !== "SUCCESS") {
         throw new Error(
@@ -29,8 +24,6 @@ export const useCreateProfile = () => {
         );
       }
 
-      // 리프레시 토큰 요청
-      console.log("토큰 갱신 요청");
       const refreshResponse = await refreshApi();
       if (refreshResponse.resultType !== "SUCCESS") {
         throw new Error(
@@ -43,8 +36,7 @@ export const useCreateProfile = () => {
         refresh: refreshResponse,
       };
     },
-    onSuccess: async ({ profile, refresh }) => {
-      console.log("프로필 생성 및 토큰 갱신 완료:", { profile, refresh });
+    onSuccess: async () => {
       await useAuthStore.getState().loadAvatar();
       navigate("/?showCompleteModal=true");
     },
