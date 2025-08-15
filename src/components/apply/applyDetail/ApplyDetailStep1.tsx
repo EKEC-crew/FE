@@ -112,10 +112,14 @@ export default function ApplyDetailStep1({
 
   // 지역
   const regionOpts = useMemo(() => {
+    // ★ allowedRegions가 빈 배열이면 빈 배열 반환 (아예 숨김)
+    if (!allowedRegions || allowedRegions.length === 0) return [];
+
     if (regionOptions.length > 0) {
       const normalized = normalizeOptions(regionOptions);
       return filterByAllowed(normalized, allowedRegions);
     }
+
     return allowedRegions.map((id) => ({
       label: `지역#${id}`,
       value: toNum(id),

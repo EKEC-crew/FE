@@ -29,7 +29,7 @@ const RootLayout = () => {
         />
         <main
           className={`
-            pt-16 flex-1 transition-all duration-300
+            pt-4 flex-1 transition-all duration-300
             ${isLargeScreen && isLeftGnbOpen ? "ml-[18.75rem]" : "ml-0"}
           `}
         >

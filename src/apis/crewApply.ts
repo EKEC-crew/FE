@@ -3,6 +3,8 @@ import type {
   ApiResponse,
   ApiSuccess,
   ApplicantsDTO,
+  AppliedListResponse,
+  AppliedListSuccess,
   ApplyRequestBody,
 } from "../types/apply/types";
 import { privateAPI } from "./axios";
@@ -130,3 +132,23 @@ export const getCrewInfo = async (
     throw error;
   }
 };
+
+// 내가 지원한 크루 조회 apis
+export type GetAppliedListParams = {
+  page?: number; // 1-base 또는 0-base는 백엔드 규약에 맞춰 조정
+  size?: number;
+};
+
+export async function getAppliedCrewList(
+  params?: GetAppliedListParams
+): Promise<AppliedListSuccess> {
+  const res = await privateAPI.get<AppliedListResponse>("/crew/apply/list", {
+    params,
+  });
+  // 서버 응답 포맷: { resultType, error, success }
+  if (res.data.resultType !== "SUCCESS" || !res.data.success) {
+    const msg = (res.data as any)?.error?.reason ?? "지원 내역 조회 실패";
+    throw new Error(msg);
+  }
+  return res.data.success;
+}

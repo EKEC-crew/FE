@@ -86,6 +86,7 @@ const BirthDropDown = ({
           options={monthOptions}
           value={month}
           onChange={setMonth}
+          disabled={disabled}
         />
       </div>
       <div className="flex-[130]">
