@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import resetIcon from "../../assets/icons/ic_reset_28.svg";
 import downIcon28 from "../../assets/icons/ic_Down_28.svg";
 import closeIcon from "../../assets/icons/ic_dissmiss_20.svg";
+import { getRegionId } from "../../utils/regions";
+import { useRegionSelection } from "../../hooks/crewList/useRegionSelection";
+import { useOutsideClick } from "../../hooks/crewList/useOutsideClick";
 
 interface RegionMap {
   [city: string]: string[];
@@ -10,74 +13,44 @@ interface RegionMap {
 interface RegionSelectDropdownProps {
   label: string;
   regions: RegionMap;
-  onChange: (city: string, gu: string) => void;
-  resetSignal?: boolean;
+  onChange?: (city: string, gu: string) => void;
+  valueIds?: number[];
+  onChangeIds?: (ids: number[]) => void;
 }
 
 const RegionSelectDropdown = ({
   label,
   regions,
   onChange,
-  resetSignal,
+  valueIds,
+  onChangeIds,
 }: RegionSelectDropdownProps) => {
   const [open, setOpen] = useState(false);
-  const [selectedCity, setSelectedCity] = useState<string>(""); // 선택된 시/도
-  const [selectedRegions, setSelectedRegions] = useState<
-    // 선택된 시/도와 구/군의 조합
-    { city: string; district: string }[]
-  >([]);
-  const ref = useRef<HTMLDivElement>(null); // 드롭다운 외부 클릭 감지용
+  const ref = useRef<HTMLDivElement>(null);
+  useOutsideClick(ref, () => setOpen(false));
 
-  useEffect(() => {
-    setSelectedCity("");
-    setSelectedRegions([]);
-  }, [resetSignal]);
+  const {
+    selectedCity,
+    selectedRegions,
+    selectCity,
+    toggleDistrict,
+    removeSelected,
+    reset,
+  } = useRegionSelection(valueIds);
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  const handleCitySelect = (city: string) => {
-    setSelectedCity(city);
-  };
-
-  const handleDistrictToggle = (district: string) => {
-    const exists = selectedRegions.find(
-      (r) => r.city === selectedCity && r.district === district
-    );
-    if (exists) {
-      setSelectedRegions((prev) =>
-        prev.filter(
-          (r) => !(r.city === selectedCity && r.district === district)
-        )
-      );
-    } else {
-      setSelectedRegions((prev) => [...prev, { city: selectedCity, district }]);
-    }
-  };
-
-  const handleRemoveSelected = (city: string, district: string) => {
-    setSelectedRegions((prev) =>
-      prev.filter((r) => !(r.city === city && r.district === district))
-    );
-  };
-
-  const reset = () => {
-    setSelectedCity("");
-    setSelectedRegions([]);
-  };
+  const handleCitySelect = selectCity;
+  const handleDistrictToggle = toggleDistrict;
+  const handleRemoveSelected = removeSelected;
 
   const apply = () => {
     setOpen(false);
-    const first = selectedRegions[0];
-    if (first) {
-      onChange(first.city, first.district);
+    const ids = selectedRegions
+      .map(({ city, district }) => getRegionId(city, district))
+      .filter((n): n is number => Number.isFinite(n));
+    onChangeIds?.(ids);
+    if (!onChangeIds) {
+      const first = selectedRegions[0];
+      if (first) onChange?.(first.city, first.district);
     }
   };
 

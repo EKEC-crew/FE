@@ -37,7 +37,7 @@ const CreateSuccessModal = ({ open, onConfirm }: CreateSuccessModalProps) => {
 
         <button
           onClick={onConfirm}
-          className="w-full h-12 rounded-lg text-white text-xl font-semibold bg-[#3A3ADB]"
+          className="w-full h-12 rounded-lg text-white text-xl font-semibold bg-[#3A3ADB] cursor-pointer"
         >
           확인
         </button>

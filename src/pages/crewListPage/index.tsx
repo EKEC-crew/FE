@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import CrewCardList from "../../components/crewList/CrewCardList";
 import CrewFilterBar from "../../components/crewList/CrewFilterBar";
 import CrewSortBar from "../../components/crewList/CrewSortBar";
@@ -10,6 +10,8 @@ import { useFilterSync } from "../../hooks/crewList/useFilterSync";
 import { filtersAreEmpty } from "../../utils/crewFilter/filtersAreEmpty";
 import { useCrewSearchDetail } from "../../hooks/crewList/useCrewSearchDetail";
 import { buildDetailQS } from "../../utils/crewFilter/buildCrewListQs";
+import { useInternalSetters } from "../../hooks/crewList/useInternalSetters";
+import { useUrlSync } from "../../hooks/crewList/useUrlSync";
 
 const PAGE_SIZE = 10;
 
@@ -25,6 +27,7 @@ const CrewListPage = () => {
     regionGu: "",
     age: null,
     gender: null,
+    regionIds: [],
   });
 
   const [page, setPage] = useState(1);
@@ -33,6 +36,14 @@ const CrewListPage = () => {
   const [headcount, setHeadcount] = useState<number | null>(null);
 
   const [hydrated, setHydrated] = useState(false);
+
+  // 내부 변경 인지 훅
+  const { flagRef: internalChangeRef, wrap } = useInternalSetters();
+
+  const setFiltersI = useCallback(wrap(setFilters), [wrap, setFilters]);
+  const setSortI = useCallback(wrap(setSort), [wrap, setSort]);
+  const setHeadcountI = useCallback(wrap(setHeadcount), [wrap, setHeadcount]);
+  const setPageI = useCallback(wrap(setPage), [wrap, setPage]);
 
   // URL -> 상태 (초기/ 뒤로가기)
   useFilterSync({
@@ -56,6 +67,7 @@ const CrewListPage = () => {
         style: filters.style,
         regionSido: filters.regionSido || undefined,
         regionGu: filters.regionGu || undefined,
+        regionIds: filters.regionIds,
         age: filters.age ?? undefined,
         gender: filters.gender ?? undefined,
         capacity: headcount ?? undefined,
@@ -63,16 +75,14 @@ const CrewListPage = () => {
     [page, sort, name, filters, headcount]
   );
 
-  const lastQS = useRef<string>("");
-
-  useEffect(() => {
-    if (!hydrated) return;
-    if (qs === location.search.slice(1)) return;
-    if (qs !== lastQS.current) {
-      lastQS.current = qs;
-      navigate(`/crewListPage?${qs}`, { replace: true });
-    }
-  }, [hydrated, qs, location.search, navigate]);
+  useUrlSync({
+    hydrated,
+    locationSearch: location.search,
+    navigate: (path: string, opts: { replace: boolean }) =>
+      navigate(path, opts),
+    qs,
+    isInternalRef: internalChangeRef,
+  });
 
   // 데이터 가져오기 (react-query)
   const { data } = useCrewSearchDetail({
@@ -82,6 +92,7 @@ const CrewListPage = () => {
     style: filters.style,
     regionSido: filters.regionSido || undefined,
     regionGu: filters.regionGu || undefined,
+    regionIds: filters.regionIds,
     age: filters.age,
     gender: filters.gender,
     capacity: headcount,
@@ -93,8 +104,9 @@ const CrewListPage = () => {
   const totalCount = data?.count ?? 0;
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
+  // 필터 변경 시 페이지 1로 초기화
   useEffect(() => {
-    if (page !== 1) setPage(1); // 필터가 바뀔 때 페이지를 1로 초기화
+    if (page !== 1) setPageI(1);
   }, [filters, sort, headcount]);
 
   // 페이지 범위 보정
@@ -107,12 +119,13 @@ const CrewListPage = () => {
   }, [qs]);
 
   const handleReset = () => {
-    setFilters({
+    setFiltersI({
       category: [],
       activity: [],
       style: [],
       regionSido: "",
       regionGu: "",
+      regionIds: [],
       age: null,
       gender: null,
     });
@@ -120,8 +133,6 @@ const CrewListPage = () => {
     setSort(2); // 활동 많은 순
     setPage(1);
     setName("");
-
-    navigate("/crewListPage?page=1&sort=2", { replace: true });
   };
 
   return (
@@ -139,16 +150,16 @@ const CrewListPage = () => {
         {/* 필터 옵션 */}
         <CrewFilterBar
           filters={filters}
-          setFilters={setFilters}
+          setFilters={setFiltersI}
           onReset={handleReset}
         />
 
         {/* 크루 개수 + 정렬 옵션 */}
         <CrewSortBar
           sort={sort}
-          setSort={setSort}
+          setSort={setSortI}
           headcount={headcount}
-          setHeadcount={setHeadcount}
+          setHeadcount={setHeadcountI}
           totalCount={totalCount}
         />
 
@@ -170,7 +181,7 @@ const CrewListPage = () => {
             <Pagination
               currentPage={page}
               totalPages={totalPages}
-              onPageChange={setPage}
+              onPageChange={setPageI}
             />
           </div>
         )}

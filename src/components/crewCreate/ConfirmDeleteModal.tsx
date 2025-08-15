@@ -22,13 +22,13 @@ const ConfirmDeleteModal = ({
         <div className="flex gap-4 w-full">
           <button
             onClick={onCancel}
-            className="bg-[#D9DADD] text-[#5E6068] text-[26px] font-semibold w-full py-2 rounded-lg"
+            className="bg-[#D9DADD] text-[#5E6068] text-[26px] font-semibold w-full py-2 rounded-lg cursor-pointer"
           >
             취소
           </button>
           <button
             onClick={onConfirm}
-            className="bg-[#3A3ADB] text-white text-[26px] font-semibold w-full py-2 rounded-lg"
+            className="bg-[#3A3ADB] text-white text-[26px] font-semibold w-full py-2 rounded-lg cursor-pointer"
           >
             삭제
           </button>

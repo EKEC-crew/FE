@@ -1,4 +1,3 @@
-// layouts/RootLayout.tsx
 import { Outlet } from "react-router-dom";
 import LeftGnb from "../components/LeftGnb/LeftGnb";
 import TopGnb from "../components/TopGnb/TopGnb";

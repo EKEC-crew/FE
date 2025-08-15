@@ -20,17 +20,17 @@ export type CrewFilter = {
   regionGu: string;
   age: number | null;
   gender: number | null;
+  regionIds?: number[];
 };
 
 interface CrewFilterBarProps {
   filters: CrewFilter;
   setFilters: React.Dispatch<React.SetStateAction<CrewFilter>>;
   onReset: () => void;
-  resetSignal?: boolean;
 }
 
 const genderOptions = [
-  { label: "선택 안 함", value: null },
+  { label: "선택 안 함", value: 0 },
   { label: "남성", value: 1, icon: <img src={manIcon} alt="남성" /> },
   { label: "여성", value: 2, icon: <img src={womanIcon} alt="여성" /> },
 ];
@@ -39,7 +39,6 @@ const CrewFilterBar = ({
   filters,
   setFilters,
   onReset,
-  resetSignal,
 }: CrewFilterBarProps) => {
   return (
     <div className="flex gap-3 flex-wrap pb-8">
@@ -77,12 +76,15 @@ const CrewFilterBar = ({
       <RegionSelectDropdown
         label="지역"
         regions={regionOptions}
-        resetSignal={resetSignal}
-        onChange={(sido, gu) =>
+        onChange={() => {}}
+        valueIds={filters.regionIds}
+        // 다중 선택 ID 배열만 filters에 저장
+        onChangeIds={(ids) =>
           setFilters((prev) => ({
             ...prev,
-            regionSido: sido,
-            regionGu: gu,
+            regionIds: ids,
+            regionSido: "",
+            regionGu: "",
           }))
         }
       />

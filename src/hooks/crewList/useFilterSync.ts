@@ -1,3 +1,4 @@
+import { serverRegions } from "../../constants/serverRegions";
 import type { CrewFilter } from "../../components/crewList/CrewFilterBar";
 import { useLayoutEffect } from "react";
 import { useLocation } from "react-router-dom";
@@ -19,10 +20,17 @@ const filtersShallowEqual = (a: CrewFilter, b: CrewFilter) =>
   arraysEqual(a.category, b.category) &&
   arraysEqual(a.activity, b.activity) &&
   arraysEqual(a.style, b.style) &&
+  arraysEqual(a.regionIds ?? [], b.regionIds ?? []) &&
   a.regionSido === b.regionSido &&
   a.regionGu === b.regionGu &&
   a.age === b.age &&
   a.gender === b.gender;
+
+// id -> 라벨
+const idToRegion: Record<number, { sido: string; gu: string }> =
+  Object.fromEntries(
+    serverRegions.map((r) => [r.id, { sido: r.sido, gu: r.goo }])
+  );
 
 interface UseSyncFiltersProps {
   setFilters: React.Dispatch<React.SetStateAction<CrewFilter>>;
@@ -48,12 +56,30 @@ export const useFilterSync = ({
   useLayoutEffect(() => {
     const params = new URLSearchParams(location.search);
 
+    const regionIds = parseNumberArray(params.get("region"));
+    let regionSidoLabel = params.get("regionSido") || "";
+    let regionGuLabel = params.get("regionGu") || "";
+
+    const regionParam = params.get("region");
+    if (regionParam && /^\d+$/.test(regionParam)) {
+      const rec = idToRegion[Number(regionParam)];
+      if (rec) {
+        regionSidoLabel = rec.sido;
+        regionGuLabel = rec.gu;
+      } else {
+        // 알 수 없는 region id면 비워둠 (필요시 기본값 지정 가능)
+        regionSidoLabel = "";
+        regionGuLabel = "";
+      }
+    }
+
     const nextFilters: CrewFilter = {
       category: parseNumberArray(params.get("category")),
       activity: parseNumberArray(params.get("activity")),
       style: parseNumberArray(params.get("style")),
-      regionSido: params.get("regionSido") || "",
-      regionGu: params.get("regionGu") || "",
+      regionIds,
+      regionSido: "",
+      regionGu: "",
       age: params.get("age") ? Number(params.get("age")) : null,
       gender: params.get("gender") ? Number(params.get("gender")) : null,
     };

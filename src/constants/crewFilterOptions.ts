@@ -123,7 +123,7 @@ export const ageGroupOptions = [
 ];
 
 export const headcountOptions = [
-  { label: "선택 안 함", value: null },
+  { label: "선택 안 함", value: 0 },
   { label: "5명", value: 5 },
   { label: "10명", value: 10 },
   { label: "20명", value: 20 },

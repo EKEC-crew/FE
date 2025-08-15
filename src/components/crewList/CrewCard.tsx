@@ -1,8 +1,10 @@
 import type { Crew } from "../../types/crewCreate/crew";
 import starIcon from "../../assets/icons/ic_Star_36.svg";
 import defaultBanner from "../../assets/logo/img_crew_banner.svg";
+import { useNavigate } from "react-router-dom";
 
 const CrewCard = ({
+  id,
   name,
   description,
   capacity,
@@ -12,14 +14,29 @@ const CrewCard = ({
   crewActivity,
   crewStyle,
 }: Crew) => {
+  const navigate = useNavigate();
+
   const bannerSrc =
     bannerImage && bannerImage.trim()
       ? bannerImage.startsWith("http")
         ? bannerImage
         : `${import.meta.env.VITE_API_BASE_URL}/image/?type=0&fileName=${encodeURIComponent(bannerImage)}`
       : defaultBanner;
+
+  const goDetail = () => navigate(`/crew/${id}`);
+  const onKey = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      goDetail();
+    }
+  };
+
   return (
-    <div className="flex items-center w-full max-w-[1320px] h-auto bg-white rounded-xl border-2 border-[#D9DADD] p-4">
+    <div
+      onClick={goDetail}
+      onKeyDown={onKey}
+      className="flex items-center w-full max-w-[1320px] h-auto bg-white rounded-xl border-2 border-[#D9DADD] p-4 hover:-translate-y-0.5 duration-300 hover:shadow-xl cursor-pointer"
+    >
       {/* 배너 이미지 */}
       <div className="relative w-1/3 aspect-[3/2] rounded-lg overflow-hidden min-w-[280px] max-w-[360px]">
         <img

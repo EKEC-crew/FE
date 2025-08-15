@@ -29,6 +29,7 @@ import PostBulletinForm from "../components/detail/bulletin/PostForm/PostBulleti
 import ApplyPage from "../pages/apply";
 import ApplicationDetailPage from "../pages/apply/ApplicationDetailPage";
 import EditNoticeForm from "../components/detail/notice/detail/edit/EditNoticeForm";
+import CreateCrewGate from "../components/LeftGnb/CreateCrewGate";
 
 const router = createBrowserRouter([
   {
@@ -88,6 +89,15 @@ const router = createBrowserRouter([
           {
             index: true,
             element: <CrewCreatePage />,
+          },
+        ],
+      },
+      {
+        path: "createCrewGate",
+        children: [
+          {
+            index: true,
+            element: <CreateCrewGate />,
           },
         ],
       },

@@ -6,6 +6,10 @@ import useSearchController, {
 } from "../../hooks/useSearch/useSearchController";
 import { useCategoryStore } from "../../store/categoryStore";
 import { buildFreshQS } from "../../utils/crewFilter/buildCrewListQs";
+import SuggestList from "./SuggestList";
+
+import useCompactVisibility from "../../hooks/gnb/useCompactVisibility";
+import useSearchHotKeys from "@/hooks/gnb/useSearchHot";
 
 interface Props {
   variant: "large" | "compact";
@@ -15,61 +19,29 @@ export default function SearchBar({ variant }: Props) {
   const location = useLocation();
   const navigate = useNavigate();
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const [visible, setVisible] = useState(false);
+  const visible = useCompactVisibility(variant, location.pathname);
   const [open, setOpen] = useState(false);
   const [hasFocus, setHasFocus] = useState(false);
+  const [activeIndex, setActiveIndex] = useState<number>(-1);
+  const activeItemRef = useRef<HTMLLIElement | null>(null);
 
   const { selectedCategory, setCategory } = useCategoryStore();
-  const {
-    keyword,
-    setKeyword,
-    suggestions,
-    // handleSearch,
-    // handleSuggestionClick,
-  } = useSearchController();
+  const { keyword, setKeyword, suggestions } = useSearchController();
 
   useEffect(() => {
-    if (location.pathname === "/searchPage" && selectedCategory) {
+    if (location.pathname === "/searchPage" && selectedCategory)
       setKeyword(selectedCategory);
-    }
-
     if (location.pathname === "/") {
-      setCategory(""); // 전역 상태 초기화
-      setKeyword(""); // 검색창 입력값도 초기화
+      setCategory("");
+      setKeyword("");
     }
   }, [location.pathname, selectedCategory, setCategory, setKeyword]);
 
   useEffect(() => {
-    const isHome = location.pathname === "/";
-    if (variant === "compact") {
-      if (!isHome) {
-        setVisible(true);
-        return;
-      }
-      const handleScroll = () => {
-        const scrollTop =
-          window.pageYOffset || document.documentElement.scrollTop;
-        setVisible(scrollTop > 200); // 값은 원하는 만큼 조절
-      };
-
-      handleScroll();
-      window.addEventListener("scroll", handleScroll);
-      return () => window.removeEventListener("scroll", handleScroll);
-    } else {
-      setVisible(true);
-    }
-  }, [location.pathname, variant]);
-
-  // 포커스 감지: 캡처로 안정적으로
-  const onFocusCapture = () => setHasFocus(true);
-  const onBlurCapture = (e: React.FocusEvent<HTMLDivElement>) => {
-    const next = e.relatedTarget as Node | null;
-    if (!next || !e.currentTarget.contains(next)) setHasFocus(false);
-  };
-
-  // 자동열림: 포커스 + 제안 있을 때만
-  useEffect(() => {
-    setOpen(hasFocus && Boolean(keyword.trim()) && suggestions.length > 0);
+    const shouldOpen =
+      hasFocus && Boolean(keyword.trim()) && suggestions.length > 0;
+    setOpen(shouldOpen);
+    setActiveIndex(shouldOpen ? 0 : -1); // 첫번째가 기본
   }, [hasFocus, keyword, suggestions]);
 
   // 라우트 변경 시 닫기
@@ -77,9 +49,20 @@ export default function SearchBar({ variant }: Props) {
     setOpen(false);
   }, [location.pathname, location.search]);
 
+  useEffect(() => {
+    if (activeItemRef.current)
+      activeItemRef.current.scrollIntoView({ block: "nearest" });
+  }, [activeIndex]);
+
   if (!visible) return null;
 
-  // 항상 “처음 검색” 규칙: 이름만 OR 태그 하나만
+  const onFocusCapture = () => setHasFocus(true);
+  const onBlurCapture = (e: React.FocusEvent<HTMLDivElement>) => {
+    const next = e.relatedTarget as Node | null;
+    if (!next || !e.currentTarget.contains(next)) setHasFocus(false);
+  };
+
+  // 이름만 OR 태그 하나만
   const goToListFresh = (patch: {
     name?: string;
     category?: number;
@@ -89,7 +72,6 @@ export default function SearchBar({ variant }: Props) {
     const qs = buildFreshQS(patch);
     const target = `/crewListPage?${qs}`;
     const current = `${location.pathname}${location.search}`;
-
     if (current === target) {
       setOpen(false);
       return;
@@ -98,7 +80,6 @@ export default function SearchBar({ variant }: Props) {
     setOpen(false);
   };
 
-  // 엔터/돋보기
   const onSearch = () => {
     const q = keyword.trim();
     if (!q) return;
@@ -130,6 +111,15 @@ export default function SearchBar({ variant }: Props) {
     }
   };
 
+  const onInputKeyDown = useSearchHotKeys(
+    open,
+    suggestions,
+    activeIndex,
+    setActiveIndex,
+    onPick,
+    onSearch
+  );
+
   return (
     <div
       ref={containerRef}
@@ -143,25 +133,15 @@ export default function SearchBar({ variant }: Props) {
         value={keyword}
         onChange={setKeyword}
         onSearch={onSearch}
+        onKeyDown={onInputKeyDown}
         variant={variant}
       />
-      {open && suggestions.length > 0 && (
-        <ul className="absolute top-full w-full left-0 mt-1 bg-white border border-gray-300 rounded-lg shadow box-border z-50 overflow-hidden">
-          {suggestions.map((s, i) => (
-            <li
-              key={`${s.type}-${s.label}-${i}`}
-              className="px-4 py-2 text-sm hover:bg-gray-100 cursor-pointer"
-              onPointerDown={() => onPick(s)}
-            >
-              {s.type === "tag" ? (
-                <span className="text-blue-500">{s.label}</span>
-              ) : (
-                <span>{s.label}</span>
-              )}
-            </li>
-          ))}
-        </ul>
-      )}
+      <SuggestList
+        open={open}
+        suggestions={suggestions}
+        activeIndex={activeIndex}
+        onPick={onPick}
+      />
     </div>
   );
 }

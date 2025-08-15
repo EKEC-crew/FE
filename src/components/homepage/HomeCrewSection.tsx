@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import HomeCrewSectionSkeleton from "./HomeCrewSectionSkeleton";
 import { useQuery } from "@tanstack/react-query";
 import { API } from "../../apis/axios";
+import { buildFreshQS } from "../../utils/crewFilter/buildCrewListQs";
 
 export default function HomeCrewSection() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ export default function HomeCrewSection() {
     },
   });
 
-  console.log("🔎 isLoading:", isLoading, "data:", data);
+  console.log("isLoading:", isLoading, "data:", data);
 
   if (isLoading) return <HomeCrewSectionSkeleton />;
 
@@ -43,7 +44,18 @@ export default function HomeCrewSection() {
     };
   });
 
-  console.log("📝 최종 mappedCrews:", mappedCrews);
+  console.log("최종 mappedCrews:", mappedCrews);
+
+  // 탭에 따라 라벨/정렬
+  const isPopular = selectedTab === "popular";
+  const moreLabel = isPopular ? "인기 크루 더보기" : "신규 크루 더보기";
+  const handleMore = () => {
+    const qs = buildFreshQS({
+      page: 1,
+      sort: isPopular ? 2 : 1,
+    });
+    navigate(`/crewListPage?${qs}`);
+  };
 
   return (
     <section>
@@ -58,10 +70,10 @@ export default function HomeCrewSection() {
         </div>
       </div>
       <button
-        onClick={() => navigate(`/crew-list?sort=popular`)}
-        className="block w-full text-center mt-8 py-3 rounded-xl bg-[#F1F1F5] text-[#555] font-semibold"
+        onClick={handleMore}
+        className="block w-full text-center my-8 py-3 rounded-xl bg-[#F1F1F5] text-[#555] font-semibold"
       >
-        인기크루 더보기
+        {moreLabel}
       </button>
     </section>
   );

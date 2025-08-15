@@ -8,7 +8,7 @@ const CreateCrewButton = () => {
       label="크루 만들기"
       icon={addIconWt}
       bgImage={addBtnBg}
-      to="/crewCreatePage"
+      to="/createCrewGate"
     />
   );
 };

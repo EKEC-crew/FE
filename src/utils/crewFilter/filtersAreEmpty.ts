@@ -1,6 +1,5 @@
 import type { CrewFilters } from "../../types/crewFilter/crew";
 
-// category가 number[] | number | null 모두 올 수 있다고 보고 처리
 export function filtersAreEmpty(
   f:
     | CrewFilters
