@@ -93,7 +93,7 @@ function Header() {
           </div>
         </div>
 
-        {/* 우측: 내 역할 + 더보기 */}
+        {/* 우측: 내 역할 + 더보기/지원하기 */}
         <div className="flex flex-col items-center gap-2 relative">
           <div className="flex items-center justify-between w-full px-4 py-2">
             <img
@@ -124,12 +124,25 @@ function Header() {
             )}
           </div>
 
+          {/* 크루장/운영진용 더보기 메뉴 */}
           {!roleLoading && isLeader && isMenuOpen && (
             <button
               onClick={() => navigate(`/crew/${crewId}/edit-intro`)}
               className="bg-gray-100 px-6 py-2 text-xs font-bold rounded-lg hover:bg-indigo-50 shadow-md transition-colors duration-200 text-left"
             >
               크루 소개 작성 및 수정하기
+            </button>
+          )}
+
+          {/* 게스트용 지원하기 버튼 */}
+          {!roleLoading && roleKey === "GUEST" && (
+            <button
+              onClick={() => {
+                navigate(`/crew/${crewId}/apply`);
+              }}
+              className="bg-[#3A3ADB] text-white px-6 py-2 text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md"
+            >
+              지원하기
             </button>
           )}
         </div>
