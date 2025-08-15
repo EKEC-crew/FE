@@ -50,7 +50,7 @@ export default function SearchInput({
           {/* 위에 올릴 돋보기 */}
           <img
             src={searchIcon}
-            className={`absolute inset-0 m-auto ${inputBtnClass}`}
+            className={`absolute inset-0 m-auto cursor-pointer ${inputBtnClass}`}
             alt="돋보기아이콘"
           />
         </div>

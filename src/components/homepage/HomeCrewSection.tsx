@@ -71,7 +71,7 @@ export default function HomeCrewSection() {
       </div>
       <button
         onClick={handleMore}
-        className="block w-full text-center my-8 py-3 rounded-xl bg-[#F1F1F5] text-[#555] font-semibold"
+        className="block w-full text-center my-8 py-3 rounded-xl bg-[#F1F1F5] text-[#555] font-semibold cursor-pointer"
       >
         {moreLabel}
       </button>
