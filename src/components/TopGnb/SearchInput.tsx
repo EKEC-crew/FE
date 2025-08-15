@@ -1,10 +1,12 @@
 import searchIcon from "../../assets/icons/ic_search_36.svg";
 import btnBg from "../../assets/icons/btn_search_60.svg";
+
 interface Props {
   value: string;
   onChange: (v: string) => void;
   onSearch: () => void;
   variant: "large" | "compact";
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 export default function SearchInput({
@@ -12,6 +14,7 @@ export default function SearchInput({
   onChange,
   onSearch,
   variant,
+  onKeyDown,
 }: Props) {
   const inputClass =
     variant === "large"
@@ -25,7 +28,10 @@ export default function SearchInput({
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && onSearch()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") onSearch();
+          onKeyDown?.(e);
+        }}
         placeholder="검색하고 싶은 태그 혹은 크루명을 입력하세요!"
         className={`w-full pl-10 pr-4 border bg-white border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${inputClass}`}
       />

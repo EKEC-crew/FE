@@ -1,20 +1,27 @@
 import type { CrewFilters } from "../../types/crewFilter/crew";
+import { getRegionId } from "../regions";
 
 export const buildFilterQuery = (filters: CrewFilters): string => {
-  const query = new URLSearchParams();
+  const sp = new URLSearchParams();
 
-  if (filters.category !== null)
-    query.append("category", String(filters.category));
+  sp.set("page", "1");
+  sp.set("sort", "2");
+
+  if (filters.category !== null) sp.set("category", String(filters.category));
   if (filters.activity.length > 0)
-    query.append("activity", filters.activity.join(","));
-  if (filters.style.length > 0) query.append("style", filters.style.join(","));
-  if (filters.regionSido) query.append("regionSido", filters.regionSido);
-  if (filters.regionGu) query.append("regionGu", filters.regionGu);
-  if (filters.age !== null) query.append("age", String(filters.age));
-  if (filters.gender !== null) query.append("gender", String(filters.gender));
+    sp.set("activity", filters.activity.join(","));
+  if (filters.style.length > 0) sp.set("style", filters.style.join(","));
 
-  query.append("page", "1");
-  query.append("sort", "2");
+  // regionIds 우선
+  if (filters.regionIds && filters.regionIds.length > 0) {
+    sp.set("region", filters.regionIds.join(","));
+  } else if (filters.regionSido && filters.regionGu) {
+    const id = getRegionId(filters.regionSido, filters.regionGu);
+    if (id != null) sp.set("region", String(id));
+  }
 
-  return query.toString();
+  if (filters.age !== null) sp.set("age", String(filters.age));
+  if (filters.gender !== null) sp.set("gender", String(filters.gender));
+
+  return sp.toString();
 };

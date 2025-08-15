@@ -19,3 +19,8 @@ export const getRegionId = (
   if (!sido || !gu) return null;
   return regionIdLookup[sido]?.[gu] ?? null;
 };
+
+export const idToRegion: Record<number, { sido: string; gu: string }> =
+  Object.fromEntries(
+    serverRegions.map((r) => [r.id, { sido: r.sido, gu: r.goo }])
+  );
