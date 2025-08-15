@@ -96,7 +96,7 @@ export const toggleBulletinLikeApi = async (crewId: string, postId: string) => {
 };
 
 // 이미지 URL 변환 함수
-const getImageUrl = (
+export const getImageUrl = (
   fileName?: string | null,
   type: number = 1
 ): string | null => {
