@@ -26,7 +26,7 @@ const ActionButton = ({
       onClick={() => navigate(to)}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      className={`relative flex items-center gap-2 w-[16.25rem] h-[3.4375rem] rounded-[0.625rem] text-[1.25rem] px-4 py-2 
+      className={`relative flex items-center gap-2 w-[16.25rem] h-[3.4375rem] rounded-[0.625rem] text-[1.25rem] px-4 py-2 cursor-pointer
         focus:outline-none transition-colors ${
           bgImage
             ? "text-white"

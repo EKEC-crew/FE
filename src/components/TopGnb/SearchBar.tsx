@@ -7,9 +7,8 @@ import useSearchController, {
 import { useCategoryStore } from "../../store/categoryStore";
 import { buildFreshQS } from "../../utils/crewFilter/buildCrewListQs";
 import SuggestList from "./SuggestList";
-
 import useCompactVisibility from "../../hooks/gnb/useCompactVisibility";
-import useSearchHotKeys from "@/hooks/gnb/useSearchHot";
+import useSearchHotKeys from "../../hooks/gnb/useSearchHotKeys";
 
 interface Props {
   variant: "large" | "compact";
@@ -41,8 +40,12 @@ export default function SearchBar({ variant }: Props) {
     const shouldOpen =
       hasFocus && Boolean(keyword.trim()) && suggestions.length > 0;
     setOpen(shouldOpen);
-    setActiveIndex(shouldOpen ? 0 : -1); // 첫번째가 기본
+    if (!shouldOpen) setActiveIndex(-1);
   }, [hasFocus, keyword, suggestions]);
+
+  useEffect(() => {
+    setActiveIndex(-1);
+  }, [keyword]);
 
   // 라우트 변경 시 닫기
   useEffect(() => {
@@ -53,8 +56,6 @@ export default function SearchBar({ variant }: Props) {
     if (activeItemRef.current)
       activeItemRef.current.scrollIntoView({ block: "nearest" });
   }, [activeIndex]);
-
-  if (!visible) return null;
 
   const onFocusCapture = () => setHasFocus(true);
   const onBlurCapture = (e: React.FocusEvent<HTMLDivElement>) => {
@@ -119,6 +120,8 @@ export default function SearchBar({ variant }: Props) {
     onPick,
     onSearch
   );
+
+  if (!visible) return null;
 
   return (
     <div
