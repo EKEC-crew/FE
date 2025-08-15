@@ -3,11 +3,12 @@ import camera from "../../assets/icons/ic_line_Camera.svg";
 import { useAuthStore } from "../../store/useAuthStore";
 
 export default function ProfileHeader() {
-  const { user } = useAuthStore(); // ✅ 컴포넌트 내부에서 Hook 호출
+  const { user } = useAuthStore();
 
   const handleProfileClick = () => {
     alert("프로필 이미지 변경");
   };
+
   //이미지로드 가공
   const profileimageUrl = user?.profileImage
     ? `${import.meta.env.VITE_API_BASE_URL}/image/?type=1&fileName=${user?.profileImage}`
@@ -23,7 +24,11 @@ export default function ProfileHeader() {
           <img
             src={profileimageUrl ? profileimageUrl : noProfileImage}
             alt="프로필 이미지"
-            className="w-[4.625rem] h-[4.625rem]"
+            className={
+              profileimageUrl
+                ? "w-full h-full object-cover"
+                : "w-[4.625rem] h-[4.625rem]"
+            }
           />
         </button>
         {/*카메라*/}

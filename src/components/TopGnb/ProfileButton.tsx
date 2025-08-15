@@ -25,7 +25,7 @@ export default function ProfileButton() {
     <>
       <button
         onClick={handleProfileClick}
-        className="flex w-[9.06rem] h-12 items-center space-x-2 transition-transform duration-300 ease-in-out hover:scale-110"
+        className="flex w-[9.06rem] cursor-pointer h-12 items-center space-x-2 transition-transform duration-300 ease-in-out hover:scale-110"
       >
         <img
           src={profileSrc}
