@@ -8,14 +8,19 @@ import type { Notice } from "../../../types/notice/types";
 import { fetchNoticeList } from "./constants";
 import { fetchMyRole as fetchMyRoleDetail } from "../constants";
 
-// API 응답 타입 정의
+// API 응답 타입 정의 - 새로운 API 구조에 맞춰 수정
 interface ApiNoticeData {
   id: number;
   title: string;
-  content: string;
+  content?: string;
+  type: number; // 0: 일반, 1: 필독
   createdAt: string;
-  hasLabel?: boolean;
-  labelText?: string;
+  author?: {
+    crewMemberId: number;
+    role: number;
+    nickname: string;
+  };
+  isLiked?: boolean;
   [key: string]: any;
 }
 
@@ -24,6 +29,7 @@ const NoticeList: React.FC = () => {
   const location = useLocation();
   const { crewId } = useParams();
   const [activeTab] = useState<string>("notice");
+  
   const { data: myRole } = useQuery({
     queryKey: ["myRole", crewId],
     queryFn: () => fetchMyRoleDetail(crewId!),
@@ -31,7 +37,19 @@ const NoticeList: React.FC = () => {
     staleTime: 1000 * 60 * 2,
     retry: false,
   });
-  const canPost = myRole === "LEADER" || myRole === "MANAGER";
+  
+  // 역할 기반 권한 체크 개선
+  const canPost = React.useMemo(() => {
+    if (!myRole) return false;
+    const role = typeof myRole === "object" && myRole !== null && "role" in myRole ? (myRole as any).role : myRole;
+    if (typeof role === 'string') {
+      return role === "LEADER" || role === "MANAGER" || role === "CREW_LEADER" || role === "ADMIN";
+    }
+    if (typeof role === 'number') {
+      return role >= 1; // 1: 운영진, 2: 크루장
+    }
+    return false;
+  }, [myRole]);
 
   const {
     data: noticesResponse,
@@ -50,21 +68,24 @@ const NoticeList: React.FC = () => {
 
   const notices: Notice[] = React.useMemo(() => {
     console.log("📦 전체 응답 데이터:", noticesResponse);
-    const raw = noticesResponse;
-    const rawNotices = Array.isArray(raw)
-      ? raw
-      : (raw && (raw.data?.data || raw.data?.notices || raw.data)) || [];
+
+    const rawNotices = Array.isArray(noticesResponse) 
+      ? noticesResponse 
+      : [];
+    
     console.log("📋 추출된 rawNotices:", rawNotices);
 
     if (!Array.isArray(rawNotices)) return [];
+    
     return rawNotices.map((n: ApiNoticeData): Notice => ({
       id: n.id,
       title: n.title,
-      content: n.content,
+      content: n.content || "",
       date: n.createdAt?.split("T")[0] || "",
       time: n.createdAt?.split("T")[1]?.slice(0, 5) || "",
-      hasLabel: n.hasLabel || false,
-      labelText: n.labelText || undefined,
+      // type이 1이면 필독 공지
+      hasLabel: n.type === 1,
+      labelText: n.type === 1 ? "필독" : undefined,
     }));
   }, [noticesResponse]);
 
@@ -157,7 +178,6 @@ const NoticeList: React.FC = () => {
         <div className="flex items-center justify-between mb-2">
           <span className="text-xl font-bold">공지</span>
           <div className="text-sm text-gray-500 flex items-center space-x-2">
-            {crewId && <span>크루 ID: {crewId}</span>}
             {isLoading && <span className="text-blue-500">🔄</span>}
           </div>
         </div>

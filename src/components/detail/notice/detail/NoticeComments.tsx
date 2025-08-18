@@ -1,11 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { fetchNoticeComments } from "../constants";
-import {
-  createNoticeComment,
-  updateNoticeComment,
-  deleteNoticeComment,
-} from "../constants";
 import moreIcon from "../../../../assets/schedule/ic_More.svg";
 
 type Comment = {
@@ -21,6 +15,259 @@ type Props = {
   noticeId: string;
 };
 
+import { authorizedFetch } from "../../../../apis/client";
+import { privateAPI } from "../../../../apis/axios";
+
+const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || "";
+
+/* 공통 유틸 */
+const enc = (v: string | number) => encodeURIComponent(String(v));
+const ok = (d: any) => d?.resultType === "SUCCESS" || d?.success;
+
+export const CONSTANTS = {
+  ITEMS_PER_PAGE: 10,
+  TOTAL_PAGES: 5,
+  CATEGORY: { NUMBER: 2, NAME: "공지", TOTAL_COUNT: 4 },
+  LABELS: { REQUIRED: "필독", WRITE_BUTTON: "글쓰기", BOTTOM_SECTION: "미술너 사네" },
+} as const;
+
+/* 공지 목록 */
+export const fetchNoticeList = async (crewId: string, page = 1, size = 10) => {
+  const url = `${API_BASE}/crew/${enc(crewId)}/notice/?page=${enc(page)}&size=${enc(size)}`;
+  const res = await authorizedFetch(url, {
+    method: "GET",
+    headers: { Accept: "application/json" },
+    credentials: "include",
+  });
+  const json = await res.json().catch(() => null);
+  if (res.status >= 500) return [];
+  if (!res.ok || json?.resultType !== "SUCCESS") {
+    throw new Error(json?.error?.reason || `Notice list failed (${res.status})`);
+  }
+  const d = json?.data;
+  return Array.isArray(d) ? d : d?.notices || [];
+};
+
+/* 공지 작성 */
+export const createNotice = async (
+  crewId: string,
+  title: string,
+  content: string,
+  options?: { isRequired?: boolean; allowComment?: boolean }
+) => {
+  const url = `/crew/${enc(crewId)}/notice/`;
+  const body: any = {
+    title,
+    content,
+    type: options?.isRequired ? 1 : 0,
+  };
+  if (options?.allowComment !== undefined) body.allowComment = options.allowComment;
+
+  try {
+    const { data } = await privateAPI.post(url, body, {
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      withCredentials: true,
+    });
+    if (!ok(data)) throw new Error(data?.error?.reason || "공지 작성에 실패했습니다.");
+    return data ?? null;
+  } catch (err: any) {
+    const reason = err?.response?.data?.error?.reason || err?.message || "Create failed";
+    throw new Error(reason);
+  }
+};
+
+/* 내 역할 조회 (명세: { memberId, role }) */
+export const fetchMyRole = async (crewId: string) => {
+  const url = `${API_BASE}/crew/${enc(crewId)}/myrole/`;
+  const res = await authorizedFetch(url, {
+    method: "GET",
+    headers: { Accept: "application/json" },
+    credentials: "include",
+  });
+  if (res.status === 403) return { role: "GUEST" as const };
+  const json = await res.json().catch(() => null);
+  if (!res.ok || json?.resultType !== "SUCCESS")
+    throw new Error(json?.error?.reason || `MyRole failed (${res.status})`);
+  return json.data; // { memberId, role }
+};
+
+/* 공지 삭제 */
+export const deleteNotice = async (crewId: string, noticeId: string) => {
+  const url = `/crew/${enc(crewId)}/notice/${enc(noticeId)}/`;
+  const { data } = await privateAPI.delete(url, {
+    withCredentials: true,
+    headers: { Accept: "application/json" },
+  });
+  if (!ok(data)) throw new Error(data?.error?.reason || "Delete failed");
+  return data;
+};
+
+/* 좋아요 토글 */
+export const toggleNoticeLike = async (crewId: string, noticeId: string) => {
+  const url = `/crew/${enc(crewId)}/notice/${enc(noticeId)}/like/`;
+  try {
+    const { data } = await privateAPI.post(
+      url,
+      {},
+      {
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        withCredentials: true,
+      }
+    );
+    if (!ok(data)) throw new Error(data?.error?.reason || "Like toggle failed");
+    return data;
+  } catch (err: any) {
+    const reason = err?.response?.data?.error?.reason || err?.message || "Like toggle failed";
+    throw new Error(reason);
+  }
+};
+
+/* 공지 상세 */
+export const getNoticeDetail = async (crewId: string, noticeId: string) => {
+  const url = `${API_BASE}/crew/${enc(crewId)}/notice/${enc(noticeId)}/`;
+  const res = await authorizedFetch(url, {
+    method: "GET",
+    headers: { Accept: "application/json" },
+    credentials: "include",
+  });
+  const json = await res.json().catch(() => null);
+  if (!res.ok) throw new Error(json?.error?.reason || `Notice detail failed (${res.status})`);
+  return json;
+};
+
+/* 댓글 목록 ( /comment/ → 실패 시 /comments/ 폴백 ) */
+export const fetchNoticeComments = async (
+  crewId: string | number,
+  noticeId: string | number
+) => {
+  const base = `/crew/${enc(crewId)}/notice/${enc(noticeId)}`;
+  const url1 = `${base}/comment/?ts=${Date.now()}`;
+  const url2 = `${base}/comments/?ts=${Date.now()}`;
+
+  const getList = async (url: string) => {
+    const { data } = await privateAPI.get(url, {
+      withCredentials: true,
+      headers: { "Cache-Control": "no-cache", Accept: "application/json" },
+    });
+    if (!ok(data)) throw new Error(data?.error?.reason || "Comment list failed");
+
+    const raw =
+      Array.isArray(data?.data) ? data.data :
+      Array.isArray(data?.data?.data) ? data.data.data :
+      [];
+
+    const normalized = raw.map((c: any) => ({
+      id: c.id,
+      content: c.content,
+      createdAt: c.createdAt,
+      author: c.author || c.writer || c.nickname || "",
+    }));
+
+    normalized.sort((a: any, b: any) => (a.createdAt > b.createdAt ? -1 : 1));
+    return { ...data, data: normalized };
+  };
+
+  try {
+    return await getList(url1);
+  } catch (e: any) {
+    const code = e?.response?.status;
+    if (code === 404 || code === 405) {
+      return await getList(url2);
+    }
+    const reason = e?.response?.data?.error?.reason || e?.message || "Comment list failed";
+    throw new Error(reason);
+  }
+};
+
+/* 댓글 작성 (403 메시지 보강, /comment/ → /comments/ 폴백) */
+export const createNoticeComment = async (
+  crewId: string | number,
+  noticeId: string | number,
+  content: string
+): Promise<any> => {
+  const base = `/crew/${enc(crewId)}/notice/${enc(noticeId)}`;
+  const url1 = `${base}/comment/`;
+  const url2 = `${base}/comments/`;
+
+  const post = async (url: string) => {
+    const { data } = await privateAPI.post(
+      url,
+      { content }, // 세션으로 작성자 식별 → crewMemberId 보내지 않음
+      {
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        withCredentials: true,
+      }
+    );
+    if (!ok(data)) throw new Error(data?.error?.reason || "Comment create failed");
+    return data.data; // { id, content, createdAt, author ... }
+  };
+
+  try {
+    return await post(url1);
+  } catch (e: any) {
+    const status = e?.response?.status;
+    if (status === 404 || status === 405) {
+      return await post(url2);
+    }
+    const reason = e?.response?.data?.error?.reason || e?.message || "Comment create failed";
+    if (status === 403) {
+      throw new Error(`댓글 권한 없음: ${reason}`);
+    }
+    throw new Error(reason);
+  }
+};
+
+/* 댓글 수정 (PUT → 실패 시 PATCH 폴백) */
+export const updateNoticeComment = async (
+  crewId: string | number,
+  noticeId: string | number,
+  commentId: string | number,
+  content: string
+) => {
+  const url = `/crew/${enc(crewId)}/notice/${enc(noticeId)}/comment/${enc(commentId)}/`;
+
+  const cfg = {
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    withCredentials: true as const,
+  };
+
+  try {
+    const { data } = await privateAPI.put(url, { content }, cfg);
+    if (ok(data)) return data.data;
+    throw new Error(data?.error?.reason || "Comment update failed");
+  } catch (e: any) {
+    const code = e?.response?.status;
+    if (code === 404 || code === 405) {
+      const { data: p } = await privateAPI.patch(url, { content }, cfg);
+      if (ok(p)) return p.data;
+      throw new Error(p?.error?.reason || "Comment update failed");
+    }
+    const reason = e?.response?.data?.error?.reason || e?.message || "Comment update failed";
+    throw new Error(reason);
+  }
+};
+
+/* 댓글 삭제 */
+export const deleteNoticeComment = async (
+  crewId: string | number,
+  noticeId: string | number,
+  commentId: string | number
+) => {
+  const url = `/crew/${enc(crewId)}/notice/${enc(noticeId)}/comment/${enc(commentId)}/`;
+  try {
+    const { data } = await privateAPI.delete(url, {
+      withCredentials: true,
+      headers: { Accept: "application/json" },
+    });
+    if (!ok(data)) throw new Error(data?.error?.reason || "Comment delete failed");
+    return data;
+  } catch (err: any) {
+    const reason = err?.response?.data?.error?.reason || err?.message || "Comment delete failed";
+    throw new Error(reason);
+  }
+};
+
+/* ====== 컴포넌트 ====== */
 const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(false);
@@ -28,10 +275,8 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
   const [error, setError] = useState<string | null>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
 
-  // 입력창
   const [newContent, setNewContent] = useState("");
 
-  // 편집 상태
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState("");
   const [menuOpenId, setMenuOpenId] = useState<number | null>(null);
@@ -43,8 +288,8 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
     setError(null);
     try {
       const response = await fetchNoticeComments(crewId, noticeId);
-      const list = Array.isArray(response?.data) ? response.data as Comment[] : [];
-      if (response.resultType === "SUCCESS") {
+      const list = Array.isArray(response?.data) ? (response.data as Comment[]) : [];
+      if (response.resultType === "SUCCESS" || response.success) {
         setComments(list);
       } else {
         setError("댓글을 불러오는데 실패했습니다.");
@@ -63,7 +308,6 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, crewId, noticeId]);
 
-  // 메뉴 외부 클릭 시 닫기
   useEffect(() => {
     const onDocClick = (e: MouseEvent) => {
       const target = e.target as Node | null;
@@ -89,21 +333,21 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
     }
   };
 
-  // 등록
   const handleCreate = async () => {
     const content = newContent.trim();
     if (!content) return;
     setPosting(true);
     try {
       const created = await createNoticeComment(crewId, noticeId, content);
-      // 낙관적 반영: 최신이 맨 위
-      setComments((prev) => {
-        const optimistic = [
-          { id: created.id, content: created.content, createdAt: created.createdAt, author: created.author || "나" },
-          ...prev,
-        ];
-        return optimistic;
-      });
+      setComments((prev) => [
+        {
+          id: created.id,
+          content: created.content,
+          createdAt: created.createdAt,
+          author: created.author || "나",
+        },
+        ...prev,
+      ]);
       setNewContent("");
     } catch (e: any) {
       alert(e?.message ?? "댓글 작성에 실패했습니다.");
@@ -112,7 +356,6 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
     }
   };
 
-  // 편집 시작
   const startEdit = (c: Comment) => {
     setEditingId(c.id);
     setEditingContent(c.content);
@@ -121,7 +364,6 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
     setEditingId(null);
     setEditingContent("");
   };
-  // 편집 저장
   const saveEdit = async () => {
     if (editingId == null) return;
     const content = editingContent.trim();
@@ -129,7 +371,11 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
     try {
       const updated = await updateNoticeComment(crewId, noticeId, editingId, content);
       setComments((prev) =>
-        prev.map((c) => (c.id === editingId ? { ...c, content: updated.content, createdAt: updated.modifiedAt ?? c.createdAt } : c))
+        prev.map((c) =>
+          c.id === editingId
+            ? { ...c, content: updated.content, createdAt: (updated.modifiedAt ?? c.createdAt) }
+            : c
+        )
       );
       cancelEdit();
     } catch (e: any) {
@@ -137,7 +383,6 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
     }
   };
 
-  // 삭제
   const removeComment = async (id: number) => {
     if (!confirm("이 댓글을 삭제할까요?")) return;
     try {
@@ -194,7 +439,6 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
                     key={comment.id}
                     className="bg-[#F6F7FA] px-4 py-3 rounded-lg shadow-sm text-sm flex items-center justify-between relative"
                   >
-                    {/* 왼쪽: 프로필(placeholder) + 작성자 */}
                     <div className="flex items-center gap-3 w-[140px] shrink-0">
                       <div className="w-6 h-6 rounded-full bg-gray-300" />
                       <div className="text-gray-700 font-medium truncate max-w-[90px]">
@@ -202,7 +446,6 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
                       </div>
                     </div>
 
-                    {/* 중앙: 내용 */}
                     <div className="flex-1 px-2 text-gray-800 min-w-0">
                       {isEditing ? (
                         <textarea
@@ -215,7 +458,6 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
                       )}
                     </div>
 
-                    {/* 오른쪽: 날짜 + 답글 + 더보기 */}
                     <div className="flex items-center gap-3 shrink-0">
                       <span className="text-gray-400 text-sm whitespace-nowrap">
                         {formatDate(comment.createdAt)}
@@ -224,7 +466,6 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
                         답글
                       </button>
 
-                      {/* 더보기 */}
                       <button
                         className="w-6 h-6 flex items-center justify-center"
                         onClick={(e) => {
@@ -236,7 +477,6 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
                         <img src={moreIcon} alt="더보기" className="w-6 h-6" />
                       </button>
 
-                      {/* 메뉴 */}
                       {menuOpenId === comment.id && (
                         <div
                           ref={menuRef}

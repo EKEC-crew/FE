@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 
@@ -9,71 +9,45 @@ interface ContentInputProps {
 
 const ContentInput: React.FC<ContentInputProps> = ({ onValueChange, initialValue }) => {
   const editorRef = useRef<Editor>(null);
-  const [content, setContent] = useState("");
 
+  // 에디터 내용 변경 시 부모로 값 전달
   const handleChange = () => {
-    const html = editorRef.current?.getInstance().getHTML() || "";
-    setContent(html);
+    const inst = editorRef.current?.getInstance();
+    const html = inst?.getHTML() ?? "";
     onValueChange(html);
   };
 
+  // initialValue 변경 시 실제 에디터 내용 반영
   useEffect(() => {
-    if (typeof initialValue === "string") {
-      setContent(initialValue);
-      const inst = editorRef.current?.getInstance();
-      if (inst) {
-        inst.setHTML(initialValue);
-      }
-      onValueChange(initialValue);
+    if (typeof initialValue !== "string") return;
+    const inst = editorRef.current?.getInstance();
+    if (!inst) return;
+
+    // 동일한 값이면 커서 튀는 것 방지
+    const current = inst.getHTML();
+    if (current !== initialValue) {
+      inst.setHTML(initialValue);
     }
+    // 부모에도 한번 전달
+    onValueChange(initialValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialValue]);
-
-  // placeholder 텍스트 제거
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const placeholders = document.querySelectorAll('.toastui-editor-md-placeholder, .toastui-editor-ww-placeholder');
-      placeholders.forEach(el => {
-        (el as HTMLElement).style.display = 'none';
-      });
-      
-      const modeSwitches = document.querySelectorAll('.toastui-editor-mode-switch');
-      modeSwitches.forEach(el => {
-        (el as HTMLElement).style.display = 'none';
-      });
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   return (
     <div>
       <div className="font-bold mb-2">
         본문 입력<span className="text-red-500 text-base">*</span>
       </div>
-      <div className="mb-6">
+      <div className="mb-6 relative">
         <Editor
           ref={editorRef}
-          initialValue={content}
-          height="400px"
+          initialValue={typeof initialValue === "string" ? initialValue : ""}
+          previewStyle="vertical"
+          height="420px"
+          initialEditType="wysiwyg"
           useCommandShortcut
-          hideModeSwitch={true}
-          onChange={handleChange}
           placeholder="내용을 입력해주세요..."
-          toolbarItems={[
-            ["heading", "bold", "italic", "strike"],
-            ["hr", "quote"],
-            ["ul", "ol", "task", "indent", "outdent"],
-            ["table", "image", "link"],
-            ["code", "codeblock"],
-          ]}
-        />
-      </div>
-
-      {/* 미리보기 영역 (실시간 반영) */}
-      <div className="mt-4 rounded-2xl bg-[#eef0f5] p-6">
-        <div
-          className="text-[15px] leading-7 text-gray-800"
-          dangerouslySetInnerHTML={{ __html: content }}
+          onChange={handleChange}
         />
       </div>
     </div>
