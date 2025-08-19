@@ -5,7 +5,7 @@ import Tabs from "../../../../components/detail/tabs";
 import NoticeAction from "./NoticeAction";
 import NoticeComments from "./NoticeComments";
 import NoticeAbout from "./NoticeAbout";
-import { getNoticeDetail } from "../constants";
+import { getNoticeDetail, toggleNoticeLike } from "../constants";
 import type { Notice } from "../../../../types/notice/types";
 
 const NoticeDetail = () => {
@@ -28,11 +28,10 @@ const NoticeDetail = () => {
           const mappedNotice = {
             id: n.id,
             title: n.title,
-            content: n.content, // HTML 본문
+            content: n.content,
             date,
             time,
-            hasLabel: n.type === 1,
-            labelText: n.type === 1 ? "필독" : "번개",
+            hasLabel: Boolean(n.labelText),
             likeCount: Number(n.totalLikes ?? 0),
             liked: Boolean(n.isLiked),
           };
@@ -53,7 +52,31 @@ const NoticeDetail = () => {
     );
   }
 
-  // content를 안전하게 문자열화
+  // ✅ 좋아요 한 번만 허용 + 서버 응답으로 동기화
+  const handleLikeToggle = async () => {
+    if (!crewId || !noticeId) return;
+    if (notice.liked) {
+      alert("이미 좋아요를 눌렀습니다.");
+      return;
+    }
+    try {
+      const r = await toggleNoticeLike(crewId, noticeId);
+      const s = r?.data;
+
+      setNotice((prev) => {
+        if (!prev) return prev;
+        const prevCount = Number((prev as any).likeCount ?? 0);
+        const nextLiked = s?.isLiked ?? true;
+        const nextCount =
+          typeof s?.totalLikes === "number" ? s.totalLikes : prevCount + 1;
+
+        return { ...prev, liked: nextLiked, likeCount: nextCount };
+      });
+    } catch (e: any) {
+      alert(e?.message ?? "좋아요 처리에 실패했습니다.");
+    }
+  };
+
   const contentHtml = String(notice.content ?? "");
 
   return (
@@ -90,13 +113,14 @@ const NoticeDetail = () => {
             {/* 본문 */}
             <NoticeAbout content={contentHtml} />
 
-            {/* 액션 & 댓글 */}
             <NoticeAction
               isCommentOpen={isCommentOpen}
               toggleComment={() => setIsCommentOpen((prev) => !prev)}
-              initialLikeCount={notice.likeCount}
+              initialLikeCount={Number(notice.likeCount ?? 0)}
               initialLiked={Boolean(notice.liked)}
+              onLikeToggle={handleLikeToggle}
             />
+
             <NoticeComments
               isOpen={isCommentOpen}
               crewId={crewId ?? ""}

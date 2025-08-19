@@ -28,32 +28,29 @@ const PostNoticeForm = () => {
   const [isCheckingRole, setIsCheckingRole] = useState(true);
   const queryClient = useQueryClient();
 
-  // 권한 체크 - 개선된 로직
   useEffect(() => {
     const checkUserRole = async () => {
       if (!crewId) return;
-      
+
       try {
         setIsCheckingRole(true);
         const roleData = await fetchMyRole(crewId);
         console.log("🔍 사용자 역할 조회 결과:", roleData);
-        
-        // 역할 번호 추출 (크루장: 2, 운영진: 1, 크루원: 0)
+
         const role = roleData?.role;
-        if (typeof role === 'number') {
+        if (typeof role === "number") {
           setUserRole(role);
-        } else if (typeof role === 'string') {
-          // 문자열로 오는 경우 변환
-          if (role === 'LEADER' || role === 'CREW_LEADER') setUserRole(2);
-          else if (role === 'ADMIN' || role === 'MANAGER') setUserRole(1);
-          else if (role === 'MEMBER' || role === 'CREW_MEMBER') setUserRole(0);
-          else setUserRole(0); // 기본값
+        } else if (typeof role === "string") {
+          if (role === "LEADER" || role === "CREW_LEADER") setUserRole(2);
+          else if (role === "ADMIN" || role === "MANAGER") setUserRole(1);
+          else if (role === "MEMBER" || role === "CREW_MEMBER") setUserRole(0);
+          else setUserRole(0);
         } else {
-          setUserRole(0); // 기본값
+          setUserRole(0);
         }
       } catch (error) {
         console.error("역할 조회 실패:", error);
-        setUserRole(0); // 오류시 기본값
+        setUserRole(0);
       } finally {
         setIsCheckingRole(false);
       }
@@ -66,7 +63,9 @@ const PostNoticeForm = () => {
 
   const handleSubmit = async () => {
     if (!hasWritePermission) {
-      alert("공지사항 작성 권한이 없습니다. 크루장 또는 운영진만 작성할 수 있습니다.");
+      alert(
+        "공지사항 작성 권한이 없습니다. 크루장 또는 운영진만 작성할 수 있습니다."
+      );
       return;
     }
 
@@ -86,37 +85,41 @@ const PostNoticeForm = () => {
         isRequired,
       });
 
-      // API 응답 구조 변경: success -> data
       if (res?.resultType !== "SUCCESS") {
-        throw new Error(res?.error?.reason || res?.message || "공지사항 등록에 실패했습니다.");
+        throw new Error(
+          res?.error?.reason || res?.message || "공지사항 등록에 실패했습니다."
+        );
       }
 
-      // 쿼리 무효화로 목록 새로고침
       await queryClient.invalidateQueries({ queryKey: ["notices"] });
       await queryClient.invalidateQueries({ queryKey: ["notices", cid] });
       await queryClient.invalidateQueries({
-        predicate: (q) => q.queryKey.some((k) => typeof k === "string" && k.includes("notice")),
+        predicate: (q) =>
+          q.queryKey.some((k) => typeof k === "string" && k.includes("notice")),
       });
 
       alert("공지사항이 성공적으로 등록되었습니다!");
-      navigate(`/crew/${cid}/notice`, { 
-        state: { refresh: true } // 새로고침 플래그 추가
+      navigate(`/crew/${cid}/notice`, {
+        state: { refresh: true },
       });
     } catch (err: any) {
       let msg = "등록 중 오류가 발생했습니다.";
-      
-      // 더 정확한 오류 메시지 추출
+
       if (err?.response?.data?.error?.reason) {
         msg = err.response.data.error.reason;
       } else if (err?.message) {
         msg = err.message;
       }
-      
-      // 권한 관련 오류인 경우 특별 처리
-      if (msg.includes("권한") || msg.includes("FORBIDDEN") || msg.includes("403")) {
-        msg = "공지 작성 권한이 없습니다. 크루장 또는 운영진만 공지를 작성할 수 있습니다.";
+
+      if (
+        msg.includes("권한") ||
+        msg.includes("FORBIDDEN") ||
+        msg.includes("403")
+      ) {
+        msg =
+          "공지 작성 권한이 없습니다. 크루장 또는 운영진만 공지를 작성할 수 있습니다.";
       }
-      
+
       alert(msg);
       console.error("등록 실패:", err);
     } finally {
@@ -124,7 +127,6 @@ const PostNoticeForm = () => {
     }
   };
 
-  // 권한 체크 중이면 로딩 표시
   if (isCheckingRole) {
     return (
       <div className="bg-gray-100 min-h-screen">
@@ -139,7 +141,6 @@ const PostNoticeForm = () => {
     );
   }
 
-  // 권한이 없는 경우
   if (!hasWritePermission) {
     return (
       <div className="bg-gray-100 min-h-screen">
@@ -158,7 +159,14 @@ const PostNoticeForm = () => {
                 <div className="text-gray-500 mb-6">
                   크루장 또는 운영진만 공지사항을 작성할 수 있습니다.
                   <br />
-                  현재 권한: {userRole === 0 ? '크루원' : userRole === 1 ? '운영진' : userRole === 2 ? '크루장' : '알 수 없음'}
+                  현재 권한:{" "}
+                  {userRole === 0
+                    ? "크루원"
+                    : userRole === 1
+                      ? "운영진"
+                      : userRole === 2
+                        ? "크루장"
+                        : "알 수 없음"}
                 </div>
                 <button
                   onClick={() => navigate(`/crew/${crewId}/notice`)}
@@ -205,11 +213,17 @@ const PostNoticeForm = () => {
               />
 
               <TitleInput onValueChange={setTitle} />
-              <ContentInput onValueChange={setContent} />
+              <ContentInput content={content} setContent={setContent} />
               <FeeSection {...{ fee, setFee }} />
               <SubmitButton
                 onClick={handleSubmit}
-                disabled={isSubmitting || !crewId || !title.trim() || !content.trim() || !hasWritePermission}
+                disabled={
+                  isSubmitting ||
+                  !crewId ||
+                  !title.trim() ||
+                  !content.trim() ||
+                  !hasWritePermission
+                }
               />
             </div>
           </div>

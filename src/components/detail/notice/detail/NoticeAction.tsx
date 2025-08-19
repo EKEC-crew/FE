@@ -1,86 +1,107 @@
-import { useEffect, useState } from "react";
+// src/components/detail/notice/detail/NoticeAction.tsx
 import iconHeart from "../../../../assets/schedule/ic_Heart.svg";
 import iconLikedHeart from "../../../../assets/icons/ic_liked_heart.svg";
 import iconComment from "../../../../assets/icons/ic_comment.svg";
 import iconShare from "../../../../assets/schedule/ic_Share.svg";
+import { useEffect, useMemo, useState } from "react";
 
 type Props = {
   isCommentOpen: boolean;
   toggleComment: () => void;
-  initialLikeCount?: number;
-  initialLiked?: boolean;
-
-  commentCount?: number;
   isAuthor?: boolean;
   onEdit?: () => void;
   onGoToList?: () => void;
   onDelete?: () => void;
-  onLikeToggle?: (nextLiked: boolean) => void; 
+
+  initialLikeCount?: number;
+  initialLiked?: boolean;
+  onLikeToggle?: () => Promise<void> | void; // 부모에서 API 호출
+
+  commentCount?: number;
+
+  /** ✅ true면 liked 상태일 때 버튼 비활성(재클릭 금지) */
+  disableIfLiked?: boolean;
 };
 
 const NoticeAction = ({
-  isCommentOpen,
   toggleComment,
-  initialLikeCount = 0,
-  initialLiked = false,
-  commentCount = 0,
   isAuthor = false,
   onEdit,
   onGoToList,
   onDelete,
+  initialLikeCount = 0,
+  initialLiked = false,
   onLikeToggle,
+  commentCount = 0,
+  disableIfLiked = true, // 기본값: 한 번 누르면 잠금
 }: Props) => {
-  const [liked, setLiked] = useState<boolean>(initialLiked);
-  const [count, setCount] = useState<number>(initialLikeCount);
+  const [liked, setLiked] = useState(initialLiked);
+  const [likeCount, setLikeCount] = useState(initialLikeCount);
+  const [sending, setSending] = useState(false);
 
-  // 외부 값 변경 시 동기화
+  // 부모에서 내려온 초기값 동기화
   useEffect(() => setLiked(initialLiked), [initialLiked]);
-  useEffect(() => setCount(initialLikeCount), [initialLikeCount]);
+  useEffect(() => setLikeCount(initialLikeCount), [initialLikeCount]);
 
-  const handleLike = () => {
-    const next = !liked;
-    setLiked(next);
-    setCount((c) => (next ? c + 1 : Math.max(0, c - 1)));
-    onLikeToggle?.(next);
+  const disabled = useMemo(
+    () => (disableIfLiked && liked) || sending,
+    [disableIfLiked, liked, sending]
+  );
+
+  const handleLikeClick = async () => {
+    // ✅ 잠금 또는 전송중이면 무시
+    if (disabled) return;
+
+    // 이번 요구사항: false -> true만 허용 (토글 금지)
+    setLiked(true);
+    setLikeCount((c) => c + 1);
+
+    try {
+      setSending(true);
+      await onLikeToggle?.();
+      // 부모에서 서버 응답(totalLikes/isLiked)로 다시 덮어쓸 수 있음
+    } catch {
+      // 실패 시 롤백
+      setLiked(false);
+      setLikeCount((c) => Math.max(0, c - 1));
+      alert("좋아요 처리에 실패했습니다.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
     <div className="flex justify-between items-center mt-4">
-      {/* 좌측: 좋아요/댓글/공유 */}
       <div className="flex items-center gap-2">
         <button
-          onClick={handleLike}
-          className="flex items-center gap-1 hover:opacity-70 transition-opacity"
-          aria-label={liked ? "좋아요 취소" : "좋아요"}
+          onClick={handleLikeClick}
+          className={`flex items-center gap-1 transition-opacity ${
+            disabled ? "opacity-60 cursor-not-allowed" : "hover:opacity-70"
+          }`}
+          disabled={disabled}
+          aria-disabled={disabled}
+          title={liked ? "이미 좋아요 했어요" : "좋아요"}
         >
           <img
             src={liked ? iconLikedHeart : iconHeart}
-            alt="좋아요"
+            alt={liked ? "좋아요됨" : "좋아요"}
             className="w-5 h-5"
           />
-          <span className="text-sm text-gray-600">{count}</span>
+          <span className="text-sm text-gray-600">{likeCount}</span>
         </button>
 
         <button
-          className="bg-white px-3 py-0.5 rounded-2xl text-sm flex items-center gap-1 hover:bg-gray-50 transition"
+          className="bg-white px-3 py-0.5 rounded-2xl text-sm flex items-center gap-1"
           onClick={toggleComment}
-          aria-pressed={isCommentOpen}
-          aria-label="댓글 열기"
         >
           <img src={iconComment} alt="댓글" className="w-5 h-5" />
           <span className="text-gray-600">{commentCount}</span>
         </button>
-
-        <button
-          className="hover:opacity-80 transition-opacity"
-          aria-label="공유"
-          type="button"
-        >
+        <button>
           <img src={iconShare} alt="공유" className="w-5 h-5" />
         </button>
       </div>
 
-      {/* 우측: 수정/삭제/목록 */}
       <div className="flex items-center gap-2">
         {isAuthor && (
           <>

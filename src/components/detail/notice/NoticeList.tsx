@@ -7,8 +7,6 @@ import PostButton from "../notice/button/post";
 import type { Notice } from "../../../types/notice/types";
 import { fetchNoticeList } from "./constants";
 import { fetchMyRole as fetchMyRoleDetail } from "../constants";
-
-// API 응답 타입 정의 - 새로운 API 구조에 맞춰 수정
 interface ApiNoticeData {
   id: number;
   title: string;

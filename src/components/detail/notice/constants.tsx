@@ -1,10 +1,6 @@
-// src/components/detail/notice/constants.tsx
-import { authorizedFetch } from "../../../apis/client";
+
 import { privateAPI } from "../../../apis/axios";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || "";
-
-// 공통 유틸
 const enc = (v: string | number) => encodeURIComponent(String(v));
 const ok = (d: any) => d?.resultType === "SUCCESS" || d?.success;
 
@@ -15,23 +11,22 @@ export const CONSTANTS = {
   LABELS: { REQUIRED: "필독", WRITE_BUTTON: "글쓰기", BOTTOM_SECTION: "미술너 사네" },
 } as const;
 
-/** 공지 목록 */
 export const fetchNoticeList = async (crewId: string, page = 1, size = 10) => {
-  const url = `${API_BASE}/crew/${enc(crewId)}/notice/?page=${enc(page)}&size=${enc(size)}`;
-  const res = await authorizedFetch(url, {
-    method: "GET",
-    headers: { Accept: "application/json" },
-    credentials: "include",
-  });
-  const resp = await res.json().catch(() => null);
+  const { data } = await privateAPI.get(
+    `/crew/${enc(crewId)}/notice/`,
+    {
+      params: { page, size },
+      withCredentials: true,
+      headers: { Accept: "application/json" },
+    }
+  );
 
-  if (res.status >= 500) return [];
-  if (!res.ok || resp?.resultType !== "SUCCESS") {
-    throw new Error(resp?.error?.reason || `Notice list failed (${res.status})`);
+  if (!ok(data)) {
+    throw new Error(data?.error?.reason || "Notice list failed");
   }
 
   // 서버가 { data: [...] } 또는 { data: { data: [...] } } 형태로 올 수 있음
-  const d = resp?.data;
+  const d = data?.data;
   if (Array.isArray(d)) return d;
   if (Array.isArray(d?.data)) return d.data;
   return [];
@@ -91,37 +86,32 @@ export const deleteNotice = async (crewId: string, noticeId: string) => {
   return data;
 };
 
-/** 좋아요 토글 */
 export const toggleNoticeLike = async (crewId: string | number, noticeId: string | number) => {
-  const url = `/crew/${enc(crewId)}/notice/${enc(noticeId)}/like/`;
+  const url = `/crew/${enc(crewId)}/notice/${enc(noticeId)}/like`;
   try {
     const { data } = await privateAPI.post(
       url,
       {},
-      {
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        withCredentials: true,
-      }
+      { headers: { "Content-Type": "application/json", Accept: "application/json" }, withCredentials: true }
     );
-    if (!ok(data)) throw new Error(data?.error?.reason || "Like toggle failed");
-    return data; // { resultType, data: { isLiked, totalLikes, ... } }
+    if (data?.resultType !== "SUCCESS") throw new Error(data?.error?.reason || "Like toggle failed");
+    return data; // data: { isLiked, totalLikes, ... }
   } catch (err: any) {
     const reason = err?.response?.data?.error?.reason || err?.message || "Like toggle failed";
     throw new Error(reason);
   }
 };
 
-/** 공지 상세 조회 */
 export const getNoticeDetail = async (crewId: string, noticeId: string) => {
-  const url = `${API_BASE}/crew/${enc(crewId)}/notice/${enc(noticeId)}/`;
-  const res = await authorizedFetch(url, {
-    method: "GET",
+  const url = `/crew/${enc(crewId)}/notice/${enc(noticeId)}`;
+  const { data } = await privateAPI.get(url, {
+    withCredentials: true,
     headers: { Accept: "application/json" },
-    credentials: "include",
   });
-  const json = await res.json().catch(() => null);
-  if (!res.ok) throw new Error(json?.error?.reason || `Notice detail failed (${res.status})`);
-  return json; // { resultType, data: {...} }
+  if (data?.resultType !== "SUCCESS") {
+    throw new Error(data?.error?.reason || "Notice detail failed");
+  }
+  return data; 
 };
 
 /** 댓글 목록 조회 ( /comment/ → 실패시 /comments/ 폴백 ) */
