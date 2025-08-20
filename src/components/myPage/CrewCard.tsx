@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo/ic_logo graphic_45.svg";
 import CategoryBgImgs from "../CategoryBgImgs";
 
@@ -7,6 +8,7 @@ interface CrewCardProps {
   title: string;
   description: string;
   rightContent: React.ReactNode;
+  crewId: number;
 }
 
 export default function CrewCard({
@@ -15,11 +17,20 @@ export default function CrewCard({
   title,
   description,
   rightContent,
+  crewId,
 }: CrewCardProps) {
   const hasImage = imageUrl && imageUrl.trim() !== "";
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/crew/${crewId}`); // 크루 디테일 페이지로 이동
+  };
 
   return (
-    <div className="flex items-center justify-between w-[56rem] h-[10rem] bg-[#F7F7FB] rounded-2xl px-6">
+    <div
+      className="flex items-center justify-between w-[56rem] h-[10rem] bg-[#F7F7FB] rounded-2xl px-6 cursor-pointer hover:bg-[#ECECFC] transition-colors"
+      onClick={handleCardClick}
+    >
       {/* 좌측 */}
       <div className="flex items-center">
         {/* 이미지 컨테이너 */}
@@ -52,8 +63,8 @@ export default function CrewCard({
         </div>
       </div>
 
-      {/* 우측 */}
-      {rightContent}
+      {/* 우측 - 이벤트 버블링 방지 */}
+      <div onClick={(e) => e.stopPropagation()}>{rightContent}</div>
     </div>
   );
 }

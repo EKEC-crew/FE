@@ -1,33 +1,19 @@
 // src/pages/myPage/AppliedCrewPage.tsx
 import { useMyAppliedCrewList } from "../../hooks/apply/useMyAppliedCrewList";
 import AppliedCrewList from "../../components/myPage/applied/AppliedCrewList";
-import type { AppliedCrew } from "../../types/mypage/AppliedCrew";
-import { useMemo } from "react";
-import type { AppliedItem } from "@/types/apply/types";
 
 const AppliedCrewPage = () => {
-  const { data, isLoading, isError, error, refetch } = useMyAppliedCrewList({
-    page: 1,
-    size: 24,
-  });
+  const {
+    crews,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+    error,
+  } = useMyAppliedCrewList(); // ✅ 파라미터 제거
 
-  // 서버 응답 → UI에서 쓰는 AppliedCrew로 변환
-  const appliedCrews: AppliedCrew[] = useMemo(() => {
-    // data가 AppliedListSuccess 타입이므로 직접 items에 접근
-    const items = data?.items ?? [];
-    return items.map<AppliedCrew>((item: AppliedItem) => ({
-      id: item.applyId,
-      name: item.crewName,
-      description: item.crewContent ?? "",
-      imageUrl: item.crewImage ?? "",
-      status: item.statusLabel as AppliedCrew["status"], // 타입 단언
-      crewId: item.crewId,
-      applyId: item.applyId,
-      appliedAt: item.appliedAt,
-    }));
-  }, [data]);
-
-  // 로딩 상태
+  // 로딩 상태 (첫 로딩)
   if (isLoading) {
     return (
       <div className="px-10 py-6">
@@ -56,12 +42,6 @@ const AppliedCrewPage = () => {
         <div className="text-red-600 font-medium mb-3">
           지원 내역을 불러오지 못했어요.
         </div>
-        <button
-          className="px-3 py-2 rounded bg-gray-900 text-white"
-          onClick={() => refetch()}
-        >
-          다시 시도
-        </button>
         <div className="text-sm text-gray-500 mt-2">
           {error instanceof Error
             ? error.message
@@ -72,14 +52,14 @@ const AppliedCrewPage = () => {
   }
 
   // 데이터가 없는 경우
-  if (appliedCrews.length === 0) {
+  if (crews.length === 0) {
     return (
       <div className="px-10 py-6">
         <div className="text-[2.25rem] font-semibold mb-5">
           내가 지원한 크루
         </div>
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="text-gray-400 text-6xl mb-4"></div>
+          <div className="text-gray-400 text-6xl mb-4">📝</div>
           <div className="text-lg font-medium text-gray-600 mb-2">
             아직 지원한 크루가 없어요
           </div>
@@ -95,7 +75,12 @@ const AppliedCrewPage = () => {
   return (
     <div className="px-10 py-6">
       <div className="text-[2.25rem] font-semibold mb-5">내가 지원한 크루</div>
-      <AppliedCrewList crews={appliedCrews} />
+      <AppliedCrewList
+        crews={crews}
+        hasMore={hasNextPage ?? false}
+        fetchMore={fetchNextPage}
+        isLoading={isFetchingNextPage}
+      />
     </div>
   );
 };

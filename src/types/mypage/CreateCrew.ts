@@ -4,6 +4,5 @@ export interface CreatedCrew {
   description: string;
   imageUrl: string;
   category: string;
-  current: number;
-  max: number;
+  roleLabel: string;
 }
