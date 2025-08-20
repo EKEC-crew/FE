@@ -1,9 +1,6 @@
 // src/hooks/apply/useAppliedCrewList.ts
 import { useInfiniteQuery } from "@tanstack/react-query";
-import {
-  getAppliedCrewList,
-  type GetAppliedListParams,
-} from "../../apis/crewApply";
+import { getAppliedCrewList } from "../../apis/crewApply";
 import type { AppliedCrew } from "../../types/mypage/AppliedCrew";
 import type { AppliedListSuccess } from "../../types/apply/types"; // 타입 import
 import { useMemo } from "react";
