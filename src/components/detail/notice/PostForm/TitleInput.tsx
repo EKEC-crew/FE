@@ -12,7 +12,6 @@ const TitleInput: React.FC<TitleInputProps> = ({ onValueChange, initialValue }) 
             setValue(initialValue);
             onValueChange(initialValue);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [initialValue]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

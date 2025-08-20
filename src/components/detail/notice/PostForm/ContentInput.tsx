@@ -1,49 +1,29 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useEffect } from "react";
 import { Editor } from "@toast-ui/react-editor";
 import "@toast-ui/editor/dist/toastui-editor.css";
 
 interface ContentInputProps {
-  onValueChange: (value: string) => void;
-  initialValue?: string;
+  content?: string;
+  setContent?: (content: string) => void;
 }
 
-const ContentInput: React.FC<ContentInputProps> = ({ onValueChange, initialValue }) => {
+const ContentInput = ({ content = "", setContent }: ContentInputProps) => {
   const editorRef = useRef<Editor>(null);
-  const [content, setContent] = useState("");
 
   const handleChange = () => {
     const html = editorRef.current?.getInstance().getHTML() || "";
-    setContent(html);
-    onValueChange(html);
+    setContent?.(html);
   };
 
+  // content prop이 변경될 때 에디터 내용 업데이트
   useEffect(() => {
-    if (typeof initialValue === "string") {
-      setContent(initialValue);
-      const inst = editorRef.current?.getInstance();
-      if (inst) {
-        inst.setHTML(initialValue);
-      }
-      onValueChange(initialValue);
+    if (
+      editorRef.current &&
+      content !== editorRef.current.getInstance().getHTML()
+    ) {
+      editorRef.current.getInstance().setHTML(content);
     }
-  }, [initialValue]);
-
-  // placeholder 텍스트 제거
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const placeholders = document.querySelectorAll('.toastui-editor-md-placeholder, .toastui-editor-ww-placeholder');
-      placeholders.forEach(el => {
-        (el as HTMLElement).style.display = 'none';
-      });
-      
-      const modeSwitches = document.querySelectorAll('.toastui-editor-mode-switch');
-      modeSwitches.forEach(el => {
-        (el as HTMLElement).style.display = 'none';
-      });
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
+  }, [content]);
 
   return (
     <div>
@@ -53,12 +33,11 @@ const ContentInput: React.FC<ContentInputProps> = ({ onValueChange, initialValue
       <div className="mb-6">
         <Editor
           ref={editorRef}
-          initialValue={content}
+          initialValue=""
           height="400px"
           useCommandShortcut
           hideModeSwitch={true}
           onChange={handleChange}
-          placeholder="내용을 입력해주세요..."
           toolbarItems={[
             ["heading", "bold", "italic", "strike"],
             ["hr", "quote"],
@@ -66,14 +45,6 @@ const ContentInput: React.FC<ContentInputProps> = ({ onValueChange, initialValue
             ["table", "image", "link"],
             ["code", "codeblock"],
           ]}
-        />
-      </div>
-
-      {/* 미리보기 영역 (실시간 반영) */}
-      <div className="mt-4 rounded-2xl bg-[#eef0f5] p-6">
-        <div
-          className="text-[15px] leading-7 text-gray-800"
-          dangerouslySetInnerHTML={{ __html: content }}
         />
       </div>
     </div>

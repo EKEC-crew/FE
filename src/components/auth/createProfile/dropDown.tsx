@@ -13,7 +13,7 @@ interface DropDownProps {
   value: string;
   onChange: (value: string) => void;
   getDisplayValue?: (value: string) => string;
-  disabled?: boolean; // 드롭다운 비활성화 여부
+  disabled?: boolean;
 }
 
 const DropDown = ({
@@ -23,14 +23,37 @@ const DropDown = ({
   value,
   onChange,
   getDisplayValue,
-  disabled = false, // 기본값 false
+  disabled = false,
 }: DropDownProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropUp, setDropUp] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const checkPosition = () => {
+    if (!dropdownRef.current) return;
+
+    const rect = dropdownRef.current.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    const dropdownHeight = 200; // maxHeight
+
+    // 화면 하단에서 드롭다운 높이만큼의 공간이 있는지 확인
+    const spaceBelow = windowHeight - rect.bottom;
+    const shouldDropUp =
+      spaceBelow < dropdownHeight && rect.top > dropdownHeight;
+
+    setDropUp(shouldDropUp);
+  };
 
   const toggleOpen = () => {
     if (!disabled) {
-      setIsOpen((prev) => !prev);
+      setIsOpen((prev) => {
+        if (!prev) {
+          // 열 때 위치 체크
+          setTimeout(checkPosition, 0);
+        }
+        return !prev;
+      });
     }
   };
 
@@ -48,13 +71,24 @@ const DropDown = ({
         setIsOpen(false);
       }
     };
+
+    const handleResize = () => {
+      if (isOpen) checkPosition();
+    };
+
     document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleResize);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleResize);
+    };
+  }, [isOpen]);
 
   const containerClasses = `relative ${width ? "" : "w-full"}`;
   const containerStyle = width ? { width } : {};
-
   const isActive = value !== "" && value !== null;
 
   return (
@@ -83,8 +117,14 @@ const DropDown = ({
 
       {isOpen && !disabled && (
         <div
-          className="absolute left-0 mt-1 w-full bg-white rounded-[20px] shadow-lg border border-gray-200 z-50 overflow-y-auto"
-          style={{ maxHeight: "200px" }}
+          ref={menuRef}
+          className={`absolute left-0 w-full bg-white rounded-[20px] shadow-lg border border-gray-200 overflow-y-auto ${
+            dropUp ? "bottom-full mb-1" : "top-full mt-1"
+          }`}
+          style={{
+            maxHeight: "200px",
+            zIndex: 1000,
+          }}
         >
           {options.map((option) => (
             <div

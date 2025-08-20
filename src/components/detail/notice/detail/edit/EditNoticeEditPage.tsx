@@ -91,10 +91,12 @@ export default function NoticeEditPage() {
         <div className="w-full max-w-[1200px] space-y-6 py-6">
           <Notice />
           <div className="bg-white rounded-xl shadow-md p-6">
-            <div className="text-2xl font-bold mb-7 mt-4 px-2 lg:px-6">공지 수정하기</div>
+            <div className="text-2xl font-bold mb-7 mt-4 px-2 lg:px-6">
+              공지 수정하기
+            </div>
             <div className="space-y-6 px-2 lg:px-6">
               <TitleInput initialValue={title} onValueChange={setTitle} />
-              <ContentInput initialValue={content} onValueChange={setContent} />
+              <ContentInput content={content} setContent={setContent} />
               <div className="flex justify-end gap-2 pt-2">
                 <button
                   className="px-4 py-2 rounded bg-gray-200"
@@ -111,4 +113,3 @@ export default function NoticeEditPage() {
     </div>
   );
 }
-

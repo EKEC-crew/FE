@@ -25,7 +25,7 @@ const TypeSelector = ({
             onChange={(e) => setType(e.target.value)}
             className="w-4 h-4 appearance-none rounded-full border-1 border-gray-300 checked:border-[#B8B8F8] checked:bg-[#3A3ADB] checked:shadow-[0_0_0_4px_#B8B8F8]"
           />
-          <div className="text-lg">정기모임</div>
+          <div className="text-lg">필수 공지</div>
         </label>
         <label className="flex items-center gap-2">
           <input
@@ -36,7 +36,7 @@ const TypeSelector = ({
             onChange={(e) => setType(e.target.value)}
             className="w-4 h-4 appearance-none rounded-full border-1 border-gray-300 checked:border-[#B8B8F8] checked:bg-[#3A3ADB] checked:shadow-[0_0_0_4px_#B8B8F8]"
           />
-          <div className="text-lg">번개 모임</div>
+          <div className="text-lg">일반 공지</div>
         </label>
         <label className="flex items-center gap-2">
           <input
