@@ -137,13 +137,6 @@ const BulletinDetail = () => {
               />
               <p className="text-sm text-gray-600">{bulletin.author}</p>
               <p className="text-sm text-gray-500">{bulletin.date}</p>
-              <div className="flex items-center gap-2">
-                {bulletin.likeCount > 0 && (
-                  <span className="text-red-500 text-sm">
-                    ♥ {bulletin.likeCount}
-                  </span>
-                )}
-              </div>
             </div>
 
             {/* 게시글 내용 */}
