@@ -13,7 +13,7 @@ interface Props {
 const ProtectedRoute = ({ children }: Props) => {
   const status = useAuthStore((s) => s.status);
   const showSessionModal = useAuthStore((s) => s.showSessionModal);
-  const logoutReason = useAuthStore((s) => s.logoutReason);
+
   const navigate = useNavigate();
   const [open, setOpen] = useState(true);
 
