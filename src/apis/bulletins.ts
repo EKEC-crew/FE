@@ -213,3 +213,45 @@ export const deleteBulletinCommentApi = async (
 
   return response.data;
 };
+
+// 게시글 좋아요 추가 API 함수
+export const likeBulletinApi = async (
+  crewId: string,
+  postId: string
+): Promise<{
+  resultType: "SUCCESS" | "FAIL";
+  error: null;
+  data: { likeCount?: number };
+}> => {
+  console.log(
+    `[likeBulletinApi] Requesting: POST /crew/${crewId}/post/${postId}/like`
+  );
+  const response = await privateAPI.post<{
+    resultType: "SUCCESS" | "FAIL";
+    error: null;
+    data: { likeCount?: number };
+  }>(`/crew/${crewId}/post/${postId}/like`);
+  console.log("[likeBulletinApi] response.data:", response.data);
+  return response.data;
+};
+
+// 게시글 좋아요 취소 API 함수
+export const unlikeBulletinApi = async (
+  crewId: string,
+  postId: string
+): Promise<{
+  resultType: "SUCCESS" | "FAIL";
+  error: null;
+  data: { likeCount?: number };
+}> => {
+  console.log(
+    `[unlikeBulletinApi] Requesting: DELETE /crew/${crewId}/post/${postId}/like`
+  );
+  const response = await privateAPI.post<{
+    resultType: "SUCCESS" | "FAIL";
+    error: null;
+    data: { likeCount?: number };
+  }>(`/crew/${crewId}/post/${postId}/like`);
+  console.log("[unlikeBulletinApi] response.data:", response.data);
+  return response.data;
+};
