@@ -1,17 +1,15 @@
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-
 import { signInApi, refreshApi } from "../../apis/auth";
 import type { RequestSign, ResponseSign } from "../../types/auth/types";
 import { useAuthStore } from "../../store/useAuthStore";
 import { useErrorModal } from "./useErrorModal";
+import { authMeta } from "../../utils/authMeta";
 
 export const useSignIn = () => {
   const navigate = useNavigate();
   const { showSignUpPromptModal, showPasswordErrorModal } = useErrorModal();
-
-  const setUser = useAuthStore((s) => s.setUser);
-  const setStatus = useAuthStore((s) => s.setStatus);
+  const { setUser, setStatus, loadAvatar } = useAuthStore();
 
   return useMutation<ResponseSign, Error, RequestSign>({
     mutationFn: signInApi,
@@ -20,54 +18,97 @@ export const useSignIn = () => {
 
       if (response.resultType === "SUCCESS") {
         try {
-          const me = await refreshApi();
-          if (me.resultType === "SUCCESS" && me.data) {
-            setUser(me.data);
+          // 쿠키 설정을 위한 짧은 대기
+          await new Promise((resolve) => setTimeout(resolve, 100));
+
+          // 사용자 정보 새로고침
+          const userResponse = await refreshApi();
+
+          if (userResponse.resultType === "SUCCESS" && userResponse.data) {
+            setUser(userResponse.data);
             setStatus("authenticated");
-            await useAuthStore.getState().loadAvatar();
+            authMeta.setLastLoginAt(Date.now());
+
+            // 세션 활성화 플래그 설정
+            try {
+              sessionStorage.setItem("auth:live", "1");
+            } catch {}
+
+            await loadAvatar();
+
+            // 프로필 완성 여부에 따른 라우팅
+            if (response.data?.isCompleted) {
+              navigate("/");
+            } else {
+              navigate("/createProfile");
+            }
           } else {
-            setUser(null);
-            setStatus("unauthenticated");
+            throw new Error("Failed to get user info");
           }
-        } catch {
+        } catch (error) {
+          console.error("Post-login user fetch failed:", error);
+
+          // refreshApi 실패 시, 로그인 응답에서 받은 데이터로라도 처리
+          if (response.data) {
+            console.log("refreshApi 실패했지만 로그인 응답 데이터로 처리");
+
+            // 기본 사용자 정보 설정 (refreshApi 응답과 같은 구조로 가정)
+            const userData = {
+              id: response.data.id,
+              email: response.data.email,
+              name: response.data.name,
+              nickname: response.data.nickname,
+              profileImage: response.data.profileImage || "",
+              isCompleted: response.data.isCompleted,
+              gender: 0, // 기본값 (로그인 응답에는 없으므로)
+              phone: "", // 기본값 (로그인 응답에는 없으므로)
+              birth: "", // 기본값 (로그인 응답에는 없으므로)
+              defaultImage: false, // 기본값 (로그인 응답에는 없으므로)
+            };
+            setUser(userData);
+            setStatus("authenticated");
+            authMeta.setLastLoginAt(Date.now());
+
+            // 세션 활성화 플래그 설정
+            try {
+              sessionStorage.setItem("auth:live", "1");
+            } catch {}
+
+            // 프로필 완성 여부에 따른 라우팅
+            if (response.data.isCompleted) {
+              navigate("/");
+            } else {
+              navigate("/createProfile");
+            }
+            return;
+          }
+
           setUser(null);
           setStatus("unauthenticated");
-        }
-        if (response.data?.isCompleted) {
-          navigate("/");
-        } else {
-          navigate("/createProfile");
+          throw error;
         }
       } else {
-        console.error("로그인 실패:", response.error);
         throw new Error(response.error?.reason || "로그인에 실패했습니다.");
       }
     },
+
     onError: (error: any) => {
       console.error("로그인 오류:", error);
 
-      // Axios 에러 응답 구조 확인
       if (error.response) {
         const status = error.response.status;
         const errorData = error.response.data;
 
         if (status === 404) {
-          // 404 에러: 회원가입 유도 모달
           showSignUpPromptModal();
           return;
-        } else if (status === 400) {
-          // 400 에러에서 errorCode가 I001인지 확인 (비밀번호 오류)
-          if (errorData?.error?.errorCode === "I001") {
-            showPasswordErrorModal();
-            return;
-          }
+        } else if (status === 400 && errorData?.error?.errorCode === "I001") {
+          showPasswordErrorModal();
+          return;
         }
       }
 
-      // 기타 에러는 alert 처리
-      let errorMessage = "로그인 중 오류가 발생했습니다.";
-
-      alert(errorMessage);
+      alert("로그인 중 오류가 발생했습니다.");
     },
   });
 };

@@ -1,5 +1,4 @@
-// src/router/ProtectedRoute.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 
@@ -13,8 +12,18 @@ interface Props {
 
 const ProtectedRoute = ({ children }: Props) => {
   const status = useAuthStore((s) => s.status);
+  const showSessionModal = useAuthStore((s) => s.showSessionModal);
+  const logoutReason = useAuthStore((s) => s.logoutReason);
   const navigate = useNavigate();
   const [open, setOpen] = useState(true);
+
+  useEffect(() => {
+    // 세션 모달이 표시되어야 하거나 이미 표시 중일 때는 로그인 필요 모달 숨김
+    if (showSessionModal) {
+      console.log("🚨 [ProtectedRoute] 세션 모달 우선 - 로그인 필요 모달 숨김");
+      setOpen(false);
+    }
+  }, [showSessionModal]);
 
   /* 콜백 */
   const onCancel = () => {
@@ -29,9 +38,19 @@ const ProtectedRoute = ({ children }: Props) => {
 
   /* 2) 로그인 안 됐을 때 → 홈 배경 + 모달 */
   if (status !== "authenticated") {
+    // 세션 모달(중복로그인/만료)이 표시되어야 할 때는 로그인 필요 모달을 표시하지 않음
+    const shouldShowLoginModal = open && !showSessionModal;
+
+    console.log("🔍 [ProtectedRoute] 모달 표시 상태:", {
+      open,
+      showSessionModal,
+      logoutReason,
+      shouldShowLoginModal,
+    });
+
     return (
       <>
-        {open && (
+        {shouldShowLoginModal && (
           <Modal onClose={onCancel} maxWidth="max-w-125" padding="p-6">
             <div className="flex flex-col items-center justify-center">
               <img src={modalImg} className="h-[340px] w-[340px]" />
