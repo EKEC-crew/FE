@@ -8,7 +8,6 @@ import Header from "../../../header";
 import Notice from "../../../notice";
 import Tabs from "../../../tabs";
 import ImageAttachment from "./EditImageAttachment";
-import NoticeAbout from "../NoticeAbout";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
@@ -141,7 +140,6 @@ const EditScheduleForm = () => {
               />
               <TitleInput initialValue={title} onValueChange={setTitle} />
               <ContentInput initialValue={content} onValueChange={setContent} />
-              <NoticeAbout contentHtml={content} />
               <FeeSection
                 fee={fee}
                 setFee={setFee}

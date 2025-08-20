@@ -1,21 +1,15 @@
-interface NoticeAboutProps {
-  contentHtml?: string;
-}
+import React from "react";
 
-const NoticeAbout: React.FC<NoticeAboutProps> = ({ contentHtml }) => {
+export type NoticeAboutProps = {
+  content: string; 
+};
+
+const NoticeAbout: React.FC<NoticeAboutProps> = ({ content }) => {
   return (
-    <div className="text-sm bg-[#EFF0F4] px-4 py-6 rounded-2xl text-gray-800">
-      <div className="flex items-center gap-2 mb-2">
-      </div>
-      {contentHtml ? (
-        <div
-          className="leading-7"
-          dangerouslySetInnerHTML={{ __html: contentHtml }}
-        />
-      ) : (
-        <div className="text-gray-600">내용이 없습니다.</div>
-      )}
-    </div>
+    <div
+      className="tui-content rounded-2xl bg-gray-50 ring-gray-50 shadow-sm ring-1 p-4 sm:p-6 lg:p-8"
+      dangerouslySetInnerHTML={{ __html: content }}
+    />
   );
 };
 

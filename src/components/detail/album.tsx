@@ -1,7 +1,11 @@
 import { useRef, useState, useEffect } from "react";
 import CrewBanner from "../../assets/logo/img_crew_banner.svg";
+import { useAuthStatus } from "../../hooks/notice/useAuthStatus"; 
 
 function Album() {
+  const { data: auth } = useAuthStatus();
+  const canUpload = !!auth?.isLoggedIn;
+
   const [preview, setPreview] = useState<Record<number, string>>({});
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -11,9 +15,16 @@ function Album() {
     };
   }, [preview]);
 
-  const openPicker = (idx: number) => inputRefs.current[idx]?.click();
+  const openPicker = (idx: number) => {
+    if (!canUpload) {
+      alert("로그인 후 이미지 첨부가 가능합니다.");
+      return;
+    }
+    inputRefs.current[idx]?.click();
+  };
 
   const onPick = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!canUpload) return; // ✅ 안전장치
     const f = e.target.files?.[0];
     e.currentTarget.value = "";
     if (!f) return;
@@ -44,34 +55,50 @@ function Album() {
   }) => {
     const src = preview[idx];
     return (
-      <div
-        className="relative w-full aspect-square rounded-xl bg-[#D9D9D9] overflow-hidden cursor-pointer"
-        onClick={() => openPicker(idx)}
-        role="button"
-        aria-label={`tile-${idx}`}
-      >
+      <div className="relative w-full aspect-square rounded-xl bg-[#D9D9D9] overflow-hidden">
         {badge ? <Badge text={badge} /> : null}
 
-        {src ? (
-          <img src={src} alt="preview" className="w-full h-full object-cover" />
-        ) : hasBanner ? (
-          <img
-            src={CrewBanner}
-            alt="crew banner"
-            className="w-full h-full object-cover transform scale-110"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <span className="text-gray-400 text-3xl leading-none">+</span>
+        {/* 클릭 영역 */}
+        <div
+          className={`absolute inset-0 ${canUpload ? "cursor-pointer" : "cursor-not-allowed"}`}
+          onClick={() => openPicker(idx)}
+          role="button"
+          aria-label={`tile-${idx}`}
+          aria-disabled={!canUpload}
+          title={canUpload ? "이미지 추가" : "로그인 후 이미지 첨부 가능"}
+        >
+          {src ? (
+            <img src={src} alt="preview" className="w-full h-full object-cover" />
+          ) : hasBanner ? (
+            <img
+              src={CrewBanner}
+              alt="crew banner"
+              className="w-full h-full object-cover transform scale-110"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <span className="text-gray-400 text-3xl leading-none">+</span>
+            </div>
+          )}
+        </div>
+
+        {/* 비로그인 오버레이 */}
+        {!canUpload && (
+          <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-xs font-medium select-none">
+            로그인 후 첨부 가능
           </div>
         )}
 
+        {/* 파일 입력 자체도 비활성화 */}
         <input
           type="file"
           accept="image/*"
           className="hidden"
-          ref={(el) => { inputRefs.current[idx] = el; }}
+          ref={(el) => {
+            inputRefs.current[idx] = el;
+          }}
           onChange={(e) => onPick(idx, e)}
+          disabled={!canUpload} // ✅ 비로그인 비활성화
         />
       </div>
     );
