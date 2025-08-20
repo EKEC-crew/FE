@@ -1,3 +1,8 @@
+import leftIcon from "../../../../assets/icons/ic_Left_28.svg";
+import leftIconDisabled from "../../../../assets/icons/ic_Left_disabled_28.svg";
+import rightIcon from "../../../../assets/icons/ic_Right_28.svg";
+import rightIconDisabled from "../../../../assets/icons/ic_Right_disabled_28.svg";
+
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
@@ -15,7 +20,6 @@ const Pagination: React.FC<PaginationProps> = ({
     let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
     let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
 
-    // 끝 페이지가 총 페이지보다 작으면 시작 페이지 조정
     if (endPage - startPage + 1 < maxPagesToShow) {
       startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
@@ -26,36 +30,45 @@ const Pagination: React.FC<PaginationProps> = ({
     return pages;
   };
 
+  const isFirst = currentPage === 1;
+  const isLast = currentPage === totalPages;
+
   return (
-    <div className="flex justify-center gap-2 mt-4">
+    <div className="flex justify-center items-center gap-4 mt-4">
+      {/* 이전 */}
       <button
-        className="w-6 h-6 rounded-full border border-gray-300 text-gray-600 flex items-center justify-center"
+        className="w-6 h-6 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD] cursor-pointer disabled:cursor-not-allowed"
         onClick={() => onPageChange(Math.max(1, currentPage - 1))}
-        disabled={currentPage === 1}
+        disabled={isFirst}
+        aria-label="이전 페이지"
       >
-        &lt;
+        <img src={isFirst ? leftIconDisabled : leftIcon} alt="이전" />
       </button>
 
+      {/* 페이지 번호들 */}
       {getPageNumbers().map((n) => (
         <button
           key={n}
           onClick={() => onPageChange(n)}
-          className={`w-6 h-6 rounded-full ${
+          className={`w-6 h-6 flex items-center justify-center rounded-full border-[2px] text-sm font-medium cursor-pointer ${
             n === currentPage
-              ? "bg-[#3A3ADB] text-white"
-              : "border border-gray-300 text-gray-500 font-semibold"
+              ? "border-[#3A3ADB] bg-[#3A3ADB] text-white"
+              : "border-[#93959D] text-[#93959D]"
           }`}
+          aria-current={n === currentPage ? "page" : undefined}
         >
           {n}
         </button>
       ))}
 
+      {/* 다음 */}
       <button
-        className="w-6 h-6 rounded-full border border-gray-300 text-gray-500 flex items-center justify-center"
+        className="w-6 h-6 flex items-center justify-center rounded-full border-[2px] border-[#D9DADD] cursor-pointer disabled:cursor-not-allowed"
         onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
-        disabled={currentPage === totalPages}
+        disabled={isLast}
+        aria-label="다음 페이지"
       >
-        &gt;
+        <img src={isLast ? rightIconDisabled : rightIcon} alt="다음" />
       </button>
     </div>
   );
