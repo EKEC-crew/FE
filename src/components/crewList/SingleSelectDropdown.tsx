@@ -53,7 +53,7 @@ const SingleSelectDropdown = <T,>({
     <div className="relative inline-block" ref={ref}>
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className={`inline-flex items-center gap-2 rounded-full text-xl font-normal cursor-pointer
+        className={`inline-flex items-center gap-2 rounded-full text-xl font-normal whitespace-nowrap cursor-pointer
         ${isFilter ? "h-12 px-5" : "h-10 px-4"}
         ${
           isFilter

@@ -9,6 +9,7 @@ const CrewCard = ({
   description,
   capacity,
   memberCount,
+  score,
   bannerImage,
   crewCategory,
   crewActivity,
@@ -83,7 +84,7 @@ const CrewCard = ({
           </span>
           <span className="text-sm sm:text-base md:text-xl font-normal text-[#1A1B1E] flex items-center gap-2">
             <img src={starIcon} alt="별점" />
-            4.8
+            {typeof score === "number" ? score.toFixed(1) : "0.0"}
           </span>
         </div>
 
