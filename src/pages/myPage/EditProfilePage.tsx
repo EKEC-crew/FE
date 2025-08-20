@@ -1,7 +1,6 @@
 import { FormProvider, useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom"; // 추가
 
 import { editProfileSchema } from "../../schemas/edit/editProfileSchema";
 import Input from "../../components/auth/input";
@@ -20,7 +19,6 @@ import failIcon from "../../assets/icons/img_graphic3_340.svg";
 export default function EditProfilePage() {
   // 서버에서 받아온 기본값
   const { user, setUser } = useAuthStore();
-  const navigate = useNavigate(); // navigate 추가
 
   // 모달 상태 추가
   const [showSuccessModal, setShowSuccessModal] = useState(false);
