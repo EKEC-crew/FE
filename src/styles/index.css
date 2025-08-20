@@ -20,6 +20,10 @@ body {
   @apply font-sans;
 }
 
+body::-webkit-scrollbar {
+  display: none;
+}
+
 /* src/index.css 좌측gnb 스크롤 지우는 코드임다 -동열- */
 .nav-scroll-hide::-webkit-scrollbar {
   display: none;

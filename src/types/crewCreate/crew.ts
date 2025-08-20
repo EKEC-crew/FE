@@ -52,6 +52,7 @@ export interface Crew {
   introduction: string;
   capacity: number;
   memberCount: number;
+  score: number;
   noticeCount: number;
   postCount: number;
   bannerImage: string | null;

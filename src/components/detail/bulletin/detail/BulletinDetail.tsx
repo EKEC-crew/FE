@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useBulletinDetail } from "../../../../hooks/bulletin/useBulletins";
 import { useDeleteBulletin } from "../../../../hooks/bulletin/useBulletinActions";
+import { useBulletinLikeState } from "../../../../hooks/bulletin/useBulletinLikeState";
 import { useAuthStore } from "../../../../store/useAuthStore";
 import Header from "../../header";
 import Tabs from "../../tabs";
@@ -24,6 +25,12 @@ const BulletinDetail = () => {
   } = useBulletinDetail(
     crewId ? parseInt(crewId, 10) : 0,
     id ? parseInt(id, 10) : 0
+  );
+
+  const { handleLikeToggle, isLiked } = useBulletinLikeState(
+    crewId || "",
+    id || "",
+    bulletin?.isLiked
   );
 
   if (loading) {
@@ -97,12 +104,6 @@ const BulletinDetail = () => {
     navigate(`/crew/${crewId}/bulletin`);
   };
 
-  // 좋아요 토글 (추후 구현)
-  const handleLikeToggle = () => {
-    // TODO: 좋아요 API 연결
-    console.log("좋아요 토글");
-  };
-
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="py-6 space-y-6 pt-12">
@@ -137,13 +138,6 @@ const BulletinDetail = () => {
               />
               <p className="text-sm text-gray-600">{bulletin.author}</p>
               <p className="text-sm text-gray-500">{bulletin.date}</p>
-              <div className="flex items-center gap-2">
-                {bulletin.likeCount > 0 && (
-                  <span className="text-red-500 text-sm">
-                    ♥ {bulletin.likeCount}
-                  </span>
-                )}
-              </div>
             </div>
 
             {/* 게시글 내용 */}
@@ -158,7 +152,7 @@ const BulletinDetail = () => {
               onGoToList={handleGoToList}
               likeCount={bulletin.likeCount}
               commentCount={bulletin.commentCount}
-              isLiked={bulletin.isLiked}
+              isLiked={isLiked}
               onLikeToggle={handleLikeToggle}
             />
 

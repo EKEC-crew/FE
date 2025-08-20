@@ -1,4 +1,4 @@
-import { privateAPI, API } from "./axios";
+import { privateAPI } from "./axios";
 import type {
   RequestCreateSchedule,
   ResponseCreateSchedule,
@@ -64,6 +64,7 @@ export const createScheduleApi = async (
     `/crew/${crewId}/plan/`,
     data
   );
+  console.log("[createScheduleApi] response.data:", response.data);
   return response.data;
 };
 
@@ -73,9 +74,13 @@ export const getScheduleListApi = async (
   page: number = 1,
   size: number = 10
 ): Promise<ResponseScheduleList> => {
-  const response = await API.get<ResponseScheduleList>(
+  console.log(
+    `[getScheduleListApi] Requesting: /crew/${crewId}/plan/list?page=${page}&size=${size}`
+  );
+  const response = await privateAPI.get<ResponseScheduleList>(
     `/crew/${crewId}/plan/list?page=${page}&size=${size}`
   );
+  console.log("[getScheduleListApi] response.data:", response.data);
   return response.data;
 };
 
@@ -84,8 +89,25 @@ export const getScheduleDetailApi = async (
   crewId: string,
   planId: string
 ): Promise<ResponseScheduleDetail> => {
+  console.log(
+    `[getScheduleDetailApi] Requesting: /crew/${crewId}/plan/${planId}`
+  );
   const response = await privateAPI.get<ResponseScheduleDetail>(
     `/crew/${crewId}/plan/${planId}`
+  );
+  console.log("[getScheduleDetailApi] Full response:", response);
+  console.log("[getScheduleDetailApi] response.data:", response.data);
+  console.log(
+    "[getScheduleDetailApi] Full data object:",
+    JSON.stringify(response.data?.data, null, 2)
+  );
+  console.log(
+    "[getScheduleDetailApi] isLiked field:",
+    response.data?.data?.isLiked
+  );
+  console.log(
+    "[getScheduleDetailApi] likeCount field:",
+    response.data?.data?.likeCount
   );
 
   // 일정 데이터의 이미지 URL 변환
@@ -102,10 +124,12 @@ export const updateScheduleApi = async (
   planId: string,
   data: RequestUpdateSchedule
 ): Promise<ResponseUpdateSchedule> => {
+  console.log(`[updateScheduleApi] Requesting: /crew/${crewId}/plan/${planId}`);
   const response = await privateAPI.put<ResponseUpdateSchedule>(
     `/crew/${crewId}/plan/${planId}`,
     data
   );
+  console.log("[updateScheduleApi] response.data:", response.data);
   return response.data;
 };
 

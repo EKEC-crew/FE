@@ -36,9 +36,6 @@ const Pagination = ({
     return Array.from({ length: end - start + 1 }, (_, i) => start + i);
   };
 
-  // 페이지가 1장뿐이면 아예 렌더링하지 않음
-  // if (!totalPages || totalPages <= 1) return null;
-
   const pages = getPageNumbers();
   const isFirst = currentPage <= 1;
   const isLast = currentPage >= totalPages;

@@ -25,7 +25,7 @@ const GenderSelect = ({
           <button
             key={optionValue}
             onClick={() => !disabled && onChange(optionValue)}
-            className={`h-12 px-5 flex items-center justify-center gap-1 rounded-full border-[2px] text-xl font-normal text-[#000000] cursor-pointer
+            className={`h-12 px-5 flex items-center justify-center gap-1 rounded-full border-[2px] text-xl font-normal whitespace-nowrap cursor-pointer
               ${
                 disabled
                   ? "cursor-not-allowed border-[#D9DADD] text-[#D9DADD] bg-[#F7F7FB]"
