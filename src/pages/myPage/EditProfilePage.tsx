@@ -136,20 +136,32 @@ export default function EditProfilePage() {
       ? parseBirthDate(user.birth.split("T")[0])
       : null;
 
-    // FormData 객체 생성 (multipart/form-data용)
     const formData = new FormData();
-    formData.append("profileImage", user?.profileImage || "");
-    formData.append("defaultImage", String(user?.defaultImage || false));
+
+    try {
+      if (user?.profileImage) {
+        const fullImageUrl = user.profileImage.startsWith("http")
+          ? user.profileImage
+          : `https://api.ekec.site/api/image?type=1&fileName=${user.profileImage}`;
+
+        const imageResponse = await fetch(fullImageUrl);
+        if (!imageResponse.ok) throw new Error();
+
+        const imageBlob = await imageResponse.blob();
+        if (imageBlob.type.startsWith("image/") && imageBlob.size > 0) {
+          formData.append("profileImage", imageBlob, "profile.jpg");
+        }
+      }
+    } catch (_) {
+      // fetch 실패 시 아무것도 안 보냄
+    }
+
+    formData.append("defaultImage", user?.profileImage ? "false" : "true");
     formData.append("name", user?.name || "");
     formData.append("nickname", data.nickname || "");
     formData.append("gender", String(getGenderNumber(gender)));
     formData.append("phone", user?.phone || "");
     formData.append("birthday", JSON.stringify(birthdayData));
-
-    console.log("전체 제출 데이터 (FormData):");
-    for (let [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
 
     try {
       const response = await privateAPI.post("/auth/profile", formData, {
@@ -158,27 +170,23 @@ export default function EditProfilePage() {
         },
       });
 
-      console.log("프로필 수정 성공:", response.data);
-
-      // 성공 후 처리
       if (response.data.resultType === "SUCCESS") {
         const updatedUser = response.data.data;
 
-        // zustand store 업데이트 - 화면 리렌더링 트리거
+        // 받아온 image 필드를 기존 profileImage에 매핑 (호환성)
+        if (updatedUser.image) {
+          updatedUser.profileImage = updatedUser.image;
+        }
+
         setUser(updatedUser);
 
-        // 프로필 이미지가 변경된 경우 아바타도 다시 로드
         if (updatedUser.profileImage !== user?.profileImage) {
           await useAuthStore.getState().loadAvatar();
         }
 
-        // 성공 모달 표시
         setShowSuccessModal(true);
       }
     } catch (error: any) {
-      console.error("프로필 수정 실패:", error);
-      console.error("에러 응답:", error.response?.data);
-      // 에러 모달 표시
       setShowErrorModal(true);
     }
   };
@@ -186,7 +194,7 @@ export default function EditProfilePage() {
   // 성공 모달 확인 버튼 핸들러
   const handleSuccessConfirm = () => {
     setShowSuccessModal(false);
-    navigate("/"); // 홈으로 이동
+    //navigate("/"); // 홈으로 이동
   };
 
   return (
