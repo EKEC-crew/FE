@@ -247,7 +247,7 @@ export const unlikeBulletinApi = async (
   console.log(
     `[unlikeBulletinApi] Requesting: DELETE /crew/${crewId}/post/${postId}/like`
   );
-  const response = await privateAPI.delete<{
+  const response = await privateAPI.post<{
     resultType: "SUCCESS" | "FAIL";
     error: null;
     data: { likeCount?: number };
