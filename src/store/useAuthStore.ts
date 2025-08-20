@@ -32,6 +32,13 @@ export const useAuthStore = create<AuthState>()(
       setStatus: (s) => set({ status: s }),
 
       initAuth: async () => {
+        // localStorage에 저장된 인증 정보가 있는지 확인
+        const stored = localStorage.getItem("auth-storage");
+        if (!stored) {
+          set({ status: "unauthenticated" });
+          return;
+        }
+
         set({ status: "loading" });
         try {
           const r = await refreshApi();
