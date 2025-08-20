@@ -31,21 +31,15 @@ export const privateAPI = axios.create({
 privateAPI.interceptors.response.use(
   (response) => response,
   async (error) => {
-    console.log("🔥 인터셉터 에러 발생:", error.response?.status);
-
     const originalRequest = error.config;
 
     if (error.response?.status === 401 && !originalRequest._retry) {
-      console.log("🔥 401 에러 감지!");
       originalRequest._retry = true;
 
       try {
         await refreshApi();
-        console.log("🔥 refresh 성공");
         return privateAPI(originalRequest);
       } catch (refreshError) {
-        console.log("🔥 refresh 실패, 홈으로 이동 + URL 파라미터");
-
         // ✅ URL 파라미터로 모달 표시 신호
         window.location.href = "/?needLogin=true";
 

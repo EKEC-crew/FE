@@ -20,7 +20,6 @@ const ProtectedRoute = ({ children }: Props) => {
   useEffect(() => {
     // 세션 모달이 표시되어야 하거나 이미 표시 중일 때는 로그인 필요 모달 숨김
     if (showSessionModal) {
-      console.log("🚨 [ProtectedRoute] 세션 모달 우선 - 로그인 필요 모달 숨김");
       setOpen(false);
     }
   }, [showSessionModal]);
@@ -40,13 +39,6 @@ const ProtectedRoute = ({ children }: Props) => {
   if (status !== "authenticated") {
     // 세션 모달(중복로그인/만료)이 표시되어야 할 때는 로그인 필요 모달을 표시하지 않음
     const shouldShowLoginModal = open && !showSessionModal;
-
-    console.log("🔍 [ProtectedRoute] 모달 표시 상태:", {
-      open,
-      showSessionModal,
-      logoutReason,
-      shouldShowLoginModal,
-    });
 
     return (
       <>

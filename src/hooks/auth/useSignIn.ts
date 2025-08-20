@@ -14,8 +14,6 @@ export const useSignIn = () => {
   return useMutation<ResponseSign, Error, RequestSign>({
     mutationFn: signInApi,
     onSuccess: async (response) => {
-      console.log("로그인 성공:", response);
-
       if (response.resultType === "SUCCESS") {
         try {
           // 쿠키 설정을 위한 짧은 대기
@@ -50,8 +48,6 @@ export const useSignIn = () => {
 
           // refreshApi 실패 시, 로그인 응답에서 받은 데이터로라도 처리
           if (response.data) {
-            console.log("refreshApi 실패했지만 로그인 응답 데이터로 처리");
-
             // 기본 사용자 정보 설정 (refreshApi 응답과 같은 구조로 가정)
             const userData = {
               id: response.data.id,

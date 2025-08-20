@@ -30,7 +30,6 @@ export const signInApi = async (data: RequestSign): Promise<ResponseSign> => {
 
   if (response.data?.resultType === "SUCCESS") {
     authMeta.setAuthEver(); // 로그인 기록 저장
-    console.log("로그인 성공, 쿠키 헤더:", response.headers["set-cookie"]);
   }
 
   return response.data;
@@ -46,8 +45,6 @@ export const signOutApi = async (): Promise<ResponseSignOut> => {
 
 // 토큰 갱신
 export const refreshApi = async (): Promise<ResponseRefresh> => {
-  console.log("refreshApi 호출 - 쿠키 확인:", document.cookie);
-
   const response = await authApi.post<ResponseRefresh>("/auth/refresh");
 
   if (response.status >= 200 && response.status < 300) {
@@ -57,7 +54,6 @@ export const refreshApi = async (): Promise<ResponseRefresh> => {
     try {
       sessionStorage.setItem("auth:live", "1");
     } catch {}
-    console.log("refreshApi 성공");
   }
 
   return response.data;

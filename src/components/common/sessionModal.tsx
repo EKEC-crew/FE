@@ -20,12 +20,10 @@ export default function SessionModal() {
       : "보안을 위해 현재 기기에서 로그아웃되었습니다. 다시 로그인해 주세요.";
 
   const close = () => {
-    console.log("🚨 [SessionModal] 모달 닫기");
     setSessionModal(false, null);
   };
 
   const goToLogin = () => {
-    console.log("🚨 [SessionModal] 로그인 페이지로 이동");
     setSessionModal(false, null);
     window.location.href = "/signIn"; // navigate 대신 강제 리로드로 확실하게 처리
   };
