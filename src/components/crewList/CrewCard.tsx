@@ -80,7 +80,8 @@ const CrewCard = ({
               memberCount === capacity ? "bg-[#5E6068]" : "bg-[#3A3ADB]"
             }`}
           >
-            크루 {memberCount ?? 0}/{capacity === 0 ? "00" : capacity}
+            크루 {memberCount ?? 0}/
+            {capacity == null || capacity === 0 ? "00" : capacity}
           </span>
           <span className="text-sm sm:text-base md:text-xl font-normal text-[#1A1B1E] flex items-center gap-2">
             <img src={starIcon} alt="별점" />
