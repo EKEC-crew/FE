@@ -3,19 +3,19 @@ import chatText from "../../assets/icons/ic_ChatText_40.svg";
 interface Props {
   crewName: string;
   content: string;
-  isRead: boolean;
   onClick: () => void;
 }
 
-export default function AlarmItem({
-  crewName,
-  content,
-  isRead,
-  onClick,
-}: Props) {
+export default function AlarmItem({ crewName, content, onClick }: Props) {
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onClick();
+  };
+
   return (
     <li
-      onClick={onClick}
+      onClick={handleClick}
       className="px-4 py-4 m-3 text-sm hover:bg-gray-100 cursor-pointer flex justify-between items-start rounded-2xl bg-white"
     >
       <div className="flex items-center gap-2">
@@ -25,7 +25,8 @@ export default function AlarmItem({
           <p>{content}</p>
         </div>
       </div>
-      {!isRead && <span className="w-2 h-2 mt-1 bg-red-500 rounded-full" />}
+      {/* 모든 알람에 빨간 점 (읽지 않은 것만 있으므로) */}
+      <span className="w-2 h-2 mt-1 bg-red-500 rounded-full" />
     </li>
   );
 }
