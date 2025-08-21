@@ -12,6 +12,7 @@ import { useCrewSearchDetail } from "../../hooks/crewList/useCrewSearchDetail";
 import { buildDetailQS } from "../../utils/crewFilter/buildCrewListQs";
 import { useInternalSetters } from "../../hooks/crewList/useInternalSetters";
 import { useUrlSync } from "../../hooks/crewList/useUrlSync";
+import CrewCardSkeletonList from "../../components/crewList/CrewCardSkeletonList";
 
 const PAGE_SIZE = 10;
 
@@ -85,7 +86,7 @@ const CrewListPage = () => {
   });
 
   // 데이터 가져오기 (react-query)
-  const { data } = useCrewSearchDetail({
+  const { data, isLoading } = useCrewSearchDetail({
     name,
     category: filters.category,
     activity: filters.activity,
@@ -164,7 +165,9 @@ const CrewListPage = () => {
         />
 
         {/* 카드 리스트 */}
-        {crews.length === 0 ? (
+        {isLoading ? (
+          <CrewCardSkeletonList count={PAGE_SIZE} />
+        ) : crews.length === 0 ? (
           <div className="text-center mt-40">
             <img src={cautionIcon} alt="successIcon" className="mx-auto" />
             <h3 className="text-xl md:text-2xl font-bold">

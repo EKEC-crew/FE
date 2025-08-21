@@ -56,6 +56,6 @@ export function buildDetailQS(p: {
   }
   if (p.age != null) sp.set("age", String(p.age));
   if (p.gender != null) sp.set("gender", String(p.gender));
-  if (p.capacity && p.capacity > 0) sp.set("capacity", String(p.capacity));
+  if (p.capacity) sp.set("capacity", String(p.capacity));
   return sp.toString();
 }
