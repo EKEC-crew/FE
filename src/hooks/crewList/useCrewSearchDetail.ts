@@ -36,7 +36,7 @@ function toQuery(p: {
   }
   if (p.age != null) q.age = String(p.age);
   if (p.gender != null) q.gender = String(p.gender);
-  if (p.capacity != null && p.capacity > 0) q.capacity = String(p.capacity);
+  if (p.capacity != null) q.capacity = String(p.capacity);
   return q;
 }
 
