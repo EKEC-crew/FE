@@ -20,7 +20,7 @@ export default function AppliedCrewList({
   if (crews.length === 0 && !isLoading) {
     return (
       <div className=" flex flex-col justify-center items-center">
-        <img src={noIcon} className="h-[340px] w-[340px]" />
+        <img src={noIcon} className="h-[21.25rem] w-[21.25rem]" />
         <div className="text-center py-8 text-gray-500">
           회원님이 지원한 크루가 없어요 <br />꼭 맞는 크루를 찾아보세요!
         </div>
