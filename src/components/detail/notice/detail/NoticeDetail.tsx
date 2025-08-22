@@ -104,7 +104,7 @@ const NoticeDetail = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="py-6 space-y-6 pt-12">
-        <div className="pt-0">
+        <div className="pt-1">
           <Header />
           <Tabs />
         </div>
