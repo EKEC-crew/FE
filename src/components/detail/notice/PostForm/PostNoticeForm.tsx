@@ -17,8 +17,9 @@ const PostNoticeForm = () => {
   const { crewId } = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [type, setType] = useState("regular");
+  const [content, setContent] = useState("")
+  const [typeRadio, setTypeRadio] = useState("regular");
+  const typeNum = typeRadio === "regular" ? 1 : 0;
   const [isRequired, setIsRequired] = useState(true);
   const [fee, setFee] = useState("");
   const [allowComment, setAllowComment] = useState(false);
@@ -59,6 +60,12 @@ const PostNoticeForm = () => {
     checkUserRole();
   }, [crewId]);
 
+  // 라디오 선택값에 따라 공지 타입 동기화
+  // type: "regular"(필독=1), "flash"(일반=0)
+  useEffect(() => {
+    setIsRequired(typeRadio === "regular");
+  }, [typeRadio]);
+
   const hasWritePermission = userRole !== null && userRole >= 1;
 
   const handleSubmit = async () => {
@@ -82,7 +89,7 @@ const PostNoticeForm = () => {
     setIsSubmitting(true);
     try {
       const res = await createNotice(cid, title.trim(), content.trim(), {
-        isRequired,
+        type: typeNum,
       });
 
       if (res?.resultType !== "SUCCESS") {
@@ -199,7 +206,12 @@ const PostNoticeForm = () => {
             </div>
 
             <div className="space-y-6 px-2 lg:px-6">
-              <TypeSelector {...{ type, setType, isRequired, setIsRequired }} />
+              <TypeSelector
+                type={typeRadio}
+                setType={setTypeRadio}
+                isRequired={isRequired}
+                setIsRequired={setIsRequired}
+              />
 
               <PermissionSelector
                 {...{

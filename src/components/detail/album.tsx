@@ -1,10 +1,13 @@
 import { useRef, useState, useEffect } from "react";
 import CrewBanner from "../../assets/logo/img_crew_banner.svg";
-import { useAuthStatus } from "../../hooks/notice/useAuthStatus"; 
+import { useAuthStatus } from "../../hooks/notice/useAuthStatus";
 
 function Album() {
-  const { data: auth } = useAuthStatus();
+  const { data: auth, isLoading } = useAuthStatus();
   const canUpload = !!auth?.isLoggedIn;
+  
+  // 디버깅용 로그
+  console.log("Album - auth status:", { auth, canUpload, isLoading });
 
   const [preview, setPreview] = useState<Record<number, string>>({});
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -24,7 +27,7 @@ function Album() {
   };
 
   const onPick = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!canUpload) return; // ✅ 안전장치
+    if (!canUpload) return;
     const f = e.target.files?.[0];
     e.currentTarget.value = "";
     if (!f) return;
@@ -82,8 +85,8 @@ function Album() {
           )}
         </div>
 
-        {/* 비로그인 오버레이 */}
-        {!canUpload && (
+        {/* 비로그인 오버레이 - 로딩 중이 아니고 로그인되지 않은 경우에만 표시 */}
+        {!isLoading && !canUpload && (
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-xs font-medium select-none">
             로그인 후 첨부 가능
           </div>

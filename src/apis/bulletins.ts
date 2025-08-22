@@ -95,6 +95,8 @@ export const toggleBulletinLikeApi = async (crewId: string, postId: string) => {
   return response.data;
 };
 
+import { imageUrlHelpers } from "./image";
+
 // 이미지 URL 변환 함수
 export const getImageUrl = (
   fileName?: string | null,
@@ -110,7 +112,18 @@ export const getImageUrl = (
   }
 
   // 파일명만 있는 경우 이미지 API로 변환
-  return `${import.meta.env.VITE_API_BASE_URL}/image/?type=${type}&fileName=${encodeURIComponent(fileName)}`;
+  switch (type) {
+    case 0:
+      return imageUrlHelpers.banner(fileName);
+    case 1:
+      return imageUrlHelpers.profile(fileName);
+    case 2:
+      return imageUrlHelpers.post(fileName);
+    case 3:
+      return imageUrlHelpers.album(fileName);
+    default:
+      return imageUrlHelpers.profile(fileName); // 기본값
+  }
 };
 
 // 게시판 댓글 데이터의 이미지 URL 변환

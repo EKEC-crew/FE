@@ -44,14 +44,15 @@ const NoticeItem: React.FC<NoticeItemProps> = ({
       onKeyDown={handleKeyDown}
       style={{ userSelect: "none" }}
     >
-      {/* 필독 라벨 */}
       <div className="w-16 flex-shrink-0">
-        {notice.hasLabel && notice.labelText && (
-          <span
-            className={`px-2 py-1 rounded-2xl text-xs font-medium
-        ${notice.labelText === "필독" ? "bg-[#3a3adb] text-white" : "bg-gray-200 text-gray-700"}`}
-          >
-            {notice.labelText}
+        {notice.type === 1 && (
+          <span className="px-2 py-1 rounded-2xl text-xs font-medium bg-[#3a3adb] text-white">
+            필독
+          </span>
+        )}
+        {notice.type === 0 && (
+          <span className="px-2 py-1 rounded-2xl text-xs font-medium bg-[#3a3adb] text-white">
+            인기
           </span>
         )}
       </div>

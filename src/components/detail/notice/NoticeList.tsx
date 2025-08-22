@@ -81,6 +81,8 @@ const NoticeList: React.FC = () => {
       content: n.content || "",
       date: n.createdAt?.split("T")[0] || "",
       time: n.createdAt?.split("T")[1]?.slice(0, 5) || "",
+      // 서버의 공지 타입을 그대로 보존 (0: 일반, 1: 필독)
+      type: typeof n.type === "number" ? n.type : 0,
       // type이 1이면 필독 공지
       hasLabel: n.type === 1,
       labelText: n.type === 1 ? "필독" : undefined,
@@ -156,7 +158,11 @@ const NoticeList: React.FC = () => {
               )}
             </div>
             <div className="flex justify-center items-center space-x-2 my-8">
-              <Pagination />
+              <Pagination
+                currentPage={1}
+                totalPages={Math.max(1, Math.ceil((notices?.length || 0) / 10))}
+                onPageChange={() => {}}
+              />
             </div>
             {canPost && (
               <div className="flex justify-center items-center space-x-4 mt-1">

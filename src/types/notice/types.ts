@@ -4,6 +4,7 @@ export interface Notice {
   title: string;
   date: string;
   time: string;
+  type: number;
   hasLabel: boolean;
   labelText?: string;
   likeCount?: number;
