@@ -12,6 +12,7 @@ const NoticeDetail = () => {
   const { crewId, noticeId } = useParams();
   const [notice, setNotice] = useState<Notice | null>(null);
   const [isCommentOpen, setIsCommentOpen] = useState(false);
+  const [commentCount, setCommentCount] = useState(0);
 
   useEffect(() => {
     if (!crewId || !noticeId) return;
@@ -42,6 +43,27 @@ const NoticeDetail = () => {
         console.error("공지 상세 조회 실패:", error);
       }
     })();
+  }, [crewId, noticeId]);
+
+  // 댓글 수를 초기에 가져오기
+  useEffect(() => {
+    if (!crewId || !noticeId) return;
+
+    const loadInitialCommentCount = async () => {
+      try {
+        const { fetchNoticeComments } = await import("./NoticeComments");
+        const response = await fetchNoticeComments(crewId, noticeId);
+        const list = Array.isArray(response?.data) ? (response.data as any[]) : [];
+        if (response.resultType === "SUCCESS" || response.success) {
+          setCommentCount(list.length);
+        }
+      } catch (err) {
+        console.error("초기 댓글 수 조회 에러:", err);
+        setCommentCount(0);
+      }
+    };
+
+    loadInitialCommentCount();
   }, [crewId, noticeId]);
 
   if (!notice) {
@@ -82,7 +104,7 @@ const NoticeDetail = () => {
   return (
     <div className="bg-gray-100 min-h-screen">
       <div className="py-6 space-y-6 pt-12">
-        <div className="py-3">
+        <div className="pt-0">
           <Header />
           <Tabs />
         </div>
@@ -119,12 +141,14 @@ const NoticeDetail = () => {
               initialLikeCount={Number(notice.likeCount ?? 0)}
               initialLiked={Boolean(notice.liked)}
               onLikeToggle={handleLikeToggle}
+              commentCount={commentCount}
             />
 
             <NoticeComments
               isOpen={isCommentOpen}
               crewId={crewId ?? ""}
               noticeId={noticeId ?? ""}
+              onCommentCountChange={setCommentCount}
             />
           </div>
         </div>

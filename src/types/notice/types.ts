@@ -9,6 +9,7 @@ export interface Notice {
   labelText?: string;
   likeCount?: number;
   liked?: boolean;
+  author?: string;
 }
 
 export interface NoticeItemProps {

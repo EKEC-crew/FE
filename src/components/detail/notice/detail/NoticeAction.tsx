@@ -102,7 +102,9 @@ const NoticeAction = ({
           onClick={toggleComment}
         >
           <img src={iconComment} alt="댓글" className="w-5 h-5" />
-          <span className="text-gray-600">{commentCount}</span>
+          {commentCount > 0 && (
+            <span className="text-gray-600">{commentCount}</span>
+          )}
         </button>
         <button>
           <img src={iconShare} alt="공유" className="w-5 h-5" />

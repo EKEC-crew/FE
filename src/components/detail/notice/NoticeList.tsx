@@ -13,11 +13,7 @@ interface ApiNoticeData {
   content?: string;
   type: number; // 0: 일반, 1: 필독
   createdAt: string;
-  author?: {
-    crewMemberId: number;
-    role: number;
-    nickname: string;
-  };
+  author: string; // API에서 문자열로 직접 전달됨
   isLiked?: boolean;
   [key: string]: any;
 }
@@ -66,26 +62,42 @@ const NoticeList: React.FC = () => {
 
   const notices: Notice[] = React.useMemo(() => {
     console.log("📦 전체 응답 데이터:", noticesResponse);
+    console.log("📦 noticesResponse.data:", noticesResponse?.data);
+    console.log("📦 noticesResponse.data?.data:", noticesResponse?.data?.data);
 
-    const rawNotices = Array.isArray(noticesResponse) 
-      ? noticesResponse 
-      : [];
+    // API 응답 구조에 맞게 데이터 추출 (여러 가능한 구조 시도)
+    let rawNotices: any[] = [];
+    
+    if (noticesResponse?.data?.data && Array.isArray(noticesResponse.data.data)) {
+      rawNotices = noticesResponse.data.data;
+    } else if (Array.isArray(noticesResponse?.data)) {
+      rawNotices = noticesResponse.data;
+    } else if (Array.isArray(noticesResponse)) {
+      rawNotices = noticesResponse;
+    }
     
     console.log("📋 추출된 rawNotices:", rawNotices);
 
     if (!Array.isArray(rawNotices)) return [];
     
-    return rawNotices.map((n: ApiNoticeData): Notice => ({
+    return rawNotices.map((n: any): Notice => ({
       id: n.id,
       title: n.title,
       content: n.content || "",
       date: n.createdAt?.split("T")[0] || "",
       time: n.createdAt?.split("T")[1]?.slice(0, 5) || "",
       // 서버의 공지 타입을 그대로 보존 (0: 일반, 1: 필독)
-      type: typeof n.type === "number" ? n.type : 0,
+      // 제목에 "일반"이 포함된 경우 type을 0으로 강제 설정
+      type: n.title.includes("일반") ? 0 : (typeof n.type === "number" ? n.type : 0),
       // type이 1이면 필독 공지
-      hasLabel: n.type === 1,
-      labelText: n.type === 1 ? "필독" : undefined,
+      hasLabel: n.type === 1 && !n.title.includes("일반"),
+      labelText: (n.type === 1 && !n.title.includes("일반")) ? "필독" : undefined,
+      // 좋아요 수 (API에 해당 필드가 없으므로 기본값 0)
+      likeCount: 0,
+      // 좋아요 상태
+      liked: n.isLiked || false,
+      // 작성자 닉네임 (API에서 문자열로 직접 전달됨)
+      author: n.author || "익명",
     }));
   }, [noticesResponse]);
 
