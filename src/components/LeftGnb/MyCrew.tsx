@@ -1,25 +1,65 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import ToggleListButton from "./ToggleListButton";
 import userIconBk from "../../assets/icons/ic_UserCircle_36.svg";
 import userIconWt from "../../assets/icons/ic_UserCircle_ white_36.svg";
+import { useJoinedCrewList } from "../../hooks/gnb/useJoinedCrewList";
 
 const MyCrewButton = () => {
-  // 임시 더미데이터 (API 연결 전)
-  const [myCrewList] = useState<string[]>([
-    "마이 크루 1",
-    "마이 크루 2",
-    "마이 크루 3",
-  ]);
+  const navigate = useNavigate();
+  const { crewNames, crews, isLoading, isError } = useJoinedCrewList();
   const [selectedCrew, setSelectedCrew] = useState("");
+
+  if (isLoading) {
+    return (
+      <ToggleListButton
+        title="My 크루 (로딩 중...)"
+        iconDefault={userIconBk}
+        iconActive={userIconWt}
+        items={[]}
+        selected=""
+        setSelected={() => {}}
+        name="myCrew"
+      />
+    );
+  }
+
+  if (isError) {
+    return (
+      <ToggleListButton
+        title="My 크루 (로드 실패)"
+        iconDefault={userIconBk}
+        iconActive={userIconWt}
+        items={[]}
+        selected=""
+        setSelected={() => {}}
+        name="myCrew"
+      />
+    );
+  }
+
+  const handleCrewChange = (crewName: string) => {
+    setSelectedCrew(crewName);
+
+    // 선택된 크루의 ID 찾기
+    const selectedCrewData = crews.find((crew) => crew.crewName === crewName);
+
+    if (selectedCrewData) {
+      console.log("선택된 크루 ID:", selectedCrewData.crewId);
+
+      // 해당 크루 페이지로 이동
+      navigate(`/crew/${selectedCrewData.crewId}`);
+    }
+  };
 
   return (
     <ToggleListButton
-      title="My 크루"
+      title={`My 크루`}
       iconDefault={userIconBk}
       iconActive={userIconWt}
-      items={myCrewList}
+      items={crewNames}
       selected={selectedCrew}
-      setSelected={setSelectedCrew}
+      setSelected={handleCrewChange}
       name="myCrew"
     />
   );

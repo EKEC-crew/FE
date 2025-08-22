@@ -1,7 +1,7 @@
 // src/pages/myPage/AppliedCrewPage.tsx
 import { useMyAppliedCrewList } from "../../hooks/apply/useMyAppliedCrewList";
 import AppliedCrewList from "../../components/myPage/applied/AppliedCrewList";
-
+import noIcon from "../../assets/icons/img_graphic3_340.svg";
 const AppliedCrewPage = () => {
   const {
     crews,
@@ -59,7 +59,7 @@ const AppliedCrewPage = () => {
           내가 지원한 크루
         </div>
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <div className="text-gray-400 text-6xl mb-4">📝</div>
+          <img src={noIcon} className="h-[21.25rem] w-[21.25rem] mb-4" />
           <div className="text-lg font-medium text-gray-600 mb-2">
             아직 지원한 크루가 없어요
           </div>
