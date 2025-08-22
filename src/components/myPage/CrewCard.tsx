@@ -23,6 +23,7 @@ export default function CrewCard({
   const navigate = useNavigate();
 
   const handleCardClick = () => {
+    console.log("크루아이디:", crewId);
     navigate(`/crew/${crewId}`); // 크루 디테일 페이지로 이동
   };
 

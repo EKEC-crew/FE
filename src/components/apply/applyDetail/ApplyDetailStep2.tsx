@@ -39,6 +39,7 @@ export default function Step2ReadonlyRenderer({ questions, detail }: Props) {
                 onCheckboxChange={() => {}} // no-op
                 onEtcTextChange={() => {}} // no-op
                 onTextInput={() => {}} // no-op
+                readOnly={true} // ✅ 추가
               />
             ) : (
               <CustomQuestionItem
@@ -49,6 +50,7 @@ export default function Step2ReadonlyRenderer({ questions, detail }: Props) {
                 onCheckboxChange={() => {}}
                 onEtcTextChange={() => {}}
                 onTextInput={() => {}}
+                readOnly={true} // ✅ 추가
               />
             )}
           </div>
