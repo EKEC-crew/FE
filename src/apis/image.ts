@@ -31,7 +31,7 @@ export const loadImage = async (params: ImageLoadParams): Promise<string> => {
     }
 
     // 이미지 URL 생성
-    const imageUrl = `${import.meta.env.VITE_API_BASE_URL}image/?type=${type}&fileName=${encodeURIComponent(fileName)}`;
+    const imageUrl = `${import.meta.env.VITE_API_BASE_URL}/image/?type=${type}&fileName=${encodeURIComponent(fileName)}`;
 
     // 이미지 존재 여부 확인 (HEAD 요청)
     const response = await fetch(imageUrl, { method: "HEAD" });

@@ -43,7 +43,9 @@ const AboutSection: React.FC = () => {
     <div className="bg-white rounded-xl shadow-md p-14 space-y-8">
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <span className="font-bold text-gray-800 text-2xl py-5">모임 소개</span>
+          <span className="font-bold text-gray-800 text-2xl py-5">
+            모임 소개
+          </span>
         </div>
 
         {/* 보기 모드: 텍스트만 표시 */}
@@ -52,8 +54,8 @@ const AboutSection: React.FC = () => {
             {infoLoading
               ? "로딩중…"
               : (crewInfo?.introduction ?? "").trim().length > 0
-              ? crewInfo!.introduction
-              : "소개가 아직 없습니다."}
+                ? crewInfo!.introduction
+                : "소개가 아직 없습니다."}
           </div>
         )}
 
@@ -85,11 +87,10 @@ const AboutSection: React.FC = () => {
             </div>
           </div>
         )}
-
-        {/* 앨범은 항상 아래 */}
-        <div className="mt-8">
-          <Album />
-        </div>
+      </div>
+      {/* 앨범은 항상 아래 */}
+      <div className="mt-8">
+        <Album crewId={Number(crewId)} />
       </div>
     </div>
   );
