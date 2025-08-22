@@ -1,6 +1,7 @@
 import CheckboxGroup from "../common/CheckBoxGroup";
 import type { CheckOption } from "../common/CheckBoxGroup";
 import canon from "./cannon";
+
 const ETC_LABEL = "기타";
 const DEFAULT_ETC_VALUE = ETC_LABEL;
 
@@ -13,6 +14,7 @@ type Props = {
   etcText?: string; // 서버에서 온 기타 텍스트(여러 줄 가능)
   onChange: (next: string[]) => void;
   onEtcTextChange?: (text: string) => void;
+  readOnly?: boolean; // ✅ 추가
 };
 
 export default function CheckboxQuestion({
@@ -24,6 +26,7 @@ export default function CheckboxQuestion({
   etcText,
   onChange,
   onEtcTextChange,
+  readOnly = false,
 }: Props) {
   const normalizedOptions = options.map(canon);
 
@@ -32,6 +35,9 @@ export default function CheckboxQuestion({
     typeof etcText === "string"
       ? etcText.split("\n").map(canon).filter(Boolean)
       : [];
+
+  // 기타 텍스트가 있는지 확인
+  const hasEtcText = etcText && etcText.trim().length > 0;
 
   // 기타 옵션의 value: 서버 값이 있으면 그 값(첫 줄), 없으면 기본값
   const resolvedEtcValue = etcValuesFromServer[0] ?? DEFAULT_ETC_VALUE;
@@ -42,13 +48,12 @@ export default function CheckboxQuestion({
     { label: ETC_LABEL, value: resolvedEtcValue, isEtc: true },
   ];
 
-  // 렌더 선택값: 기존 + (기타가 있으면 기타도 체크)
-  const renderSelected =
-    etcValuesFromServer.length > 0
-      ? Array.from(new Set([...selected.map(canon), resolvedEtcValue]))
-      : selected.map(canon);
+  // 🔧 수정된 부분: 기타 텍스트가 있으면 기타 옵션을 선택된 상태로 표시
+  const renderSelected = hasEtcText
+    ? Array.from(new Set([...selected.map(canon), canon(resolvedEtcValue)]))
+    : selected.map(canon);
 
-  // ✅ 이 줄 추가
+  // 기타 텍스트를 textarea에 표시
   const textareaValue = etcText ?? "";
 
   return (
@@ -62,8 +67,9 @@ export default function CheckboxQuestion({
         options={checkOptions}
         value={renderSelected}
         onChange={onChange}
-        etcText={textareaValue} // ✅ 여기 바꿈
+        etcText={textareaValue}
         onEtcTextChange={onEtcTextChange}
+        readOnly={readOnly}
       />
     </div>
   );

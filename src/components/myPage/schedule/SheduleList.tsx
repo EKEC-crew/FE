@@ -1,6 +1,6 @@
 import { useUpcomingSchedules } from "../../../hooks/upcomming/useUpcoming";
 import ScheduleItem from "./SheduleItem";
-
+import noIcon from "../../../assets/icons/img_graphic3_340.svg";
 function UpcomingSchedules() {
   const { schedules, loading, error, refetch } = useUpcomingSchedules();
 
@@ -28,8 +28,13 @@ function UpcomingSchedules() {
 
   if (schedules.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
-        다가오는 일정이 없습니다.
+      <div className=" flex flex-col justify-center items-center">
+        <img src={noIcon} className="h-[340px] w-[340px]" />
+        <div className="text-center py-8 text-gray-500">
+          회원님이 지원한 일정이 없어요 <br />
+          자신이 관심있는 일정을 찾아보세요!
+        </div>
+        <div className="text-center py-8 text-gray-500"></div>
       </div>
     );
   }

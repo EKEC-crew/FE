@@ -15,6 +15,7 @@ type Props = {
   onChange: (next: string[]) => void;
   etcText?: string;
   onEtcTextChange?: (text: string) => void;
+  readOnly?: boolean; // ✅ 추가
 };
 
 export default function CheckboxGroup({
@@ -23,6 +24,7 @@ export default function CheckboxGroup({
   onChange,
   etcText,
   onEtcTextChange,
+  readOnly = false, // ✅ 추가 (기본값 false)
 }: Props) {
   const [inputValue, setInputValue] = useState(etcText ?? "");
 
@@ -43,8 +45,8 @@ export default function CheckboxGroup({
     onChange(next);
 
     if (opt?.isEtc && !nextChecked) {
-      setInputValue(""); // 로컬 상태 초기화
-      onEtcTextChange?.(""); // 부모에게 초기화 알림
+      setInputValue("");
+      onEtcTextChange?.("");
     }
   };
 
@@ -67,21 +69,25 @@ export default function CheckboxGroup({
           />
         );
       })}
-
-      {etcOption && etcChecked && (
-        <textarea
-          className="mt-2 w-full rounded-md border border-gray-300 p-2 text-sm"
-          placeholder="기타 내용을 입력해주세요"
-          value={inputValue}
-          onChange={(e) => {
-            const newValue = e.target.value;
-            console.log("🟢 기타 텍스트 입력:", newValue);
-            console.log("🟢 현재 선택된 옵션들:", value);
-            setInputValue(newValue);
-            onEtcTextChange?.(newValue);
-          }}
-        />
-      )}
+      {etcOption &&
+        etcChecked &&
+        (readOnly ? (
+          <div className="mt-2 w-full rounded-md border border-gray-300 p-2 text-sm bg-gray-50 whitespace-pre-wrap">
+            {inputValue}
+          </div>
+        ) : (
+          <textarea
+            className="mt-2 w-full rounded-md border border-gray-300 p-2 text-sm"
+            placeholder="기타 내용을 입력해주세요"
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value); // ✅ 로컬 상태만 업데이트
+            }}
+            onBlur={(e) => {
+              onEtcTextChange?.(e.target.value); // ✅ 포커스 해제될 때만 부모에게 전송
+            }}
+          />
+        ))}
     </div>
   );
 }

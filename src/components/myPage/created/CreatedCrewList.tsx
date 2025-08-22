@@ -1,7 +1,7 @@
 import InfiniteScroll from "react-infinite-scroll-component";
 import CrewCard from "../CrewCard";
 import { useCreatedCrews } from "../../../hooks/createdCrew/useCreatedCrew";
-
+import noIcon from "../../../assets/icons/img_graphic3_340.svg";
 export default function CreatedCrewList() {
   const { crews, loading, error, hasMore, fetchMoreData, totalCount } =
     useCreatedCrews();
@@ -22,9 +22,14 @@ export default function CreatedCrewList() {
   //  빈 데이터 상태
   if (!crews || crews.length === 0) {
     return (
-      <p className="text-center text-gray-400 mt-12">
-        아직 만든 크루가 없습니다.
-      </p>
+      <div className=" flex flex-col justify-center items-center">
+        <img src={noIcon} className="h-[340px] w-[340px]" />
+        <div className="text-center py-8 text-gray-500">
+          회원님이 만든 크루가 없어요 <br />
+          나만의 크루를 만들어 보세요!
+        </div>
+        <div className="text-center py-8 text-gray-500"></div>
+      </div>
     );
   }
 

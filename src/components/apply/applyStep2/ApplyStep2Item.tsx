@@ -12,6 +12,7 @@ type Props = {
   onCheckboxChange: (next: string[]) => void;
   onEtcTextChange?: (text: string) => void;
   onTextInput: (value: string) => void;
+  readOnly?: boolean;
 };
 
 export default function CustomQuestionItem({
@@ -23,6 +24,7 @@ export default function CustomQuestionItem({
   onCheckboxChange,
   onEtcTextChange,
   onTextInput,
+  readOnly = false,
 }: Props) {
   if (q.questionType === QUESTION_TYPE.CHECKBOX) {
     // 체크박스 전용 컴포넌트
@@ -36,6 +38,7 @@ export default function CustomQuestionItem({
         etcText={q.isEtc === 1 ? etcText : undefined}
         onChange={onCheckboxChange}
         onEtcTextChange={onEtcTextChange}
+        readOnly={readOnly}
       />
     );
   }
