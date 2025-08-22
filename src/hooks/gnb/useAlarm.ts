@@ -67,7 +67,7 @@ const useAlarm = () => {
     return alarmTime.toLocaleDateString();
   }, []);
 
-  // 알람 목록 조회 - 읽지 않은 알람만 필터링
+  // 알람 목록 조회 - 읽지 않은 알람만 필터링 + 디버깅
   const fetchAlarms = useCallback(
     async (page: number = 1, append: boolean = false): Promise<void> => {
       setLoading(true);
@@ -80,14 +80,36 @@ const useAlarm = () => {
         const result = response.data;
 
         if (result.resultType === "SUCCESS") {
+          // ✨ 데이터 검증 및 로그
+          console.log("받은 알람 데이터:", result.data.alarms);
+
+          result.data.alarms.forEach((alarm) => {
+            if (!alarm.crew || !alarm.crew.id) {
+              console.warn("크루 정보가 없는 알람:", alarm);
+            } else {
+              console.log(
+                `알람 ID ${alarm.id} - 크루 ID: ${alarm.crew.id}, 크루명: ${alarm.crew.name}`
+              );
+            }
+          });
+
           const alarmsWithMessages: EnhancedAlarm[] = result.data.alarms
-            .filter((alarm) => !alarm.isRead) // ✨ 읽지 않은 알람만 필터링
+            .filter((alarm) => !alarm.isRead) // 읽지 않은 알람만 필터링
+            .filter((alarm) => alarm.crew && alarm.crew.id) // ✨ crew 정보가 있는 알람만 필터링
             .map((alarm: Alarm) => ({
               ...alarm,
               message: generateAlarmMessage(alarm),
               relativeTime: getRelativeTime(alarm.createdAt),
               isRead: alarm.isRead || false,
             }));
+
+          // ✨ 필터링 후 데이터 로그
+          console.log("필터링된 알람 개수:", alarmsWithMessages.length);
+          alarmsWithMessages.forEach((alarm) => {
+            console.log(
+              `필터링된 알람 - ID: ${alarm.id}, 타입: ${alarm.type}, 크루: ${alarm.crew?.name}`
+            );
+          });
 
           if (append) {
             setAlarms((prev) => [...prev, ...alarmsWithMessages]);
@@ -102,6 +124,7 @@ const useAlarm = () => {
           setError(result.error || "알람을 불러오는데 실패했습니다.");
         }
       } catch (err: any) {
+        console.error("알람 API 호출 에러:", err);
         if (err.response?.status === 401) {
           setError("로그인이 필요합니다.");
         } else {
@@ -119,9 +142,17 @@ const useAlarm = () => {
     fetchAlarms(currentPage + 1, true);
   }, [fetchAlarms, currentPage]);
 
-  // ✨ 알람 타입에 따른 적절한 페이지 경로 생성
+  // ✨ 알람 타입에 따른 적절한 페이지 경로 생성 + 방어 코드
   const getCrewPagePath = useCallback((alarm: EnhancedAlarm): string => {
     const crewId = alarm.crew?.id;
+
+    // ✨ crewId가 없는 경우 방어 코드
+    if (!crewId) {
+      console.warn("알람에 크루 ID가 없습니다:", alarm);
+      return "/"; // 홈페이지로 리다이렉트
+    }
+
+    console.log(`경로 생성 - 알람 타입: ${alarm.type}, 크루 ID: ${crewId}`);
 
     switch (alarm.type) {
       case "CREW_JOIN_REQUEST":
@@ -136,6 +167,9 @@ const useAlarm = () => {
       case "NOTICE_CREATED":
         // 공지사항 생성 → 특정 공지사항 페이지
         if (alarm.noticeId) {
+          console.log(
+            `공지사항 경로: /crew/${crewId}/notice/${alarm.noticeId}`
+          );
           return `/crew/${crewId}/notice/${alarm.noticeId}`;
         }
         return `/crew/${crewId}/notice`;
@@ -143,6 +177,7 @@ const useAlarm = () => {
       case "SCHEDULE_CREATED":
         // 일정 생성 → 특정 일정 페이지
         if (alarm.planId) {
+          console.log(`일정 경로: /crew/${crewId}/schedule/${alarm.planId}`);
           return `/crew/${crewId}/schedule/${alarm.planId}`;
         }
         return `/crew/${crewId}/schedule`;
@@ -151,9 +186,10 @@ const useAlarm = () => {
       case "POST_COMMENTED":
         // 게시글 좋아요/댓글 → 특정 게시글 페이지
         if (alarm.postId) {
-          return `/crew/${crewId}/post/${alarm.postId}`;
+          console.log(`게시글 경로: /crew/${crewId}/bulletin/${alarm.postId}`);
+          return `/crew/${crewId}/bulletin/${alarm.postId}`;
         }
-        return `/crew/${crewId}/board`;
+        return `/crew/${crewId}/bulletin`;
 
       case "CREW_WARNED":
       case "CREW_KICKED":
@@ -162,12 +198,14 @@ const useAlarm = () => {
 
       default:
         // 기본값 → 크루 메인 페이지
+        console.log(`기본 경로: /crew/${crewId}`);
         return `/crew/${crewId}`;
     }
   }, []);
 
   // 알람 읽음 처리 - 읽은 알람은 목록에서 제거
   const markAsRead = useCallback(async (alarmId: number): Promise<void> => {
+    console.log("읽음 처리 시작 - 알람 ID:", alarmId);
     try {
       const response = await privateAPI.patch<MarkAsReadResponse>(
         `/alarm/${alarmId}`
