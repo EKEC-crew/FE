@@ -1,5 +1,6 @@
 import React, { useCallback } from "react";
 import type { NoticeItemProps } from "../../../types/notice/types";
+import iconHeart from "../../../assets/schedule/ic_Heart.svg";
 
 const NoticeItem: React.FC<NoticeItemProps> = ({
   notice,
@@ -37,7 +38,7 @@ const NoticeItem: React.FC<NoticeItemProps> = ({
 
   return (
     <div
-      className="flex items-center justify-between py-2 px-2 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors duration-200 rounded-lg"
+      className="flex items-center py-2 px-2 bg-gray-50 hover:bg-gray-100 cursor-pointer transition-colors duration-200 rounded-lg"
       onClick={handleClick}
       role="button"
       tabIndex={0}
@@ -46,27 +47,43 @@ const NoticeItem: React.FC<NoticeItemProps> = ({
     >
       {/* 필독 라벨 */}
       <div className="w-16 flex-shrink-0">
-        {notice.hasLabel && notice.labelText && (
-          <span
-            className={`px-2 py-1 rounded-2xl text-xs font-medium
-        ${notice.labelText === "필독" ? "bg-[#3a3adb] text-white" : "bg-gray-200 text-gray-700"}`}
-          >
-            {notice.labelText}
+        {notice.type === 1 && (
+          <span className="px-2 py-1 rounded-2xl text-xs font-medium bg-[#3a3adb] text-white">
+            필독
+          </span>
+        )}
+        {notice.type === 0 && (
+          <span className="px-2 py-1 rounded-2xl text-xs font-medium bg-[#3a3adb] text-white">
+            인기
           </span>
         )}
       </div>
 
       {/* 제목 */}
-      <div className="flex-1 min-w-0 px-2">
+      <div className="flex-1 min-w-0 px-2 mr-4">
         <span className="text-gray-800 font-semibold truncate text-sm md:text-base block">
           {notice.title}
         </span>
       </div>
 
-      {/* 날짜와 시간 */}
-      <div className="flex items-center text-gray-400 text-xs md:text-sm space-x-3 md:space-x-6 flex-shrink-0">
-        <span>{notice.date}</span>
-        <span>{notice.time}</span>
+      {/* 년월일 */}
+      <div className="flex-shrink-0 mr-4">
+        <span className="text-gray-400 text-xs md:text-sm">{notice.date}</span>
+      </div>
+
+      {/* 하트아이콘 */}
+      <div className="flex-shrink-0 mr-2">
+        <img src={iconHeart} alt="좋아요" className="w-4 h-4" />
+      </div>
+
+      {/* 하트수 */}
+      <div className="flex-shrink-0 mr-4">
+        <span className="text-gray-600 text-xs md:text-sm">{notice.likeCount || 0}</span>
+      </div>
+
+      {/* 글쓴이닉네임 */}
+      <div className="flex-shrink-0">
+        <span className="text-gray-600 text-xs md:text-sm">{notice.author || "익명"}</span>
       </div>
     </div>
   );

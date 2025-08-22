@@ -1,6 +1,7 @@
 import noProfileImage from "../../assets/icons/ic_logo graphic_74.svg";
 import camera from "../../assets/icons/ic_line_Camera.svg";
 import { useAuthStore } from "../../store/useAuthStore";
+import { imageUrlHelpers } from "../../apis/image";
 
 export default function ProfileHeader() {
   const { user } = useAuthStore();
@@ -11,7 +12,7 @@ export default function ProfileHeader() {
 
   //이미지로드 가공
   const profileimageUrl = user?.profileImage
-    ? `${import.meta.env.VITE_API_BASE_URL}/image/?type=1&fileName=${user?.profileImage}`
+    ? imageUrlHelpers.profile(user.profileImage)
     : "";
 
   return (

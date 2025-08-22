@@ -13,6 +13,7 @@ type Props = {
   isOpen: boolean;
   crewId: string;
   noticeId: string;
+  onCommentCountChange?: (count: number) => void;
 };
 
 import { authorizedFetch } from "../../../../apis/client";
@@ -268,7 +269,7 @@ export const deleteNoticeComment = async (
 };
 
 /* ====== 컴포넌트 ====== */
-const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
+const NoticeComments = ({ isOpen, crewId, noticeId, onCommentCountChange }: Props) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(false);
   const [posting, setPosting] = useState(false);
@@ -291,6 +292,7 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
       const list = Array.isArray(response?.data) ? (response.data as Comment[]) : [];
       if (response.resultType === "SUCCESS" || response.success) {
         setComments(list);
+        onCommentCountChange?.(list.length);
       } else {
         setError("댓글을 불러오는데 실패했습니다.");
       }
@@ -348,6 +350,7 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
         },
         ...prev,
       ]);
+      onCommentCountChange?.(comments.length + 1);
       setNewContent("");
     } catch (e: any) {
       alert(e?.message ?? "댓글 작성에 실패했습니다.");
@@ -388,6 +391,7 @@ const NoticeComments = ({ isOpen, crewId, noticeId }: Props) => {
     try {
       await deleteNoticeComment(crewId, noticeId, id);
       setComments((prev) => prev.filter((c) => c.id !== id));
+      onCommentCountChange?.(comments.length - 1);
     } catch (e: any) {
       alert(e?.message ?? "댓글 삭제에 실패했습니다.");
     }

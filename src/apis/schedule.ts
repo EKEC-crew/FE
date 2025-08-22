@@ -18,6 +18,7 @@ import type {
   ResponseDeleteComment,
   CommentData,
 } from "../types/detail/schedule/types";
+// image helpers 제거 (원복)
 
 // 이미지 URL 변환 함수
 const getImageUrl = (

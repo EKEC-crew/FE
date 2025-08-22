@@ -37,13 +37,21 @@ export const createNotice = async (
   crewId: string,
   title: string,
   content: string,
-  options?: { isRequired?: boolean }
+  options?: { isRequired?: boolean; type?: 0 | 1 }
 ) => {
   const url = `/crew/${enc(crewId)}/notice/`;
+  const typeNum =
+    typeof options?.type === "number"
+      ? options.type === 1
+        ? 1
+        : 0
+      : options?.isRequired
+      ? 1
+      : 0;
   const body = {
     title,
     content,
-    type: options?.isRequired ? 1 : 0, // 0: 일반, 1: 필독
+    type: typeNum, // 0: 일반, 1: 필독
   };
 
   try {
