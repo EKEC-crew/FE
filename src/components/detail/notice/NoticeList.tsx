@@ -7,17 +7,6 @@ import PostButton from "../notice/button/post";
 import type { Notice } from "../../../types/notice/types";
 import { fetchNoticeList } from "./constants";
 import { fetchMyRole as fetchMyRoleDetail } from "../constants";
-interface ApiNoticeData {
-  id: number;
-  title: string;
-  content?: string;
-  type: number; // 0: 일반, 1: 필독
-  createdAt: string;
-  author: string; // API에서 문자열로 직접 전달됨
-  isLiked?: boolean;
-  [key: string]: any;
-}
-
 const NoticeList: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -31,7 +20,7 @@ const NoticeList: React.FC = () => {
     staleTime: 1000 * 60 * 2,
     retry: false,
   });
-  
+
   // 역할 기반 권한 체크 개선
   const canPost = React.useMemo(() => {
     if (!myRole) return false;
