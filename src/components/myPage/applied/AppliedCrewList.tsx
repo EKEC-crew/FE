@@ -2,6 +2,7 @@
 import InfiniteScroll from "react-infinite-scroll-component";
 import CrewCard from "../../myPage/CrewCard";
 import type { AppliedCrew } from "../../../types/mypage/AppliedCrew";
+import noIcon from "../../../assets/icons/img_graphic3_340.svg";
 
 interface Props {
   crews: AppliedCrew[];
@@ -18,9 +19,13 @@ export default function AppliedCrewList({
 }: Props) {
   if (crews.length === 0 && !isLoading) {
     return (
-      <p className="text-center text-gray-400 mt-12">
-        아직 지원한 크루가 없습니다.
-      </p>
+      <div className=" flex flex-col justify-center items-center">
+        <img src={noIcon} className="h-[340px] w-[340px]" />
+        <div className="text-center py-8 text-gray-500">
+          회원님이 지원한 크루가 없어요 <br />꼭 맞는 크루를 찾아보세요!
+        </div>
+        <div className="text-center py-8 text-gray-500"></div>
+      </div>
     );
   }
 
@@ -41,8 +46,8 @@ export default function AppliedCrewList({
       <div className="flex flex-col gap-4">
         {crews.map((crew) => (
           <CrewCard
-            key={crew.id}
-            crewId={crew.id}
+            key={crew.applyId}
+            crewId={crew.crewId}
             imageUrl={crew.imageUrl}
             category="" // 카테고리 없으면 빈 문자열
             title={crew.name}

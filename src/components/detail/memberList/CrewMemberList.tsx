@@ -1,5 +1,7 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
 import { useMyCrewRole } from "../../../hooks/CrewMemberList/useMyCrewRole";
-import { useCrewMembers } from "../../../hooks/CrewMemberList/useCrewMember"; // ← 파일명이 useCrewMembers라면 맞춰주세요
+import { useCrewMembers } from "../../../hooks/CrewMemberList/useCrewMember";
 import {
   CrewRole,
   type CrewMemberListProps,
@@ -8,7 +10,8 @@ import { sortByRole, getRoleText } from "../../../utils/detail/CrewRole";
 import Pagination from "../bulletin/button/pagination";
 import MemberCard from "./MemberCard";
 import { useNavigate } from "react-router-dom";
-
+import Modal from "../../../components/common/Modal";
+import noIcon from "../../../assets/icons/img_graphic3_340.svg";
 export default function CrewMemberList({
   crewId,
   selection,
@@ -16,10 +19,12 @@ export default function CrewMemberList({
   currentPage,
   onPageChange,
 }: CrewMemberListProps) {
+  const [showForbiddenModal, setShowForbiddenModal] = useState(false);
+
   // 멤버 목록
   const { data, isLoading, error } = useCrewMembers(crewId);
 
-  // 현재 로그인 유저 권한 (React Query: data, isLoading, error)
+  // 현재 로그인 유저 권한
   const {
     data: myRole,
     isLoading: roleLoading,
@@ -27,6 +32,54 @@ export default function CrewMemberList({
   } = useMyCrewRole(crewId);
 
   const navigate = useNavigate();
+
+  // 403 에러 감지
+  useEffect(() => {
+    // 멤버 목록 API 403 에러 체크
+    if (error) {
+      console.log("🔍 CrewMembers Error:", error);
+      if (axios.isAxiosError(error) && error.response?.status === 403) {
+        setShowForbiddenModal(true);
+        return;
+      }
+    }
+
+    // 내 역할 API 403 에러 체크
+    if (roleError) {
+      console.log("🔍 MyCrewRole Error:", roleError);
+      if (axios.isAxiosError(roleError) && roleError.response?.status === 403) {
+        setShowForbiddenModal(true);
+        return;
+      }
+    }
+  }, [error, roleError]);
+
+  const handleModalClose = () => {
+    setShowForbiddenModal(false);
+    // 이전 페이지로 이동하거나 메인으로 이동
+    navigate(-1); // 또는 navigate('/');
+  };
+
+  // 403 모달이 표시되어야 하는 경우
+  if (showForbiddenModal) {
+    return (
+      <Modal onClose={handleModalClose}>
+        <div className="text-center flex flex-col justify-center items-center">
+          <img src={noIcon} className="h-[340px] w-[340px]" />
+          <h2 className="text-2xl font-semibold mb-4">접근 권한이 없습니다</h2>
+          <p className="text-gray-600 mb-6">
+            해당 크루의 멤버만 크루원 목록을 확인할 수 있습니다.
+          </p>
+          <button
+            onClick={handleModalClose}
+            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          >
+            확인
+          </button>
+        </div>
+      </Modal>
+    );
+  }
 
   if (isLoading || roleLoading) return <div>불러오는 중...</div>;
   if (error || roleError || !data) return <div>불러오기 실패</div>;
