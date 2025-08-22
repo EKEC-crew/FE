@@ -1,51 +1,52 @@
+import { useUpcomingSchedules } from "../../../hooks/upcomming/useUpcoming";
 import ScheduleItem from "./SheduleItem";
 
-export const schedules = [
-  {
-    dayLabel: "Today",
-    title: "사이클링히트",
-    description: "사이클링히트_ 잠실 2030 여성 야구 직관 동호회 (두산 vs 삼성)",
-  },
-  {
-    dayLabel: "DAY-1",
-    title: "한강러너스",
-    description: "한강러너스_ 여의도 선셋 러닝 5km (자유 참가)",
-  },
-  {
-    dayLabel: "DAY-2",
-    title: "오픈워터스윔",
-    description: "오픈워터스윔_ 잠실 한강 수영 훈련 (초급반)",
-  },
-  {
-    dayLabel: "DAY-3",
-    title: "사이클링히트",
-    description: "사이클링히트_ 반포 밤 라이딩 모임 (20km)",
-  },
-  {
-    dayLabel: "DAY-4",
-    title: "피크닉요가",
-    description: "피크닉요가_ 반포한강 피크닉 요가 클래스 (매트 제공)",
-  },
-  {
-    dayLabel: "DAY-5",
-    title: "클라이밍모임",
-    description: "클라이밍모임_ 성수 실내 클라이밍 체험 (장비 대여 가능)",
-  },
-];
+function UpcomingSchedules() {
+  const { schedules, loading, error, refetch } = useUpcomingSchedules();
 
-function ScheduleList() {
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center py-8">
+        <div>로딩 중...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <div className="text-red-500 mb-4">{error}</div>
+        <button
+          onClick={refetch}
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          다시 시도
+        </button>
+      </div>
+    );
+  }
+
+  if (schedules.length === 0) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        다가오는 일정이 없습니다.
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-col gap-y-3">
-      {schedules.map((s, idx) => (
+    <div className="space-y-3">
+      {schedules.map((schedule) => (
         <ScheduleItem
-          key={idx}
-          dayLabel={s.dayLabel}
-          title={s.title}
-          description={s.description}
+          key={schedule.id} // 배열 인덱스 대신 고유 ID 사용
+          dayLabel={schedule.dayLabel}
+          title={schedule.title}
+          description={schedule.description}
+          date={schedule.date}
         />
       ))}
     </div>
   );
 }
 
-export default ScheduleList;
+export default UpcomingSchedules;
