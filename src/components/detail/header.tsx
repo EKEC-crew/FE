@@ -48,7 +48,7 @@ function Header() {
   const category = crewInfo?.category ?? "";
   const score = typeof crewInfo?.score === "number" ? crewInfo!.score : 0;
   const memberCount = crewInfo?.memberCount ?? 0;
-  const capacity = crewInfo?.crewCapacity ?? 0;
+  const capacity = crewInfo?.crewCapacity ?? "∞";
   const apiBase = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
   const profileSrc = useMemo(() => {
     const f = crewInfo?.bannerImage?.trim();
