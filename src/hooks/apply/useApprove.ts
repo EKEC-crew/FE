@@ -72,7 +72,7 @@ export const useRejectMutation = (props: UseApprovalMutationProps = {}) => {
     mutation.mutate({
       crewId,
       applyId,
-      data: { status: 0 },
+      data: { status: 2 },
     });
   };
 
