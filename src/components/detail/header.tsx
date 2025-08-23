@@ -6,6 +6,7 @@ import UserCircle from "/src/assets/header/ic_UserCircle.svg";
 import crown from "/src/assets/header/ic_crown.png";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCrewInfo, fetchMyRole } from "./constants";
+import { getImageUrl } from "../../apis/bulletins";
 
 function Header() {
   const navigate = useNavigate();
@@ -40,7 +41,6 @@ function Header() {
   };
   const roleKey = (myRole ?? "GUEST").toString();
   const isLeader = roleKey === "LEADER" || roleKey === "SUB_LEADER";
-
   const title =
     crewInfo?.title ??
     (infoError ? "크루 정보를 불러오지 못했습니다" : "로딩중…");
@@ -58,10 +58,12 @@ function Header() {
     return `${apiBase}/image/?type=0&fileName=${encodeURIComponent(f)}`;
   }, [crewInfo?.bannerImage, apiBase]);
 
+
   return (
     <div className="bg-white w-full shadow-lg">
       <div className="w-full px-4 py-6 flex justify-between">
         {/* 좌측: 배너 썸네일 + 크루 정보 */}
+
         <div className="flex items-center gap-6">
           <img
             src={profileSrc}
@@ -131,6 +133,7 @@ function Header() {
             )}
           </div>
 
+          {/* 크루장/운영진용 더보기 메뉴 */}
           {!roleLoading && isLeader && isMenuOpen && (
             <button
               onClick={() => navigate(`/crew/${crewId}/edit-intro`)}
