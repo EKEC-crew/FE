@@ -89,7 +89,7 @@ const AboutSection: React.FC = () => {
         )}
       </div>
       {/* 앨범은 항상 아래 */}
-      <div className="mt-8">
+      <div className="mt-16">
         <Album crewId={Number(crewId)} />
       </div>
     </div>

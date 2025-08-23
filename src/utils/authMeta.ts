@@ -4,8 +4,7 @@ const LS_KEYS = {
   authEver: "auth:ever",
 } as const;
 
-// 테스트용으로 짧게 설정
-export const REFRESH_TTL_MS = 60 * 1000; // 1분
+export const REFRESH_TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7일
 // 실제 환경에서는: 7 * 24 * 60 * 60 * 1000; // 7일
 
 export const STARTUP_GRACE_MS = 2 * 60 * 1000; // 2분
