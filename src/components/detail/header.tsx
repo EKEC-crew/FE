@@ -1,46 +1,22 @@
-// header.tsx
-import { useMemo, useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-
-import defaultBanner from "/src/assets/logo/img_crew_banner.svg";
+import DefaultCrewProfile from "/src/assets/header/ic_DefaultCrewProfile.png";
 import ReviewStar from "/src/assets/header/ic_ReviewStar.png";
 import UserCircle from "/src/assets/header/ic_UserCircle.svg";
 import crown from "/src/assets/header/ic_crown.png";
-
-/** API 호출 */
-const fetchCrewInfo = async (crewId: string) => {
-  const apiBase = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
-  const res = await fetch(`${apiBase}/crew/${crewId}/info`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  });
-  if (!res.ok) throw new Error("크루 정보 조회 실패");
-  const data = await res.json();
-  if (data?.resultType === "SUCCESS" && data?.data) return data.data;
-  throw new Error(data?.error?.reason || "크루 정보 조회 실패");
-};
-
-const fetchMyRole = async (crewId: string) => {
-  const apiBase = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
-  const res = await fetch(`${apiBase}/crew/${crewId}/my-role`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  });
-  if (!res.ok) return "GUEST";
-  const data = await res.json();
-  if (data?.resultType === "SUCCESS" && data?.data) return data.data;
-  return "GUEST";
-};
+import { useQuery } from "@tanstack/react-query";
+import { fetchCrewInfo, fetchMyRole } from "./constants";
 
 function Header() {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { crewId } = useParams();
 
-  const { data: crewInfo, isLoading: infoLoading, isError: infoError } = useQuery({
+  const {
+    data: crewInfo,
+    isLoading: infoLoading,
+    isError: infoError,
+  } = useQuery({
     queryKey: ["crewInfo", crewId],
     queryFn: () => fetchCrewInfo(crewId!),
     enabled: !!crewId,
@@ -64,41 +40,37 @@ function Header() {
   };
   const roleKey = (myRole ?? "GUEST").toString();
   const isLeader = roleKey === "LEADER" || roleKey === "SUB_LEADER";
-
   const title =
     crewInfo?.title ??
     (infoError ? "크루 정보를 불러오지 못했습니다" : "로딩중…");
-  const subTitle = crewInfo?.content ?? crewInfo?.introduction ?? "";
+  const subTitle = crewInfo?.content ?? "";
   const category = crewInfo?.category ?? "";
   const score = typeof crewInfo?.score === "number" ? crewInfo!.score : 0;
   const memberCount = crewInfo?.memberCount ?? 0;
-  const capacity = crewInfo?.crewCapacity ?? 0;
-
-  /** 배너만 사용 (썸네일 한 개만 표시) */
+  const capacity = crewInfo?.crewCapacity ?? "∞";
   const apiBase = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
-  const bannerSrc = useMemo(() => {
+  const profileSrc = useMemo(() => {
     const f = crewInfo?.bannerImage?.trim();
-    if (!f) return defaultBanner;
-    if (/^https?:\/\//i.test(f)) return f;
+    if (!f) return DefaultCrewProfile; // 배너가 없으면 기본 이미지
+    if (/^https?:\/\//i.test(f)) return f; // 절대 URL이면 그대로
+    // .env: https://api.ekec.site/api  → /image?type=0 로 배너 요청
     return `${apiBase}/image/?type=0&fileName=${encodeURIComponent(f)}`;
   }, [crewInfo?.bannerImage, apiBase]);
 
   return (
     <div className="bg-white w-full shadow-lg">
-      {/* 상단 정보 바 (왼쪽 썸네일 하나만) */}
       <div className="w-full px-4 py-6 flex justify-between">
-        {/* 왼쪽: 배너 썸네일 + 텍스트 */}
+        {/* 좌측: 배너 썸네일 + 크루 정보 */}
+
         <div className="flex items-center gap-6">
           <img
-            src={bannerSrc}
-            alt="크루 배너"
-            className="w-16 h-16 rounded-lg object-cover"
+            src={profileSrc}
             onError={(e) => {
-              if (e.currentTarget.src !== defaultBanner) {
-                e.currentTarget.onerror = null;
-                e.currentTarget.src = defaultBanner;
-              }
+              e.currentTarget.onerror = null; // 무한 루프 방지
+              e.currentTarget.src = DefaultCrewProfile;
             }}
+            className="w-16 h-16 rounded-lg object-cover"
+            alt="크루 로고"
           />
           <div>
             <div className="text-xl font-bold text-gray-900 text-left">
@@ -128,8 +100,19 @@ function Header() {
           </div>
         </div>
 
-        {/* 우측: 내 역할 + 더보기/지원하기 */}
+        {/* 우측: 내 역할 + 더보기 */}
         <div className="flex flex-col items-center gap-2 relative">
+          {/* 게스트용 지원하기 버튼 */}
+          {!roleLoading && roleKey === "GUEST" && (
+            <button
+              onClick={() => {
+                navigate(`/crew/${crewId}/apply`);
+              }}
+              className="bg-[#3A3ADB] text-white px-6 py-2 text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md"
+            >
+              지원하기
+            </button>
+          )}
           <div className="flex items-center justify-between w-full px-4 py-2">
             <img
               src={UserCircle}
@@ -141,7 +124,9 @@ function Header() {
                 <img src={crown} alt="왕관" className="w-4 h-4" />
               )}
               <span className="text-sm">
-                {roleLoading ? "역할 확인중…" : (roleLabel[roleKey] ?? "게스트")}
+                {roleLoading
+                  ? "역할 확인중…"
+                  : (roleLabel[roleKey] ?? "게스트")}
               </span>
             </div>
 
@@ -157,20 +142,13 @@ function Header() {
             )}
           </div>
 
+          {/* 크루장/운영진용 더보기 메뉴 */}
           {!roleLoading && isLeader && isMenuOpen && (
             <button
               onClick={() => navigate(`/crew/${crewId}/edit-intro`)}
               className="bg-gray-100 px-6 py-2 text-xs font-bold rounded-lg hover:bg-indigo-50 shadow-md transition-colors duration-200 text-left"
             >
               크루 소개 작성 및 수정하기
-            </button>
-          )}
-          {!roleLoading && roleKey === "GUEST" && (
-            <button
-              onClick={() => navigate(`/crew/${crewId}/apply`)}
-              className="bg-[#3A3ADB] text-white px-6 py-2 text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md"
-            >
-              지원하기
             </button>
           )}
         </div>
