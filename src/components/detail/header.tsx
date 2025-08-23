@@ -1,4 +1,3 @@
-// header.tsx
 import { useState, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import DefaultCrewProfile from "/src/assets/header/ic_DefaultCrewProfile.png";
@@ -50,8 +49,6 @@ function Header() {
   const score = typeof crewInfo?.score === "number" ? crewInfo!.score : 0;
   const memberCount = crewInfo?.memberCount ?? 0;
   const capacity = crewInfo?.crewCapacity ?? 0;
-
-  // ✅ 여기서부터: 배너 이미지를 썸네일로 사용
   const apiBase = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
   const profileSrc = useMemo(() => {
     const f = crewInfo?.bannerImage?.trim();
