@@ -6,7 +6,6 @@ import UserCircle from "/src/assets/header/ic_UserCircle.svg";
 import crown from "/src/assets/header/ic_crown.png";
 import { useQuery } from "@tanstack/react-query";
 import { fetchCrewInfo, fetchMyRole } from "./constants";
-import { getImageUrl } from "../../apis/bulletins";
 
 function Header() {
   const navigate = useNavigate();
