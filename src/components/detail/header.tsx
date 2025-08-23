@@ -57,7 +57,6 @@ function Header() {
     return `${apiBase}/image/?type=0&fileName=${encodeURIComponent(f)}`;
   }, [crewInfo?.bannerImage, apiBase]);
 
-
   return (
     <div className="bg-white w-full shadow-lg">
       <div className="w-full px-4 py-6 flex justify-between">
@@ -103,6 +102,17 @@ function Header() {
 
         {/* 우측: 내 역할 + 더보기 */}
         <div className="flex flex-col items-center gap-2 relative">
+          {/* 게스트용 지원하기 버튼 */}
+          {!roleLoading && roleKey === "GUEST" && (
+            <button
+              onClick={() => {
+                navigate(`/crew/${crewId}/apply`);
+              }}
+              className="bg-[#3A3ADB] text-white px-6 py-2 text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md"
+            >
+              지원하기
+            </button>
+          )}
           <div className="flex items-center justify-between w-full px-4 py-2">
             <img
               src={UserCircle}
