@@ -7,6 +7,9 @@
 ## 프로젝트 소개
 
 
+https://github.com/user-attachments/assets/7a002fcf-0a23-429d-beaf-d49d0940c82f
+
+
 ## 프로젝트 개발 기간
 2025.06.26 ~ 2025.08.23
 
